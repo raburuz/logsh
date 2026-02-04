@@ -1,5 +1,5 @@
 import { ApiKeys } from "@/modules/api-key/components/api-keys";
-import { Feed } from "@/modules/event/components/feed";
+import { EventList } from "@/modules/event/components/event";
 import { Workspaces } from "@/modules/workspace/components/workspaces";
 import { config } from "@/modules/shared/config";
 import { Plans } from "@/modules/payment/components/plans";
@@ -31,7 +31,7 @@ export default function Home() {
       {/* Feed component */}
       <ApiKeys/>
       <Workspaces />
-      <Feed />
+      <EventList />
       <Testimonial/>
       <HowItWorks/>
       <Comparison/>

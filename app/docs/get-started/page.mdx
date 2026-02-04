@@ -1,0 +1,69 @@
+export const metadata = { 
+  title: 'Get started with Bigstats', 
+  alternates: { canonical: '/n/1', }
+};
+
+
+# Welcome
+
+Hey there! Here's what you need to know to get started.
+
+<a name="create-api-key"></a>
+## Create an API Key
+
+Api Token are used to authenticate requests to the BIGSTATS API.
+
+To create as many API Keys as you need go to the Bigstats Dashboard. 
+**Navigate to the "API Keys"** section and **click on "Create"**. 
+Give your key a name and start using it.
+
+```js title="Api Key Example" caption="You need to send your API key as Bearer token in the Authorization header"
+
+bigstats_1234567890qwertyuiopasdfghjklzxcvbnm
+
+```
+
+<a name="create-workspace"></a>
+## Create a Workspace
+
+A workspace is a container for your events. You can create multiple workspaces to organize your events.
+
+To create a workspace, go to the Bigstats Dashboard and **navigate to the "Workspaces"** section and **click on "Create"**. Give it a name, and you're all set!
+
+<a name="tracking-events"></a>
+## Tracking your first Event
+
+Now that you have your workspace and API token, you're ready to track your first event! 
+You can do this by making a POST request to the Bigstats API.
+
+```js title="Javascript Example"  caption="Send an event to Bigstats"
+export const sendBigstatsEvent = async ( data ) => {
+
+  const response = await fetch(
+    'https://bigstats.com/api/event', 
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer bigstats_api_key_here', // Your API Key
+      },
+      body: JSON.stringify({
+        workspace: data.workspace,    // Your workspace name
+        event: data.event,            // Event name
+        description: data.description, // Event description
+        icon: data.icon,              // Event icons
+      }),
+    }
+  )
+
+  const result = await response.json();
+
+  if( !response.ok ) {
+    throw new Error(result.message || 'Failed to send event to Bigstats');
+  } 
+}
+
+```
+
+That's it! You've successfully tracked your first event with Bigstats.
+

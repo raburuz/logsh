@@ -1,0 +1,120 @@
+import { AppError } from "@/modules/shared/lib/error";
+import { db } from "../db";
+import { event, workspace } from "../schemas/app";
+import { apiQuery } from "./api";
+import { subscriptionQuery } from "./subscription";
+import { and, desc, eq, lt, or } from "drizzle-orm";
+import { workspaceStatus } from "./workspace";
+
+export const eventQuery = {
+  create: async (
+    data: {
+      userId: string,
+      workspaceId: string,
+      event: string,
+      description: string,
+      icon: string,
+    }
+  ) => {
+    
+    await eventRestrictions.check_limit({ by: { userId: data.userId } })
+  
+    const [ response ] = await db
+    .insert(event)
+    .values({
+      workspaceId: data.workspaceId,
+      event: data.event,
+      description: data.description,
+      icon: data.icon,
+    })
+    .returning({
+      id: event.id,
+      createdAt: event.createdAt,
+    })
+  
+    return response;
+  
+  },
+  list: async (
+      data: {
+      entity: {
+        //extendable for other entities in the future
+        table: 'workspace',
+        id: string,  
+      },
+      nextCursor?: {
+        id: string,
+        createdAt: Date,
+      },
+      query : {
+        take: number,
+      },
+      userId: string,
+    }
+  )=> {
+  
+    const { nextCursor, entity, query } = data;
+    const whereConditions:any[] = [
+      eq(workspace.status, workspaceStatus.ACTIVE),
+    ];
+  
+    switch (entity.table) {
+      case "workspace":
+        whereConditions.push( eq(event.workspaceId, entity.id) );
+        break;
+      // Extendable for other entities in the future
+      ;
+    }
+  
+    if(nextCursor) {
+      whereConditions.push(
+        or(
+          lt(event.createdAt, nextCursor.createdAt),
+          and(
+            eq(event.createdAt, nextCursor.createdAt),
+            lt(event.id, nextCursor.id)
+          )
+        )
+      );
+    }
+  
+    const response = await db
+    .select({
+      id: event.id,
+      event: event.event,
+      description: event.description,
+      createdAt: event.createdAt,
+      icon: event.icon,
+      workspace: workspace.name,
+      workspaceId: event.workspaceId,
+    })
+    .from(event)
+    .innerJoin(workspace, eq(event.workspaceId, workspace.id))
+    .where(and(...whereConditions))
+    .orderBy( desc( event.createdAt), desc(event.id))
+    .limit(query.take)
+  
+    return response;
+
+  },
+}
+
+export const eventRestrictions = {
+  
+  check_limit : async ({ by }: { by: { userId: string } } ) => {
+
+    const [ api, subscription ] = await Promise.all([
+      apiQuery.get_usage({ by: { userId: by.userId }}),
+      subscriptionQuery.get({ by: { userId: by.userId }}),
+    ]);
+
+    //No subscription found
+    if( (api?.events ?? 0) >= subscription.plan.limits.events ) {
+      throw new AppError(
+        'payment_required',
+        'You have reached the maximum number of monthly events. To record more events, please upgrade to the basic plan or higher.'
+      )
+    }
+
+  },
+}
