@@ -15,7 +15,7 @@ export const EventList = () => {
   const rtEvents = event.realTimeList.filter( e => e.workspaceId === workspace.selected );
 
   const loadNextEvents = async () => {
-    
+    await event.fetchEvents( workspace.selected );
   }
 
   const renderItems = () => {
@@ -57,10 +57,15 @@ export const EventList = () => {
   )
 }
 
-
 const EventItem = ( event: IEvent ) => {
   return (
-    <div className="w-full relative border-l-4 px-6 border-zinc-900 bg-zinc-900/10 py-5 flex items-center justify-between rounded-r-xl">
+    <div 
+      className="w-full relative border-l-4 px-6 border-zinc-900 bg-zinc-900/10 py-5 flex items-center justify-between rounded-r-xl"
+      style={{
+        borderColor: event.color,
+        backgroundColor: `${event.color}10`
+      }}
+    >
       <div>
         <h3 className="font-bold first-letter:uppercase text-sm text-zinc-400">{event.event}</h3>
         <p className="mt-2 text-white text-xs">{event.description}</p>

@@ -15,6 +15,7 @@ interface IWorkspaceActions {
   setList: ( workspaces: IWorkspace[] ) => void;
   setSelected: ( workspaceId: string ) => void;
   setIsLoading: ( isLoading: boolean ) => void;
+  clean: () => void;
 }
 
 export const useWorkspaceStore = create<IWorkspaceState & IWorkspaceActions>( ( set ) => ({
@@ -24,6 +25,7 @@ export const useWorkspaceStore = create<IWorkspaceState & IWorkspaceActions>( ( 
   setList: ( workspaces: IWorkspace[] ) => set( { list: workspaces } ),
   setSelected: ( workspaceId: string ) => set( { selected: workspaceId } ),
   setIsLoading: ( isLoading: boolean ) => set( { isLoading } ),
+  clean: () => set( { isLoading: true, list: [], selected: "" } ),
 }))
 
 export const useWorkspace = () => {
@@ -92,5 +94,6 @@ export const useWorkspace = () => {
     deleteWorkspaceById,
     fetchWorkspaces,
     createWorkspace,
+    clean: workspaces.clean,
   }
 }

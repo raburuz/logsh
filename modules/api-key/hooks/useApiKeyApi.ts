@@ -1,8 +1,6 @@
 "use client";
 
-import { useContext } from "react";
-import { IApiKeyItem } from "../interfaces";
-import { ApiContext } from "../service";
+import { IApiKey } from "../interface";
 
 export const useApi = () => {
 
@@ -33,7 +31,7 @@ export const useApi = () => {
 
   }
 
-  const getApiKeys = async ():  Promise<IApiKeyItem[]> => {
+  const getApiKeys = async ():  Promise<IApiKey[]> => {
     try {
       const response = await fetch('/api/api-key', {
         method: 'GET',
@@ -55,21 +53,25 @@ export const useApi = () => {
     }
   }
 
-  return {
-    createApiKey,
-    getApiKeys
-  };
-}
-
-
-// Need to create a context to share state between components
-export const useFetchApiKeys = () => {
-
-  const context = useContext(ApiContext);
-
-  if (!context) {
-    throw new Error("useFetchApiKeys must be used within an ApiService");
+  const deleteApiKeyById = async ( id: string ): Promise<void> => {
+    try {
+      const response = await fetch(`/api/api-key/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Failed to delete API key');
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
-  return context;
-} 
+  return {
+    createApiKey,
+    getApiKeys,
+    deleteApiKeyById
+  };
+}

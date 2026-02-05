@@ -25,6 +25,7 @@ export const event = pgTable('event', {
     .notNull()
     .references(() => workspace.id, { onDelete: "cascade" }),
   icon: text("icon").default(''),
+  color: text("color").default('#000000'),
   event: text("event").notNull(),
   description: text("description"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),

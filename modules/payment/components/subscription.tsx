@@ -2,8 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/modules/auth/lib/client"
-import { useSubscription } from "../hooks/useSubscription";
 import { niceDate } from "@/modules/shared/lib/date";
+import { useSubscription } from "@/modules/shared/store/subscription";
 
 export const Subscription = () => {
 

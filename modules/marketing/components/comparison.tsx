@@ -73,7 +73,7 @@ export default function Comparison() {
             <h3 className="text-white font-semibold text-lg mb-6 text-center">
               👍 With {config.app.name}
             </h3>
-            <ul className="space-y-5 p-6">
+            <ul className="space-y-5 md:p-6">
               {withFeatures.map((feature, index) => (
                 <li key={index} className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-[#22c55e] mt-0.5 shrink-0" />

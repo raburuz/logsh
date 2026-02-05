@@ -7,12 +7,12 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { IWorkspace } from "../interface"
-import { useWorkspace } from "@/modules/shared/store/workspace";
+import { useApiKey } from "@/modules/shared/store/api-key";
+import { IApiKey } from "../interface";
 
-export function Settings( props: IWorkspace ) {
+export function Settings( props: IApiKey ) {
 
-  const { deleteWorkspaceById } = useWorkspace();
+  const { deleteApiKeyById } = useApiKey();
 
   return (
     <DropdownMenu>
@@ -26,7 +26,7 @@ export function Settings( props: IWorkspace ) {
           <DropdownMenuLabel>Settings</DropdownMenuLabel>
           <DropdownMenuItem 
             className="hover:bg-transparent focus:bg-transparent cursor-pointer text-red-700 hover:text-red-600 focus:text-red-600"
-            onClick={() => deleteWorkspaceById(props.id)}
+            onClick={() => deleteApiKeyById(props.id)}
           >
             Delete
           </DropdownMenuItem>

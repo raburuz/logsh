@@ -1,25 +1,21 @@
-import { useEffect } from "react"
-import { useFetchApiKeys } from "@/modules/api-key/hooks/useApi"
+import { useEffect } from "react";
 import { useEvent } from "../store/event";
 import { useWorkspace } from "../store/workspace";
+import { useApiKey } from "../store/api-key";
+import { useSubscription } from "../store/subscription";
 
 export const useInitialRender = () => {
 
-  const apiKeys = useFetchApiKeys();
+  const apiKey = useApiKey();
   const workspace = useWorkspace();
   const event = useEvent();
-  /* 
-    FLOW:
-    Load Api Keys ✓
-    Load Workspaces ✓
-    Select the last workspace Created (if any) ✓
-    Load Events for the selected workspace ✓
-    Satart listening to events (websocket / polling / sse)
-  */
+  const subscription = useSubscription();
+  
   useEffect(() => {
-    apiKeys.fetchApiKeys();
+    apiKey.fetchApikeys();
     workspace.fetchWorkspaces();
     event.fetchStream();
+    subscription.fetchSubscription();
   }, [])
 
 }

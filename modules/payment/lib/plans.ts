@@ -1,4 +1,4 @@
-import { IPlan } from "../../shared/interfaces";
+import { IPlan } from "../interface";
 
 export const plans: IPlan[] = [
   {
@@ -16,6 +16,7 @@ export const plans: IPlan[] = [
     ],
     limits: {
       events: 25_000,
+      eventsRetentionDays: 7,
     },
     discount:{
       isActive: true,
@@ -45,6 +46,7 @@ export const plans: IPlan[] = [
     ],
     limits: {
       events: 50_000,
+      eventsRetentionDays: 90,
     },
     discount: {
       isActive: true,
@@ -70,6 +72,7 @@ export const plans: IPlan[] = [
     ],
     limits: {
       events: 150_000,
+      eventsRetentionDays: 365,
     },
     discount:{
       isActive: true,
@@ -93,6 +96,7 @@ export const plans: IPlan[] = [
     ],
     limits: {
       events: 0,
+      eventsRetentionDays: 0,
     },
     callToAction: "Start 14-day free trial",
   }

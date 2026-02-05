@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server"
 import { AppError } from "../lib/error"
-import { headers } from "next/headers";
 
 export async function routeHandler<T>(fn: () => Promise<T>) {
   try {
@@ -13,13 +12,10 @@ export async function routeHandler<T>(fn: () => Promise<T>) {
 
   } catch (error: any) {
 
-    const headersList = await headers();
-
       if(process.env.NODE_ENV === 'development'){
         console.log('\n');
-        console.log('🛠️ API Route → ' + headersList.get('host') + headersList.get('x-invoke-path'));
         console.log('🚧 Error → ' + JSON.stringify(error, null, 2));
-        console.log('🌎 Stack → ' + error?.stack);
+        //console.log('🌎 Stack → ' + error?.stack);
         console.log('🟢 Status → SERVER IS STILL RUNNING... ')
       }
 

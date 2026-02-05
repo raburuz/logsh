@@ -6,5 +6,8 @@ export const config = {
   },
   api: {
     baseUrl: 'https://api.bigstats.com/v1',
-  } 
+  },
+  email: {
+    fromNoReply: 'no-reply@signalify.com',
+  }
 }

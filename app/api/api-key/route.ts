@@ -86,7 +86,7 @@ export async function GET() {
     return apiKeys.map( apiKey => ({
         id: apiKey.id,
         name: apiKey.name,
-        key: apiKey.start,
+        apiKey: apiKey.start,
         createdAt: apiKey.createdAt.toISOString(),
       }) 
    );

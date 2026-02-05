@@ -41,6 +41,7 @@ export const useEvent = () => {
 
   const fetchEvents = async ( entityId: string ) => {
     event.setIsLoading(true);
+    
     const events = await api.getEvents( { entityId, nextCursor: event.cursor } );
     
     await delay( 500 );

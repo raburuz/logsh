@@ -1,8 +1,6 @@
 "use client"
 
-import { useContext } from "react";
 import { ISubscription } from "../interface";
-import { SubscriptionContext } from "../service";
 
 export const useSubscriptionApi = () => {
 
@@ -30,16 +28,3 @@ export const useSubscriptionApi = () => {
   }
   
 }
-
-
-export const useSubscription = () => {
-
-  const subscriptionContext = useContext(SubscriptionContext);
-
-  if (!subscriptionContext) {
-    throw new Error('useSubscription must be used within a SubscriptionProvider');
-  }
-
-  return subscriptionContext;
-
-};

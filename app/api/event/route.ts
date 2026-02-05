@@ -21,6 +21,7 @@ export async function POST( request : Request ) {
       event: z.string().trim().min(1, "Event name is required").max(150, "Event name must be 150 characters or less"),
       description: z.string().trim().min(1, "Description can not be a empty string")
       .max(250, "Description must be 250 characters or less").optional().default(""),
+      color: z.string().trim().regex(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/, "Color must be a valid hex code").optional().default("#18181b"),
       //https://www.npmjs.com/package/node-emoji
       icon: z.string()
         .trim()
@@ -44,6 +45,7 @@ export async function POST( request : Request ) {
       description: body.description,
       icon: body.icon,
       workspaceId: workspaceId.id,
+      color: body.color,
     });
 
     // Publish event to Redis SSE channel
@@ -54,6 +56,7 @@ export async function POST( request : Request ) {
         id: event.id,
         event: body.event,
         description: body.description,
+        color: body.color,
         icon: body.icon,
         createdAt: event.createdAt.toISOString(),
       },

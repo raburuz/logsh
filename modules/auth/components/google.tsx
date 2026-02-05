@@ -8,11 +8,17 @@ export const Google = () => {
   const handleGoogleSignIn = async () => {
     await authClient.signIn.social({
       provider: "google",
+      callbackURL: `${window.location.origin}/dashboard`,
     });
   }
 
   return (
-    <Button variant="outline" className="w-full text-black" onClick={handleGoogleSignIn}>
+    <Button
+      type='button' 
+      variant="outline" 
+      className="w-full text-black" 
+      onClick={handleGoogleSignIn}
+      >
       Login with Google
     </Button>
   )

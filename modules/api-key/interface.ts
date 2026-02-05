@@ -1,6 +1,6 @@
-export interface IApiKeyItem {
+export interface IApiKey {
   id: string, 
   name: string, 
-  key: string,
+  apiKey: string,
   createdAt: string
 }

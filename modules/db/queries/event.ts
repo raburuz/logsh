@@ -3,8 +3,9 @@ import { db } from "../db";
 import { event, workspace } from "../schemas/app";
 import { apiQuery } from "./api";
 import { subscriptionQuery } from "./subscription";
-import { and, desc, eq, lt, or } from "drizzle-orm";
+import { and, desc, eq, gte, lt, or } from "drizzle-orm";
 import { workspaceStatus } from "./workspace";
+import { dayjs } from "@/modules/shared/lib/date";
 
 export const eventQuery = {
   create: async (
@@ -13,6 +14,7 @@ export const eventQuery = {
       workspaceId: string,
       event: string,
       description: string,
+      color: string,
       icon: string,
     }
   ) => {
@@ -26,6 +28,7 @@ export const eventQuery = {
       event: data.event,
       description: data.description,
       icon: data.icon,
+      color: data.color,
     })
     .returning({
       id: event.id,
@@ -85,6 +88,7 @@ export const eventQuery = {
       description: event.description,
       createdAt: event.createdAt,
       icon: event.icon,
+      color: event.color,
       workspace: workspace.name,
       workspaceId: event.workspaceId,
     })
@@ -97,6 +101,20 @@ export const eventQuery = {
     return response;
 
   },
+  delete_all: async ( queryData: { where: { gte: { milliseconds: number } } }) => {
+
+    const { where } = queryData;
+
+    const date = dayjs().subtract(where.gte.milliseconds, 'milliseconds').toDate();
+
+    await db
+    .delete(event)
+    .where(
+      and(
+        gte(event.createdAt, date)
+      )
+    )
+  }
 }
 
 export const eventRestrictions = {

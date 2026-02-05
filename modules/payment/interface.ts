@@ -22,6 +22,7 @@ export interface IPlan {
   features: string[];
   limits: {
     events: number;
+    eventsRetentionDays: number;
   };
   callToAction: string;
   discount?: {

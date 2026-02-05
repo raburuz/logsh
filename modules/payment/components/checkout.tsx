@@ -4,7 +4,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { authClient } from "@/modules/auth/lib/client"
 import { IPlan } from "../interface"
-import { useSubscription } from "../hooks/useSubscription"
+import { useSubscription } from "@/modules/shared/store/subscription"
 
 export const CheckoutButton = ( props: { plan: IPlan, isAuth: boolean } ) => {
 

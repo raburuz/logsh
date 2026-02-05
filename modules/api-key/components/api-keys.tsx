@@ -4,12 +4,13 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { niceDate } from "@/modules/shared/lib/date";
 import { CreateApiKeyForm } from "../forms/create"
-import { useFetchApiKeys } from "../hooks/useApi";
-import { IApiKeyItem } from "../interfaces";
+import { IApiKey } from "../interface";
+import { useApiKey } from "@/modules/shared/store/api-key";
+import { Settings } from "./settings";
 
 export const ApiKeys = () => {
 
-  const { apiKeys, isLoading } = useFetchApiKeys();
+  const { list, isLoading } = useApiKey();
   const [viewAll, setViewAll] = useState(false);
 
   return (
@@ -33,22 +34,22 @@ export const ApiKeys = () => {
         }>
 
           {
-            isLoading && apiKeys.length === 0 && [1,2,3,4].map( _ => (<SkeletonApiKeyItem key={_} />))
+            isLoading && list.length === 0 && [1,2,3,4].map( _ => (<SkeletonApiKeyItem key={_} />))
           }
 
           {
-            apiKeys.map((apiKey) => (<ApiKeyItem key={apiKey.id} apiKey={apiKey} />))
+            list.map((apiKey) => (<ApiKeyItem key={apiKey.id} apiKey={apiKey} />))
           }
 
           {
-            !isLoading && apiKeys.length === 0 && (
+            !isLoading && list.length === 0 && (
               <NoApiKeys />
             )
           }
 
         </div>
           {
-            viewAll && apiKeys.length > 3 && (
+            viewAll && list.length > 3 && (
               <Button onClick={() => setViewAll(false)} className="self-center" size={"xs"}>View less</Button>
             )
           }
@@ -58,16 +59,16 @@ export const ApiKeys = () => {
 }
 
 
-const ApiKeyItem = ({ apiKey }: { apiKey: IApiKeyItem }) => {
+const ApiKeyItem = ({ apiKey }: { apiKey: IApiKey }) => {
   return (
-    <div className="snap-start shrink-0">
+    <div className="relative snap-start shrink-0">
       <div className="relative border border-zinc-900 p-8 rounded-xl min-w-40 flex flex-col gap-2.5">
         <span className="text-sm font-bold">{apiKey.name}</span>
-        <p className="font-mono text-xs">{apiKey.key}<span className="text-xs text-white/60">...</span> </p>
+        <p className="font-mono text-xs">{apiKey.apiKey}<span className="text-[10px] text-white/60">...</span> </p>
         <span className="-mt-1 text-white/60 text-[10px]">Created at. {niceDate(apiKey.createdAt)}</span>
-        <div className="absolute top-0 right-0 bg-green-800 text-green-200 px-2 py-1 rounded-bl-lg rounded-tr-lg text-xs font-mono">
-          <span className="text-[10px] font-bold subpixel-antialiased">Active</span>
-        </div>
+      </div>
+      <div className="absolute top-2 right-2">
+        <Settings {...apiKey} />  
       </div>
     </div>
   )

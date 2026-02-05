@@ -1,9 +1,10 @@
 "use client"
-import { useState } from "react";
+import Link from "next/link";
 import { useForm } from "react-hook-form"
+import { ChevronRight } from "lucide-react";
+import z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button"
-import z from "zod"
 import {
 Dialog,
 DialogClose,
@@ -17,9 +18,7 @@ DialogTrigger,
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { config } from "@/modules/shared/config"
-import { useApi, useFetchApiKeys } from "../hooks/useApi";
-import { ChevronRight } from "lucide-react";
-import Link from "next/link";
+import { useApiKey } from "@/modules/shared/store/api-key";
 
 const schema = z.object({
   name: z.string().trim().min(1, "Name is required"),
@@ -28,8 +27,6 @@ const schema = z.object({
 type ISchema = z.infer<typeof schema>;
 
 export const CreateApiKeyForm = () => {
-
-  const [apiKey, setApiKey] = useState<string | null>(null);
 
   const {
     register,
@@ -41,17 +38,15 @@ export const CreateApiKeyForm = () => {
     mode: "onSubmit",
   });
 
-  const api = useApi();
-  const fetchApiKeys = useFetchApiKeys();
+  const apiKeyHook = useApiKey();
 
   const onSubmit = async (data: ISchema) => {
-    setApiKey((await api.createApiKey(data.name)).key);
-    await fetchApiKeys.refetch();
+    await apiKeyHook.createApiKey(data.name);
     reset();
   };
 
   const onOpenChange = () => {
-    setApiKey(null);
+    apiKeyHook.resetNewApiKey();
   }
 
   return (
@@ -62,7 +57,7 @@ export const CreateApiKeyForm = () => {
           </DialogTrigger>
           <DialogContent className="sm:max-w-106.25 bg-black/50 backdrop-blur-lg border border-white/10">
           {
-            apiKey ? (
+            apiKeyHook.newApiKey ? (
               <>
                 <DialogHeader>
                   <DialogTitle>API Key Created</DialogTitle>
@@ -72,7 +67,7 @@ export const CreateApiKeyForm = () => {
                 </DialogHeader>
                 <div className="grid gap-4">
                   <span className="font-bold text-sm text-white/50">Key:</span>
-                  <p className="text-sm font-bold p-2 border-2 border-white/10 rounded-sm break-all text-green-800 bg-black">{apiKey}</p>
+                  <p className="text-sm font-bold p-2 border-2 border-white/10 rounded-sm break-all text-green-800 bg-black">{apiKeyHook.newApiKey}</p>
                   <span className="-mt-2 text-white/50 text-xs">Your API key is encrypted and stored securely.</span>
                 </div>
                 <DialogFooter>
@@ -81,7 +76,7 @@ export const CreateApiKeyForm = () => {
                   </DialogClose>
                     <Button type="button" className="flex items-center gap-2" asChild>
                       <Link href="docs/get-started" target="_blank" rel="noreferrer">
-                        <span>Documentation</span>
+                        <span>Docs</span>
                         <ChevronRight/>
                       </Link>
                     </Button>

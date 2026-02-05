@@ -25,10 +25,10 @@ export const Footer = () => {
       <div>
         <span className="text-md font-bold text-white/40">Links</span>
         <div className="space-y-1 mt-2 flex flex-col">
-          <Link className="text-sm text-white/50" href="/">Home</Link>
-          <Link className="text-sm text-white/50" href="/auth">Login</Link>
-          <Link className="text-sm text-white/50" href="/#pricing">Pricing</Link>
-          <Link className="text-sm text-white/50" href="/docs/get-started">Documentation</Link>
+          <Link className="text-sm text-white/50" href="/" target="_blank">Home</Link>
+          <Link className="text-sm text-white/50" href="/auth" target="_blank">Login</Link>
+          <Link className="text-sm text-white/50" href="/#pricing" target="_blank">Pricing</Link>
+          <Link className="text-sm text-white/50" href="/docs/get-started" target="_blank">Documentation</Link>
         </div>
       </div>
     </footer>
