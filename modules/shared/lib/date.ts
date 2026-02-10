@@ -17,10 +17,10 @@ export const niceDate = ( date: string | Date) => {
   const isNotTodayOrYesterday = !isToday && !isYesterday;
   const isCurrentYear = dayjs(date).year() === dayjs().year();
 
-  if(isRightNow) return 'Right now';
+  if(isRightNow) return 'now';
   if(isLessThanOneHour) {
     const minutesAgo = Math.abs(dayjs(date).diff(dayjs(), 'minute'));
-    return `${minutesAgo} min ago`;
+    return `${minutesAgo}m ago`;
   }
   if(isToday) return dayjs(date).format('H.mm a');
   if(isYesterday) return dayjs(date).format('[Yest ·] H.mm a');

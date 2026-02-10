@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { authClient } from "../lib/client"
 
-export const Logout = () => {
+export const Logout = ( props: { className?: string }) => {
 
   const handleLogout = async () => {
     await authClient.signOut();
@@ -11,7 +11,7 @@ export const Logout = () => {
   }
 
   return (
-    <Button onClick={handleLogout}>
+    <Button onClick={handleLogout} size={"sm"} className={props.className}>
       Logout
     </Button>
   )

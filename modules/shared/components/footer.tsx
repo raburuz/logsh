@@ -34,7 +34,7 @@ export const Footer = () => {
             <Link className="text-sm text-white/50" href="/" target="_blank">Home</Link> 
           }
           <Link className="text-sm text-white/50" href="/auth" target="_blank">Login</Link>
-          {isSelfHosted ? null : <Link className="text-sm text-white/50" href="/#pricing" target="_blank">Pricing</Link>}
+          {isSelfHosted ? null : <Link className="text-sm text-white/50" href="/pricing" target="_blank">Pricing</Link>}
           <Link className="text-sm text-white/50" href="/docs/get-started" target="_blank">Documentation</Link>
         </div>
       </div>

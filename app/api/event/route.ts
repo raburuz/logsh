@@ -4,7 +4,7 @@ import { routeHandler } from "@/modules/shared/utils/handler";
 import { zodValidator } from "@/modules/shared/lib/zod";
 import { db } from "@/modules/db";
 import { apiAuthentication } from "@/modules/auth/lib/api";
-import { workspaceValidator } from "@/modules/workspace/lib/zod";
+import { workspaceValidator } from "@/modules/feed/lib/zod";
 import { publishEvent } from "@/modules/shared/lib/redis";
 
 //Create Event

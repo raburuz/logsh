@@ -1,17 +1,14 @@
-import { redirect } from "next/navigation";
 import { config } from "@/modules/shared/config";
-import { OneTime, Plans } from "@/modules/payment/components/plans";
+import { Plans } from "@/modules/payment/components/plans";
 import { ActionButton } from "@/modules/marketing/components/action";
 import { Testimonial } from "@/modules/marketing/components/testimonial";
 import { HowItWorks } from "@/modules/marketing/components/how-it-works";
 import { Comparison } from "@/modules/marketing/components/comparison";
-import { isSelfHosted } from "@/modules/shared/utils/self-hosted";
 import { Founder } from "@/modules/marketing/components/founder";
+import { EventList } from "@/modules/marketing/components/demo";
 import ClarityStream from "@/modules/marketing/components/stream";
 
 export default function Home() {
-
-  if(isSelfHosted) return redirect('/auth');
 
   return (
     <>
@@ -35,6 +32,7 @@ export default function Home() {
         <ClarityStream />
       </div>
       {/* Feed component */}
+      <EventList/>
       <Testimonial/>
       <HowItWorks/>
       <Comparison/>

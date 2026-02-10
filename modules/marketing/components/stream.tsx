@@ -105,7 +105,7 @@ const ClarityStream = () => {
   return (
     <div
       ref={containerRef}
-      className='absolute inset-0 z-0 -bottom-48'
+      className='absolute inset-0 z-0 -bottom-48 opacity-50'
       style={{
         background: 'linear-gradient(to bottom, #0a0a0f, #000)',
         overflow: 'hidden',

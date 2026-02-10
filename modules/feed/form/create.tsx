@@ -26,7 +26,7 @@ const schema = z.object({
 
 type ISchema = z.infer<typeof schema>;
 
-export const CreateWorkspaceForm = () => {
+export const CreateWorkspaceForm = ( props: { trigger: React.ReactNode } ) => {
 
   const {
     register,
@@ -52,7 +52,7 @@ export const CreateWorkspaceForm = () => {
     <>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
-            <Button size={"xs"} type="button">Create</Button>
+            {props.trigger}
           </DialogTrigger>
           <DialogContent className="sm:max-w-106.25 bg-black/50 backdrop-blur-lg border border-zinc-900/20">
             <form onSubmit={handleSubmit(onSubmit)}>

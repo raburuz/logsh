@@ -34,7 +34,7 @@ export const ActionBanner = () => {
   if(isSelfHosted) return null
 
   return (
-    <div className="sticky top-0 p-2 text-center border-b border-zinc-900/20 bg-black ">
+    <div className="sticky top-0 p-2 text-center border-b border-zinc-900/20 bg-black z-50">
       <div className="max-w-4xl mx-auto flex flex-row items-center justify-center gap-2">
         <p className="text-xs">Save big as an early customer: <span className="font-bold text-green-500">25,000 events</span> now for just <span className="text-blue-500 font-bold">$7/month</span></p>
         <ArrowRight className="w-3 h-3"/>

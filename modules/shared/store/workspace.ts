@@ -1,9 +1,9 @@
 "use client"
 
 import { create } from 'zustand'
-import { IWorkspace } from '@/modules/workspace/interface';
-import { useWorkspaceApi } from '@/modules/workspace/hooks/useWorkspace';
 import { useEvent } from './event';
+import { IWorkspace } from '@/modules/feed/interface';
+import { useWorkspaceApi } from '@/modules/feed/hook/useWorkspace';
 
 interface IWorkspaceState {
   isLoading: boolean;
@@ -55,7 +55,8 @@ export const useWorkspace = () => {
   const deleteWorkspaceById = async ( workspaceId: string ) => {
 
     workspaces.setList( workspaces.list.filter( w => w.id !== workspaceId ) );
-    
+
+    workspaces.setSelected("");
     // Optimistic UI update
     if( workspaces.selected === workspaceId ) {
 
@@ -67,7 +68,6 @@ export const useWorkspace = () => {
       }
 
       if( workspaces.list.length === 0 ){
-        workspaces.setSelected("");
         event.clean();
       }
     }

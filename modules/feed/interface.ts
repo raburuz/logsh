@@ -20,3 +20,8 @@ export interface IEventSse {
   workspaceId: string;
   event: IEvent;
 }
+
+export interface IWorkspace {
+  id: string;
+  name: string;
+}

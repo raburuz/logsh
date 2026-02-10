@@ -1,8 +1,8 @@
 "use client"
 
-import { IEvent, IEvents, IEventSse } from '@/modules/event/interface';
+import { IEvent, IEvents, IEventSse } from '@/modules/feed/interface';
 import { create } from 'zustand'
-import { useEventApi } from '@/modules/event/hook/useEvent';
+import { useEventApi } from '@/modules/feed/hook/useEvent';
 interface IEventState {
   list: IEvent[][];
   realTimeList: IEventSse[];

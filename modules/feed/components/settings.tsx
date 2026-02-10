@@ -1,4 +1,3 @@
-import { Ellipsis } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,25 +9,31 @@ import {
 import { IWorkspace } from "../interface"
 import { useWorkspace } from "@/modules/shared/store/workspace";
 
-export function Settings( props: IWorkspace ) {
+export function WKSettings( 
+  props: {
+    trigger: React.ReactNode,
+    workspace: IWorkspace
+  }
+){
 
   const { deleteWorkspaceById } = useWorkspace();
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className="p-1 hover:border hover:border-zinc-900/20 rounded-xl">
-          <Ellipsis className="w-3 h-3"/>
-        </div>
+        {props.trigger}
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-40 bg-black text-white/80 border border-zinc-900/20" align="start">
         <DropdownMenuGroup>
-          <DropdownMenuLabel>Settings</DropdownMenuLabel>
+          <DropdownMenuLabel>
+            <span className="uppercase font-semibold">{props.workspace?.name}{' '}</span> 
+            Settings
+          </DropdownMenuLabel>
           <DropdownMenuItem 
             className="hover:bg-transparent focus:bg-transparent cursor-pointer text-red-700 hover:text-red-600 focus:text-red-600"
-            onClick={() => deleteWorkspaceById(props.id)}
+            onClick={() => deleteWorkspaceById(props.workspace?.id || '')}
           >
-            Delete
+            <span>Delete</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
