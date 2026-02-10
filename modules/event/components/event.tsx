@@ -1,5 +1,6 @@
 "use client"
 
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button"
 import { niceDate } from "@/modules/shared/lib/date"
 import { useEvent } from "@/modules/shared/store/event"
@@ -20,60 +21,83 @@ export const EventList = () => {
 
   const renderItems = () => {
 
-    if(event.isLoading) return [1,2,3,4,5].map((index) => <SkeletonEventItem key={index} />);
-
-    if( (!event.list[0] || event.list[0].length === 0) && rtEvents.length === 0) return <NoEvents />;
+    if( !event.isLoading && (!event.list[0] || event.list[0].length === 0) && rtEvents.length === 0) return <NoEvents />;
 
     return (
       <>
-        { rtEvents.map((event) => <EventItem key={event.event.id} {...event.event} />) }
-        { event.list.map((event) => event.map((item) => <EventItem key={item.id} {...item} />)) }
+        { rtEvents.map((event) => <EventItem key={event.event.id} event={event.event} isAnimated={true} />) }
+        { event.list.map((event) => event.map((item) => <EventItem key={item.id} event={item} isAnimated={false} />)) }
+        { event.isLoading && [1,2,3,4,5].map((index) => <SkeletonEventItem key={index} />) }
       </>
     )
 
   }
 
   return (
-    <div className="w-full my-10 p-6 border border-zinc-900 rounded-2xl bg-black backdrop-blur-md flex flex-col gap-4">
-      <div className="mb-2">
-        <div className="flex justify-between items-center">
-          <span className="font-bold text-white">Monitoring feed</span>
-          <Refresh/>
-        </div>
-      </div>
-      <div className="space-y-3 transition-all delay-100">
-
-        { renderItems() }
-
-      </div>
-      {
-        event.cursor && (
-          <div className="grid place-content-center">
-            <Button onClick={loadNextEvents}>Load 50 events more</Button>
+    <>
+      <div className="w-full my-10 p-6 border border-zinc-900 rounded-2xl bg-black backdrop-blur-md flex flex-col gap-4">
+        <div className="mb-2">
+          <div className="flex justify-between items-center">
+            <span className="font-bold text-white">Monitoring feed</span>
+            <Refresh/>
           </div>
-        )
-      }
-    </div>
+        </div>
+        <div className="space-y-3 transition-all delay-100">
+
+          <AnimatePresence initial={false} mode="wait" >
+            { renderItems() }
+          </AnimatePresence>
+
+        </div>
+        {
+          event.cursor && (
+            <div className="grid place-content-center">
+              <Button onClick={loadNextEvents}>Load 50 events more</Button>
+            </div>
+          )
+        }
+      </div>
+    </>
   )
 }
 
-const EventItem = ( event: IEvent ) => {
+const EventItem = ( { event, isAnimated} : {
+  event: IEvent, isAnimated: boolean
+} ) => {
   return (
-    <div 
-      className="w-full relative border-l-4 px-6 border-zinc-900 bg-zinc-900/10 py-5 flex items-center justify-between rounded-r-xl"
-      style={{
-        borderColor: event.color,
-        backgroundColor: `${event.color}10`
-      }}
+    <motion.div
+        key={event.id}
+          layoutId={event.id}
+          initial={ isAnimated ? { opacity: 0, y: -50, scale: 0.8 } : false }
+          animate={ isAnimated ? { 
+            opacity: 1, 
+            y: 0, 
+            scale: 1,
+            transition: {
+              type: 'spring',
+              stiffness: 400,
+              damping: 30,
+              mass: 1
+            }
+          } : false }
+          layout="preserve-aspect"
     >
-      <div>
-        <h3 className="font-bold first-letter:uppercase text-sm text-zinc-400">{event.event}</h3>
-        <p className="mt-2 text-white text-xs">{event.description}</p>
+      <div 
+        className="w-full relative border-l-4 px-6 border-zinc-900 bg-zinc-900/10 py-5 flex items-center justify-between rounded-r-xl transition-colors"
+        style={{
+          borderColor: event.color,
+          backgroundColor: `${event.color}10`
+        }}
+      >
+        <div>
+          <h3 className="font-bold first-letter:uppercase text-sm text-zinc-400">{event.event}</h3>
+          <p className="mt-2 text-white text-xs">{event.description}</p>
+        </div>
+        <div className="self-start">
+          <span className="pt-0.5 block text-white/60 text-[10px] whitespace-nowrap">{niceDate(event.createdAt)}</span>
+        </div>
       </div>
-      <div className="self-start">
-        <span className="pt-0.5 block text-white/60 text-[10px] whitespace-nowrap">{niceDate(event.createdAt)}</span>
-      </div>
-    </div>
+    </motion.div>
   )
 }
 
@@ -96,3 +120,5 @@ const NoEvents = () => {
     </div>
   )
 }
+
+

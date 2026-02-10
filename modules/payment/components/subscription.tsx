@@ -21,14 +21,14 @@ export const Subscription = () => {
         {subscription?.subscription ? (
           <>
             <p className="text-white/50">You have an active subscription.</p>
-            <p className="text-green-500">- <span className="font-bold">{subscription.plan.name} subscription</span></p>
+            <p className="text-green-500 text-sm">- <span className="font-bold">{subscription.plan.name} plan subscription</span></p>
             <div className="flex flex-col gap-2">
               <p className="text-white/50 text-sm">Status: <span className="font-semibold text-orange-500">{subscription.subscription.status}</span></p>
               <p className="text-white/50 text-sm">Next billing date: <span className="font-semibold text-orange-500">{ subscription.subscription?.periodEnd ? niceDate(subscription.subscription.periodEnd) : undefined}</span></p>
               {
                 ["past_due", "unpaid", "trialing"].includes(subscription.subscription?.status ?? '') && (
                   <>
-                    <p>Once the trial ends, your subscription will pause unless you add a payment method.</p>
+                    <p className="text-red-800 font-medium text-sm">Once the trial ends, your subscription will pause unless you add a payment method.</p>
                     <CallToAction/>
                   </>
                 )

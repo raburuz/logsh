@@ -1,7 +1,7 @@
 import { config } from "@/modules/shared/config"
 import { X, Check } from "lucide-react"
 
-export default function Comparison() {
+export const Comparison = () => {
   const withoutFeatures = [
     "😞 Oh no! What happened to my app?!?!?!?!?",
     "😣 Where is the issue? Did my app just crash?",
@@ -41,7 +41,7 @@ export default function Comparison() {
   ]
 
   return (
-    <main className="flex items-center justify-center px-4 py-20">
+    <section className="flex items-center justify-center px-4 py-20">
       <div className="max-w-5xl mx-auto text-center">
         {/* Header */}
         <h2 className="mx-auto text-3xl md:text-4xl max-w-3xl font-bold text-white mb-4 text-balance">
@@ -88,6 +88,6 @@ export default function Comparison() {
           </div>
         </div>
       </div>
-    </main>
+    </section>
   )
 }

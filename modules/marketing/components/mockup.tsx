@@ -12,7 +12,7 @@ export function PhoneMockup( props : { children: React.ReactNode } ) {
           {/* Screen */}
           <div className="relative overflow-hidden rounded-[36px] bg-black text-white">
             {/* Dynamic Island */}
-            <div className="absolute left-1/2 top-3 z-20 h-7 w-25 border border-white/5 -translate-x-1/2 rounded-full bg-black" />
+            <div className="absolute left-1/2 top-3 z-20 h-7 w-25 border border-zinc-900/20 -translate-x-1/2 rounded-full bg-black" />
             
             {/* Status Bar */}
             <div className="relative flex items-center justify-between px-6 pb-2 pt-4">
@@ -26,7 +26,7 @@ export function PhoneMockup( props : { children: React.ReactNode } ) {
             </div>
 
             {/* App Header */}
-            <div className="flex items-center justify-between border-b border-white/5 px-4 py-3">
+            <div className="flex items-center justify-between border-b border-zinc-900/20 px-4 py-3">
               <div className="flex items-center gap-3">
                 <Menu className="h-5 w-5 text-white" />
                 <span className="text-lg font-medium text-white">{config.app.name}</span>
@@ -64,7 +64,7 @@ export const WindowMockup = (props: { children: React.ReactNode }) => {
         {/* Screen */}
         <div className="relative overflow-hidden rounded-sm bg-black text-white">
           {/* Title Bar */}
-          <div className="flex items-center gap-3 border-b border-white/5 px-4 py-3">
+          <div className="flex items-center gap-3 border-b border-zinc-900/20 px-4 py-3">
             <div className="flex items-center gap-2">
               <div className="h-2.5 w-2.5 rounded-full bg-red-500" />
               <div className="h-2.5 w-2.5 rounded-full bg-yellow-500" />

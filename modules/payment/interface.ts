@@ -12,13 +12,15 @@ export interface ISubscription {
 }
 
 export interface IPlan {
+  isRecommended?: boolean;
   isFree: boolean;
+  type: 'recurring' | 'one-time';
   id: string;
   name: string;
   amount: number;
   currency: string;
   stripePriceId: string;
-  interval: 'month' | 'year';
+  interval: 'month' | 'year' | "one-time";
   features: string[];
   limits: {
     events: number;
@@ -35,5 +37,6 @@ export interface IPlan {
   trial?: {
     isActive: boolean;
     days: number;
-  }
+  },
+  footer?: string;
 }

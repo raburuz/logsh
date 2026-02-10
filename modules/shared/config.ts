@@ -1,13 +1,12 @@
 export const config = {
   app: {
-    name: 'Signalify',
+    name: 'Logsh.co',
+    domain: 'logsh.co',
+    url: "https://logsh.co",
     description: 'A comprehensive analytics dashboard',
     version: '1.0.0'
   },
-  api: {
-    baseUrl: 'https://api.bigstats.com/v1',
-  },
   email: {
-    fromNoReply: 'no-reply@signalify.com',
+    fromNoReply: 'no-reply@logsh.com',
   }
 }

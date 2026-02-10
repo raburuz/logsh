@@ -54,7 +54,7 @@ export const CreateWorkspaceForm = () => {
           <DialogTrigger asChild>
             <Button size={"xs"} type="button">Create</Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-106.25 bg-black/50 backdrop-blur-lg border border-white/10">
+          <DialogContent className="sm:max-w-106.25 bg-black/50 backdrop-blur-lg border border-zinc-900/20">
             <form onSubmit={handleSubmit(onSubmit)}>
               <DialogHeader>
                 <DialogTitle>Create Workspace</DialogTitle>
@@ -68,7 +68,7 @@ export const CreateWorkspaceForm = () => {
                   <Input 
                     id="name" 
                     placeholder={config.app.name} 
-                    className="border-white/10"
+                    className="border-zinc-900/20"
                     {...register("name")}
                     />
                     <span className="text-xs text-red-800">{errors.name?.message}</span>

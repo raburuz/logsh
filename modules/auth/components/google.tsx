@@ -16,7 +16,7 @@ export const Google = () => {
     <Button
       type='button' 
       variant="outline" 
-      className="w-full text-black" 
+      className="w-full" 
       onClick={handleGoogleSignIn}
       >
       Login with Google

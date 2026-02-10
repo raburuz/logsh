@@ -54,7 +54,7 @@ export function KeywordMarquee() {
           {[...keywords, ...keywords].map((keyword, index) => (
             <span
               key={index}
-              className="px-4 py-2 text-sm text-white/80 border border-white/20 rounded-full whitespace-nowrap bg-black"
+              className="px-4 py-2 text-sm text-white/80 border border-zinc-900/20 rounded-full whitespace-nowrap bg-black"
             >
               {keyword}
             </span>
@@ -68,7 +68,7 @@ export function KeywordMarquee() {
           {[...keywordsRow2, ...keywordsRow2].map((keyword, index) => (
             <span
               key={index}
-              className="px-4 py-2 text-sm text-white/80 border border-white/20 rounded-full whitespace-nowrap bg-black"
+              className="px-4 py-2 text-sm text-white/80 border border-zinc-900/20 rounded-full whitespace-nowrap bg-black"
             >
               {keyword}
             </span>
@@ -82,7 +82,7 @@ export function KeywordMarquee() {
           {[...keywordsRow3, ...keywordsRow3].map((keyword, index) => (
             <span
               key={index}
-              className="px-4 py-2 text-sm text-white/80 border border-white/20 rounded-full whitespace-nowrap bg-black"
+              className="px-4 py-2 text-sm text-white/80 border border-zinc-900/20 rounded-full whitespace-nowrap bg-black"
             >
               {keyword}
             </span>

@@ -2,6 +2,7 @@ import Link from "next/link"
 import { config } from "../config"
 import { getServerSideUser } from "@/modules/auth/actions/auth"
 import { Logout } from "@/modules/auth/components/logout";
+import { isSelfHosted } from "../utils/self-hosted";
 
 export const Nav = async () => {
 
@@ -16,14 +17,29 @@ export const Nav = async () => {
       </Link>
       <nav>
         <ul className="flex flex-row items-center gap-4 text-sm">
-          <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
-            <Link href={"/"}>Home</Link>
-          </li>
-          <span className="text-white/80">·</span>
-          <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
-            <Link href={"/#pricing"}>Pricing</Link>
-          </li>
-          <span className="text-white/80">·</span>
+          {
+            isSelfHosted ?
+              (
+                <>
+                  <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
+                    <a href={config.app.url} target="_blank">App</a>
+                  </li>
+                  <span className="text-white/80">·</span>
+                </>
+              )
+            : (
+              <>
+                <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
+                  <Link href={"/"}>Home</Link>
+                </li>
+                <span className="text-white/80">·</span>
+                <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
+                  <Link href={"/#pricing"}>Pricing</Link>
+                </li>
+                <span className="text-white/80">·</span>
+              </>
+            ) 
+          }
           <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
             <Link href={"/docs/get-started"}>Docs</Link>
           </li>

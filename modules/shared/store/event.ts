@@ -3,8 +3,6 @@
 import { IEvent, IEvents, IEventSse } from '@/modules/event/interface';
 import { create } from 'zustand'
 import { useEventApi } from '@/modules/event/hook/useEvent';
-import { set } from 'zod';
-
 interface IEventState {
   list: IEvent[][];
   realTimeList: IEventSse[];
@@ -25,7 +23,7 @@ export const useEventStore = create<IEventState & IEventActions>( ( set ) => ({
   realTimeList: [],
   cursor: undefined,
   isLoading: true,
-  setList: ( events: IEvent[] ) => set( (state) => ({ list: [ events, ...state.list ] }) ),
+  setList: ( events: IEvent[] ) => set( (state) => ({ list: [ ...state.list, events ] }) ),
   pushRealTimeEvent: ( event: IEventSse ) => set( (state) =>  ({ realTimeList: [ event, ...state.realTimeList ] }) ),
   clean: () => set( { list: [], realTimeList: [], cursor: undefined, isLoading: false } ),
   setCursor: ( cursor: IEvents['nextCursor'] ) => set( { cursor } ),

@@ -20,7 +20,7 @@ export const ApiKeys = () => {
         <div className="flex flex-row items-center justify-start gap-4">
           <CreateApiKeyForm/>
           <span>·</span>
-          <Link href="docs/get-started" target="_blank" rel="noreferrer" className="text-white/60 text-sm">Documentation</Link>
+          <Link href="/docs/get-started" target="_blank" rel="noreferrer" className="text-white/60 text-sm">Documentation</Link>
           <span>·</span>
           <p className="text-white/60 text-sm cursor-pointer" onClick={() => setViewAll(!viewAll)}>{viewAll ? 'View less' : 'View all'}</p>
         </div>

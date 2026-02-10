@@ -55,7 +55,7 @@ export const CreateApiKeyForm = () => {
           <DialogTrigger asChild>
             <Button size={"xs"} type="button">Create</Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-106.25 bg-black/50 backdrop-blur-lg border border-white/10">
+          <DialogContent className="sm:max-w-106.25 bg-black/50 backdrop-blur-lg border border-zinc-900/20">
           {
             apiKeyHook.newApiKey ? (
               <>
@@ -67,7 +67,7 @@ export const CreateApiKeyForm = () => {
                 </DialogHeader>
                 <div className="grid gap-4">
                   <span className="font-bold text-sm text-white/50">Key:</span>
-                  <p className="text-sm font-bold p-2 border-2 border-white/10 rounded-sm break-all text-green-800 bg-black">{apiKeyHook.newApiKey}</p>
+                  <p className="text-sm font-bold p-2 border-2 border-zinc-900/20 rounded-sm break-all text-green-800 bg-black">{apiKeyHook.newApiKey}</p>
                   <span className="-mt-2 text-white/50 text-xs">Your API key is encrypted and stored securely.</span>
                 </div>
                 <DialogFooter>
@@ -75,7 +75,7 @@ export const CreateApiKeyForm = () => {
                     <Button variant="ghost" type="button">Close</Button>
                   </DialogClose>
                     <Button type="button" className="flex items-center gap-2" asChild>
-                      <Link href="docs/get-started" target="_blank" rel="noreferrer">
+                      <Link href="/docs/get-started" target="_blank" rel="noreferrer">
                         <span>Docs</span>
                         <ChevronRight/>
                       </Link>
@@ -96,7 +96,7 @@ export const CreateApiKeyForm = () => {
                     <Input 
                       id="name" 
                       placeholder={config.app.name} 
-                      className="border-white/10"
+                      className="border-zinc-900/20"
                       {...register("name")}
                       />
                       <span className="text-xs text-red-800">{errors.name?.message}</span>

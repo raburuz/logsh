@@ -39,7 +39,6 @@ export const stripePlugin = stripe({
           discounts,
           // Dont ask for payment method if the plan has a free trial (perfect for freemium plans)
           payment_method_collection: "if_required"
-          
         }
       }
     },

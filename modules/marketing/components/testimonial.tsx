@@ -3,7 +3,7 @@ import Image from "next/image"
 
 export const Testimonial = () => {
   return (
-    <div className="my-10 max-w-md mx-auto flex flex-col items-center gap-2">
+    <div className="my-10 max-w-md mx-auto flex flex-col items-center gap-2 z-10">
       <blockquote className="text-zinc-500 text-center">
         "{config.app.name} was created as a robust solution to track real-time events across all my apps. This approach has allowed me to take action on my apps' events instantly and reliability."
       </blockquote>

@@ -5,7 +5,7 @@ import { ChatPreview } from "./chat-preview"
 
 export const HowItWorks = () => {
   return (
-    <section className="relative py-20 mb-20 w-full bg-black/50 overflow-hidden">
+    <section className="relative py-20 mb-20 w-full overflow-hidden">
       <div className="max-w-4xl mx-auto px-4">
         {/* Badge */}
         <div className="flex justify-center mb-2">
@@ -18,21 +18,21 @@ export const HowItWorks = () => {
         <h2 className="text-3xl md:text-4xl font-medium text-white text-center mb-4">
           Monitor Your Applications Seamlessly
         </h2>
-        <h2 className="text-3xl md:text-4xl font-medium text-green-400 text-center mb-16">
+        <span className="block text-3xl md:text-4xl font-medium text-green-400 text-center mb-16">
           3 Simple Steps
-        </h2>
+        </span>
 
         {/* Timeline */}
-        <div className="relative">
+        <div>
           {/* Vertical Line */}
           <div className="h-36 ">
             <div className="w-px h-full bg-linear-to-b from-transparent to-green-500 mx-auto" />
           </div>
 
           {/* Step 1 */}
-          <div className="relative mb-16">
+          <div className=" mb-16">
             <div className="flex justify-center mb-4">
-              <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center z-10">
+              <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center">
                 <span className="text-green-500 text-sm">1</span>
               </div>
             </div>
@@ -49,9 +49,9 @@ export const HowItWorks = () => {
             <div className="w-px h-full bg-linear-to-b from-transparent to-green-500 mx-auto" />
           </div>
           {/* Step 2 */}
-          <div className="relative mb-16">
+          <div className=" mb-16">
             <div className="flex justify-center mb-4">
-              <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center z-10">
+              <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center">
                 <span className="text-green-500 text-sm">2</span>
               </div>
             </div>
@@ -73,9 +73,9 @@ export const HowItWorks = () => {
       </div>
       {/* Step 3 */}
       <div className="max-w-4xl mx-auto px-4">
-        <div className="relative">
+        <div className="">
           <div className="flex justify-center mb-4">
-            <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center z-10">
+            <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center">
               <span className="text-green-500 text-sm">3</span>
             </div>
           </div>

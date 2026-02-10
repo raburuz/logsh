@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { AppError } from "@/modules/shared/lib/error";
 import { auth } from "./server";
 import { db } from "@/modules/db";
+import { isSelfHosted } from "@/modules/shared/utils/self-hosted";
 
 export const apiAuthentication = async () => {
 
@@ -56,7 +57,10 @@ export const apiAuthentication = async () => {
     }
   }
 
-  await db.api.rate_limit(session.key.id);
+  // If self-hosted, we skip rate limiting to avoid potential issues with misconfiguration, but in a SaaS environment, we enforce it to prevent abuse.
+  if(isSelfHosted) return session.key;
 
+  await db.api.rate_limit(session.key.id);
+  
   return session.key;
 }

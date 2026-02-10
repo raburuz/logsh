@@ -1,5 +1,6 @@
 "use client"
 
+import { Toaster } from '@/components/ui/sonner';
 import { useInitialRender } from '../hook/useInitialRender';
 
 export const Provider = ({ children }: { children: React.ReactNode }) => {
@@ -9,6 +10,7 @@ export const Provider = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       {children}
+      <Toaster position='top-center' />
     </>
   )
 }

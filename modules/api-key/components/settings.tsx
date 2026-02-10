@@ -17,11 +17,11 @@ export function Settings( props: IApiKey ) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className="p-1 hover:border hover:border-white/10 rounded-xl">
+        <div className="p-1 hover:border hover:border-zinc-900/20 rounded-xl">
           <Ellipsis className="w-3 h-3"/>
         </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-40 bg-black text-white/80 border-white/10" align="start">
+      <DropdownMenuContent className="w-40 bg-black text-white/80 border-zinc-900/20" align="start">
         <DropdownMenuGroup>
           <DropdownMenuLabel>Settings</DropdownMenuLabel>
           <DropdownMenuItem 

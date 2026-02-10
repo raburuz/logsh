@@ -17,6 +17,9 @@
 /.next/
 /out/
 
+# sw
+/public/sw.js
+
 # production
 /build
 

@@ -10,7 +10,7 @@ export function WorkspaceCard() {
         {/* Field 1 */}
         <div className="mb-4">
           <label className="text-white/80 text-xs mb-1 block">Name</label>
-          <div className="bg-black border border-white/20 rounded-md p-3 mt-2">
+          <div className="bg-black border border-zinc-900/20 rounded-md p-3 mt-2">
             <p className="text-white/80 text-sm pointer-events-none select-none">
               {config.app.name} Monitoring Workspace
             </p>

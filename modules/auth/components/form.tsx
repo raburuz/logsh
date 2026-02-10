@@ -59,7 +59,7 @@ export function AuthForm() {
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
-                  className="border-white/20"
+                  className="border-zinc-900/20"
                   id="email"
                   type="email"
                   placeholder={`m@${config.app.name.toLowerCase()}.com`}

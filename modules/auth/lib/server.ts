@@ -62,7 +62,7 @@ export const auth = betterAuth({
         enabled: false,
       }
     }),
-    stripePlugin
+    stripePlugin,
   ]
 
 });

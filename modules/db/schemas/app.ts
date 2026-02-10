@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { apikey, user } from "./auth";
 
 export const workspace = pgTable('workspace', {
@@ -50,6 +50,14 @@ export const apiKeyTokenBucket = pgTable("api_key_token_bucket", {
   lastRefillAt: timestamp("last_refill_at", { withTimezone: true }).defaultNow().notNull(),
 })
 
+export const pushSubscriptions = pgTable("push_subscriptions	", {
+  id: uuid("id").primaryKey().defaultRandom(), 
+  userId: text("user_id").notNull().references(()=> user.id, { onDelete: 'cascade' }),
+  endpoint: text("endpoint").notNull(),
+  keys: jsonb('keys').$type<{ auth: string, p256dh:string }>().notNull().default({ auth: '', p256dh: '' }),
+  deviceId: text("device_id").notNull(),
+})
+
 export const eventRelations = relations( event, ({ one }) => ({
   workspace: one( workspace, {
     fields: [event.workspaceId],
@@ -60,4 +68,11 @@ export const eventRelations = relations( event, ({ one }) => ({
 export const workspaceRelations = relations( workspace, ({ many }) => ({
   members: many( workspaceMember ),
   events: many( event ),
+}))
+
+export const pushNotificationRelations = relations( pushSubscriptions, ({ one }) => ({
+  user: one( user, {
+    fields: [pushSubscriptions.userId],
+    references: [user.id],
+  }),
 }))

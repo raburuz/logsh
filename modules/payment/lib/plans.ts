@@ -3,6 +3,7 @@ import { IPlan } from "../interface";
 export const plans: IPlan[] = [
   {
     isFree: false,
+    type: 'recurring',
     id: "price_1",
     name: "Basic",
     amount: 10,
@@ -12,7 +13,6 @@ export const plans: IPlan[] = [
     features: [
       "Unlimited Workspaces",
       "25,000 events per month",
-      "Support 24/7",
     ],
     limits: {
       events: 25_000,
@@ -21,18 +21,21 @@ export const plans: IPlan[] = [
     discount:{
       isActive: true,
       couponId: "fMXODZw0",
-      text: "Early access: 25,000 events for $3/month ",
-      amount: 3,
-      porcentage: 70,
+      text: "Perfect for small apps",
+      amount: 7,
+      porcentage: 30,
     },
     trial: {
       isActive: true,
       days: 14,
     },
     callToAction: "Start 14-day free trial",
+    footer: "$0.00 due today. No card required."
   },
   {
+    isRecommended: true,
     isFree: false,
+    type: 'recurring',
     id: "price_2",
     name: "Pro",
     amount: 16,
@@ -42,7 +45,6 @@ export const plans: IPlan[] = [
     features: [
       "Unlimited Workspaces",
       "50,000 events per month",
-      "Support 24/7",
     ],
     limits: {
       events: 50_000,
@@ -56,9 +58,11 @@ export const plans: IPlan[] = [
       porcentage: 25,
     },
     callToAction: "Start 14-day free trial",
+    footer: "$0.00 due today. No card required."
   },
   {
     isFree: false,
+    type: 'recurring',
     id: "price_3",
     name: "Master",
     amount: 30,
@@ -68,7 +72,7 @@ export const plans: IPlan[] = [
     features: [
       "Unlimited Workspaces",
       "150,000 events per month",
-      "Support 24/7",
+      "Priority support",
     ],
     limits: {
       events: 150_000,
@@ -82,10 +86,12 @@ export const plans: IPlan[] = [
       porcentage: 10,
     },
     callToAction: "Start 14-day free trial",
+    footer: "$0.00 due today. No card required."
   },
   //Most be the default plan
   {
     isFree: true,
+    type: 'recurring',
     id: "price_0",
     name: "None",
     amount: 0,
@@ -99,7 +105,7 @@ export const plans: IPlan[] = [
       eventsRetentionDays: 0,
     },
     callToAction: "Start 14-day free trial",
-  }
+  },
 ]
 
 //https://www.better-auth.com/docs/plugins/stripe#subscription-management
