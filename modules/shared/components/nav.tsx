@@ -23,7 +23,7 @@ export const Nav = async () => {
     return (
       <div className="py-10 w-full flex flex-row justify-between items-center gap-10">
       <Link href={"/"} >
-        <span className="font-bold">{config.app.name}</span>
+        <span className="font-bold text-sm lowercase">{config.app.name}</span>
       </Link>
       <nav>
         <ul className="flex flex-row items-center gap-4 text-xs">
@@ -66,7 +66,7 @@ export const Nav = async () => {
   return (
     <div className="py-10 w-full flex flex-row justify-between items-center gap-10">
       <Link href={"/dashboard"} >
-        <span className="font-bold">{config.app.name}</span>
+        <span className="font-bold text-sm lowercase">{config.app.name}</span>
       </Link>
       <>
       {/* Phone */}
@@ -87,7 +87,7 @@ export const Nav = async () => {
             </li>
             <span className="text-zinc-900">/</span>
             <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
-              <Link href={"/dashboard/profile"}>Profile</Link>
+              <Link href={"/dashboard/profile"}>Account</Link>
             </li>
             <span className="text-zinc-900">/</span>
             <Logout/>
@@ -111,7 +111,7 @@ export const NavPhone = async () => {
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <>
             <Link href={"/dashboard/profile"}>
-              <DropdownMenuItem>Profile</DropdownMenuItem>
+              <DropdownMenuItem>Account</DropdownMenuItem>
             </Link>
           </>
           <>

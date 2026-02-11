@@ -48,7 +48,6 @@ export const useApiKey= () => {
 
   const createApiKey = async ( name: string ) => {
     const newApiKey = await api.createApiKey(name);
-    await fetchApikeys();
     apiKey.setNewApiKey(newApiKey.key);
   };
 

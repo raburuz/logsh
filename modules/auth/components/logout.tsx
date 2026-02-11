@@ -12,7 +12,7 @@ export const Logout = ( props: { className?: string }) => {
 
   return (
     <Button onClick={handleLogout} size={"xs"} className={props.className}>
-      Logout
+      logout
     </Button>
   )
 }

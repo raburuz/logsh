@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { niceDate } from '@/modules/shared/lib/date';
+import { nicePastDate } from '@/modules/shared/lib/date';
 import { eventTemplates } from '../data';
 import { cn } from '@/lib/utils';
-import { Activity, Hash, Terminal } from 'lucide-react';
+import { Activity, Terminal } from 'lucide-react';
 import { config } from '@/modules/shared/config';
 import { ScrambleText } from '@/modules/shared/components/scramble-text';
 
@@ -27,6 +27,7 @@ const generateFakeEvent = (workspace: string) => {
 };
 
 export const AppDemo = () => {
+  const [countEvent, setCountEvent] = useState(0)
   const [selectedWorkspace, setSelectedWorkspace] = useState(workspaces[0]);
   const [rtEvents, setRtEvents] = useState<any[]>([]);
   const [active, setActive] = useState('');
@@ -38,12 +39,14 @@ export const AppDemo = () => {
 
     const time = setTimeout(() => {
       const newEvent = generateFakeEvent(selectedWorkspace);
-      setRtEvents(prev => [{ event: newEvent }, ...prev]);
+      setRtEvents(prev => [{ event: newEvent }, ...prev.slice(0, 8)]); // Keep only latest 9 events
+      setCountEvent(prev => prev + 1);
     }, 500); // Initial event after 1 second
 
     const interval = setInterval(() => {
       const newEvent = generateFakeEvent(selectedWorkspace);
-      setRtEvents(prev => [{ event: newEvent }, ...prev]);
+      setRtEvents(prev => [{ event: newEvent }, ...prev.slice(0, 8)]); // Keep only latest 9 events
+      setCountEvent(prev => prev + 1);
       
     }, 3000);
 
@@ -54,6 +57,7 @@ export const AppDemo = () => {
   }, [selectedWorkspace]);
 
   useEffect(() => {
+    setCountEvent(0);
     setActive(selectedWorkspace);
   }, [selectedWorkspace])
   
@@ -172,14 +176,16 @@ export const AppDemo = () => {
           </h2>
           <div className="flex-1 h-px bg-border" />
           <span className="text-[11px] font-mono text-muted-foreground/60 tabular-nums">
-            {rtEvents.length} new events
+            {countEvent} new events
           </span>
         </div>
         <div className="relative space-y-3 transition-all delay-100 divide-y divide-border">
           {/* FEED */}
-          <AnimatePresence initial={true} mode="wait">
-            {renderItems()}
-          </AnimatePresence>
+          <motion.div layout>
+            <AnimatePresence initial={true} mode='sync'>
+              {renderItems()}
+            </AnimatePresence>
+          </motion.div>
         </div>
         <div className='absolute bottom-0 w-full h-28 bg-linear-to-t from-black to-transparent z-10'></div>
       </div>
@@ -200,13 +206,12 @@ export const AppDemo = () => {
 
 const EventItem = ({ event, isAnimated }: { event: any; isAnimated: boolean }) => {
 
-  const time = niceDate(event.createdAt) || 'Unknown time';
+  const time = nicePastDate(event.createdAt) || 'Unknown time';
 
   return (
     <motion.div
       key={event.id}
-      layoutId={event.id}
-      initial={isAnimated ? { opacity: 0, y: -50, scale: 0.8 } : false}
+      initial={isAnimated ? { opacity: 0, y: -50, scale: 0.9 } : false}
       animate={
         isAnimated
           ? {
@@ -214,15 +219,13 @@ const EventItem = ({ event, isAnimated }: { event: any; isAnimated: boolean }) =
               y: 0,
               scale: 1,
               transition: {
-                type: 'spring',
-                stiffness: 400,
-                damping: 30,
-                mass: 1,
+                duration: 0.18,
+                //ease: "easeOut",
               },
             }
           : false
       }
-      layout="preserve-aspect"
+      layout="position"
     >
       <div className="flex items-start justify-between gap-4 py-4 group">
         <div className="flex items-start gap-6 min-w-0">

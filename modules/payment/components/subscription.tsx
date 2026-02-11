@@ -2,8 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/modules/auth/lib/client"
-import { niceDate } from "@/modules/shared/lib/date";
+import { niceFutureDate } from "@/modules/shared/lib/date";
 import { useSubscription } from "@/modules/shared/store/subscription";
+import { Activity, CalendarClock, Package } from "lucide-react";
 
 export const Subscription = () => {
 
@@ -13,33 +14,43 @@ export const Subscription = () => {
     <>
       <div className="flex flex-col gap-2">
         <div className="w-full flex flex-row items-center justify-between gap-2">
-          <h1 className="text-white font-bold text-2xl">Subscription</h1>
+          <h2 className="font-bold text-lg">Subscription</h2>
           {
             subscription?.subscription ? <Portal/> : null
           }
         </div>
         {subscription?.subscription ? (
-          <>
-            <p className="text-white/50">You have an active subscription.</p>
-            <p className="text-green-500 text-sm">- <span className="font-bold">{subscription.plan.name} plan subscription</span></p>
-            <div className="flex flex-col gap-2">
-              <p className="text-white/50 text-sm">Status: <span className="font-semibold text-orange-500">{subscription.subscription.status}</span></p>
-              <p className="text-white/50 text-sm">Next billing date: <span className="font-semibold text-orange-500">{ subscription.subscription?.periodEnd ? niceDate(subscription.subscription.periodEnd) : undefined}</span></p>
-              {
-                ["past_due", "unpaid", "trialing"].includes(subscription.subscription?.status ?? '') && (
-                  <>
-                    <p className="text-red-800 font-medium text-sm">Once the trial ends, your subscription will pause unless you add a payment method.</p>
-                    <CallToAction/>
-                  </>
-                )
-              }
+          <div className="text-xs flex flex-col gap-2">
+            <p className="pb-0.5">You already have an active subscription.</p>
+            <div className="flex items-center gap-2 pb-2">
+              <Package className='w-4 h-4 '/>
+              <span>Plan:</span>
+              <span className="font-bold text-zinc-500">{subscription.plan.name} plan subscription</span>
             </div>
-          </>
+            <div className="flex items-center gap-2 pb-2">
+              <Activity  className='w-4 h-4 '/>
+              <span>Status:</span>
+              <span className="font-bold text-zinc-500">{subscription.subscription.status}</span>
+            </div>
+            <div className="flex items-center gap-2 pb-2">
+              <CalendarClock className='w-4 h-4 '/>
+              <span>Next billing:</span>
+              <span className="font-bold text-zinc-500">{ subscription.subscription?.periodEnd ? niceFutureDate(subscription.subscription.periodEnd) : undefined}</span>
+            </div>
+            {
+              ["past_due", "unpaid", "trialing"].includes(subscription.subscription?.status ?? '') && (
+                <div className="text-xs flex flex-col gap-2">
+                  <p className="text-red-800 font-medium">Once the trial ends, your subscription will pause unless you add a payment method.</p>
+                </div>
+              )
+            }
+            <CallToAction/>
+          </div>
         ) : (
-          <>
-            <p className="text-white/50">You do not have an active subscription.</p>
-            <p className="text-orange-500 font-semibold">Having a subscription is needed to send events.</p>
-          </>
+          <div className="text-xs flex flex-col gap-2">
+            <p className="text-zinc-500">You do not have an active subscription.</p>
+            <p className="text-red-800 font-semibold">Having a subscription is needed to send events.</p>
+          </div>
         )}
       </div>
     </>
@@ -60,8 +71,8 @@ export const Portal = () => {
 
   return (
     <div>
-      <Button onClick={handleManageSubscription}>
-        Manage Subscription
+      <Button size={'xs'} onClick={handleManageSubscription}>
+        Manage subscription
       </Button>
     </div>
   )
@@ -80,7 +91,7 @@ export const CallToAction = () => {
 
   return (
     <div className="mt-5">
-      <Button onClick={handleManageSubscription} variant={"default"} >
+      <Button size={'xs'} onClick={handleManageSubscription} variant={"default"} >
         👉 Update payment method
       </Button>
     </div>

@@ -116,6 +116,7 @@ export const workspaceQuery = {
         eq(workspaceMember.userId, userId),
         eq(workspace.id, workspaceMember.workspaceId),
         eq(workspace.name, data.name),
+        eq(workspace.status, workspaceStatus.ACTIVE)
       )
     )
     .limit(1);

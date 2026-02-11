@@ -42,11 +42,17 @@ export const CreateApiKeyForm = ( props: { trigger: React.ReactNode }) => {
 
   const onSubmit = async (data: ISchema) => {
     await apiKeyHook.createApiKey(data.name);
-    reset();
   };
-
-  const onOpenChange = () => {
+  
+  const onOpenChange = async ( isOpen: boolean ) => {
+    if(isOpen) return;
+    // If a new API key was created, refresh the list to show the new key
+    if(apiKeyHook.newApiKey){
+      await apiKeyHook.fetchApikeys();
+    }
+    // Reset the new API key state and form when the dialog is closed
     apiKeyHook.resetNewApiKey();
+    reset();
   }
 
   return (
@@ -65,9 +71,9 @@ export const CreateApiKeyForm = ( props: { trigger: React.ReactNode }) => {
                     Here is your newly created API key. Please store it securely as <span className="text-white/80">it will not be shown again</span>.
                   </DialogDescription>
                 </DialogHeader>
-                <div className="grid gap-4">
-                  <span className="font-bold text-sm text-white/50">Key:</span>
-                  <p className="text-sm font-bold p-2 border-2 border-zinc-900/20 rounded-sm break-all text-green-800 bg-black">{apiKeyHook.newApiKey}</p>
+                <div className="space-y-2 mt-2">
+                  <span className="font-bold text-sm text-white/50">Api key:</span>
+                  <p className="text-xs font-semibold p-2 border-2 border-zinc-900/20 rounded-sm break-all text-green-800 bg-black">{apiKeyHook.newApiKey}</p>
                   <span className="-mt-2 text-white/50 text-xs">Your API key is encrypted and stored securely.</span>
                 </div>
                 <DialogFooter>

@@ -13,6 +13,7 @@ export const plans: IPlan[] = [
     features: [
       "Unlimited Workspaces",
       "25,000 events per month",
+      "Support"
     ],
     limits: {
       events: 25_000,
@@ -45,6 +46,7 @@ export const plans: IPlan[] = [
     features: [
       "Unlimited Workspaces",
       "50,000 events per month",
+      "Priority support",
     ],
     limits: {
       events: 50_000,

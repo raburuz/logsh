@@ -2,13 +2,14 @@
 import { useState } from "react";
 import Link from "next/link";
 import { KeyRound } from "lucide-react";
-import { niceDate } from "@/modules/shared/lib/date";
+import { nicePastDate } from "@/modules/shared/lib/date";
 import { useApiKey } from "@/modules/shared/store/api-key";
 import { ScrambleText } from "@/modules/shared/components/scramble-text";
 import { CreateApiKeyForm } from "../forms/create"
 import { IApiKey } from "../interface";
 import { Settings } from "./settings";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 export const ApiKeys = () => {
 
@@ -89,7 +90,7 @@ const ApiKeyItem = ({ apiKey }: { apiKey: IApiKey }) => {
           <span className='text-zinc-900'>/</span>
           <p className="font-mono text-zinc-400">{apiKey.apiKey}<span className="text-[6px] text-zinc-400">...</span> </p>
         </div>
-        <span className="-mt-1 text-zinc-600 text-[10px]">{niceDate(apiKey.createdAt)}</span>
+        <span className="-mt-1 text-zinc-600 text-[10px]">{nicePastDate(apiKey.createdAt)}</span>
       </div>
       <div className="absolute top-2 right-2">
         <Settings {...apiKey} />  
@@ -112,7 +113,10 @@ const SkeletonApiKeyItem = () => {
 const NoApiKeys = () => {
   return (
     <div className="w-full py-10 flex flex-col items-center justify-center gap-4">
-      <span className="text-white/60 text-sm">No API keys found. Create one to get started.</span>
+      <span className="text-white/60 text-sm">No api keys found.</span>
+      <CreateApiKeyForm
+        trigger={<Button size={'xs'}>Create one to get started.</Button>}
+      />
     </div>
   )
 }

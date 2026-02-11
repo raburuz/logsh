@@ -16,9 +16,10 @@ interface IWorkspaceActions {
   setSelected: ( workspaceId: string ) => void;
   setIsLoading: ( isLoading: boolean ) => void;
   clean: () => void;
+  getList: () => IWorkspace[];
 }
 
-export const useWorkspaceStore = create<IWorkspaceState & IWorkspaceActions>( ( set ) => ({
+export const useWorkspaceStore = create<IWorkspaceState & IWorkspaceActions>( ( set, get ) => ({
   isLoading: true,
   list: [],
   selected: "",
@@ -26,6 +27,7 @@ export const useWorkspaceStore = create<IWorkspaceState & IWorkspaceActions>( ( 
   setSelected: ( workspaceId: string ) => set( { selected: workspaceId } ),
   setIsLoading: ( isLoading: boolean ) => set( { isLoading } ),
   clean: () => set( { isLoading: true, list: [], selected: "" } ),
+  getList: () => get().list,
 }))
 
 export const useWorkspace = () => {
@@ -44,9 +46,6 @@ export const useWorkspace = () => {
       workspaces.setSelected(id);
       event.fetchEvents(id);
     } else {
-      console.log(event.list)
-      console.log(event.realTimeList)
-      console.log(event.list[0]?.length === 0 && event.realTimeList.length === 0)
       event.clean();
     }
     workspaces.setIsLoading(false);
@@ -54,20 +53,23 @@ export const useWorkspace = () => {
 
   const deleteWorkspaceById = async ( workspaceId: string ) => {
 
-    workspaces.setList( workspaces.list.filter( w => w.id !== workspaceId ) );
-
-    workspaces.setSelected("");
     // Optimistic UI update
+    workspaces.setList( workspaces.list.filter( w => w.id !== workspaceId ) );
+    
+    // If the deleted workspace is currently selected, we need to update the selection and clear events
     if( workspaces.selected === workspaceId ) {
+      
+      workspaces.setSelected("");
+      const wklist = workspaces.getList();
 
-      if( workspaces.list.length > 1){
-        const firstWorkspaceId = workspaces.list[0].id;
-        workspaces.setSelected(firstWorkspaceId);
-        event.clean();
-        event.fetchEvents(firstWorkspaceId);
-      }
-
-      if( workspaces.list.length === 0 ){
+      // If there are other workspaces available, select the first one and fetch its events
+      if( wklist.length >= 1){
+        // Select the first workspace in the list (after deletion)
+        const firstWorkspaceId = wklist[0].id;
+        // Update the selected workspace and fetch events for it
+        await selectWorkspaceById( firstWorkspaceId );
+      } else {
+        // No workspaces left, just clear the selection and events
         event.clean();
       }
     }
@@ -75,10 +77,10 @@ export const useWorkspace = () => {
     await api.deleteWorkspace( workspaceId );
   };
 
-  const selectWorkspaceById = ( workspaceId: string ) => {
+  const selectWorkspaceById = async ( workspaceId: string ) => {
     workspaces.setSelected( workspaceId );
     event.clean();
-    event.fetchEvents( workspaceId );
+    await event.fetchEvents( workspaceId );
   }
 
   const createWorkspace = async ( name: string ) => {

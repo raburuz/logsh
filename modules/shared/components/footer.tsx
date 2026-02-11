@@ -1,8 +1,18 @@
 import Link from "next/link"
 import { config } from "../config"
 import { isSelfHosted } from "../utils/self-hosted"
+import { getServerSideUser } from "@/modules/auth/actions/auth";
 
-export const Footer = () => {
+export const Footer = async () => {
+
+  const user = await getServerSideUser();
+
+  if(user) return (
+    <div className="py-10 grid place-content-center">
+      <span className="text-xs text-zinc-500 lowercase">{config.app.name}</span>
+    </div>
+  );
+
   return (
     <footer className="pt-10 w-full flex flex-col sm:flex-row justify-start items-start gap-20 border-t border-zinc-900/20 mt-20 pb-10">
       <div className=" w-full flex flex-col justify-start items-start gap-2 ">

@@ -16,18 +16,20 @@ interface IEventActions {
   clean: () => void;
   setCursor: ( cursor: IEvents['nextCursor'] ) => void;
   setIsLoading: ( isLoading: boolean ) => void;
+  getCursor: () => IEvents['nextCursor'];
 }
 
-export const useEventStore = create<IEventState & IEventActions>( ( set ) => ({
+export const useEventStore = create<IEventState & IEventActions>( ( set, get ) => ({
   list: [],
   realTimeList: [],
   cursor: undefined,
   isLoading: true,
   setList: ( events: IEvent[] ) => set( (state) => ({ list: [ ...state.list, events ] }) ),
-  pushRealTimeEvent: ( event: IEventSse ) => set( (state) =>  ({ realTimeList: [ event, ...state.realTimeList ] }) ),
-  clean: () => set( { list: [], realTimeList: [], cursor: undefined, isLoading: false } ),
   setCursor: ( cursor: IEvents['nextCursor'] ) => set( { cursor } ),
   setIsLoading: ( isLoading: boolean ) => set( { isLoading } ),
+  pushRealTimeEvent: ( event: IEventSse ) => set( (state) =>  ({ realTimeList: [ event, ...state.realTimeList ] }) ),
+  clean: () => set( { list: [], realTimeList: [], cursor: undefined, isLoading: false } ),
+  getCursor: () => get().cursor,
 }))
 
 export const useEvent = () => {
@@ -40,7 +42,7 @@ export const useEvent = () => {
   const fetchEvents = async ( entityId: string ) => {
     event.setIsLoading(true);
     
-    const events = await api.getEvents( { entityId, nextCursor: event.cursor } );
+    const events = await api.getEvents( { entityId, nextCursor: event.getCursor() } );
     
     await delay( 500 );
 

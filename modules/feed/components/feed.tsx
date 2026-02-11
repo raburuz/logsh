@@ -1,53 +1,107 @@
 "use client";
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useVirtualizer } from '@tanstack/react-virtual'
 import { Activity, ChevronRight, Settings, Terminal } from 'lucide-react';
-import { niceDate } from '@/modules/shared/lib/date';
+import { nicePastDate } from '@/modules/shared/lib/date';
 import { cn } from '@/lib/utils';
 import { config } from '@/modules/shared/config';
 import { useWorkspace } from '@/modules/shared/store/workspace';
 import { useEvent } from '@/modules/shared/store/event';
 import { ScrambleText } from '@/modules/shared/components/scramble-text';
+import { Button } from '@/components/ui/button';
 import { CreateWorkspaceForm } from '../form/create';
 import { WKSettings } from './settings';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
+import { IEvent } from '../interface';
 
 
 export const Feed = () => {
+  const parentRef = useRef<HTMLDivElement>(null);
   const workspace = useWorkspace();
   const event = useEvent();
   const [viewAllWorkspace, setViewAllWorkspace] = useState(false);
 
-  const rtEvents = event.realTimeList.filter( e => e.workspaceId === workspace.selected );
+  const rtEvents = event.realTimeList.filter( e => e.workspaceId === workspace.selected ).map(e => e.event);
+  const storeEvents = event.list.flat();
+
+  const events = [ ...rtEvents, ...storeEvents ];
+
+  //https://tanstack.com/virtual/latest
+   const rowVirtualizer = useVirtualizer({
+    count: events.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 100, 
+    overscan: 5,
+  })
+
+  const virtualItems = rowVirtualizer.getVirtualItems();
 
   const loadNextEvents = async () => {
     await event.fetchEvents( workspace.selected );
   }
 
-  const renderItems = () => {
+  const renderVirtualizedItems = () => {
   
     if( !event.isLoading && (!event.list[0] || event.list[0].length === 0) && rtEvents.length === 0) return <NoEvents />;
    
     return (
       <>
-        <AnimatePresence initial={true} mode="wait" >  
-          { rtEvents.map((event) => <EventItem key={event.event.id} event={event.event} isAnimated={true} />) }
-        </AnimatePresence>
-        <AnimatePresence initial={false} mode="wait" >
-          { event.list.map((event) => event.map((item) => <EventItem key={item.id} event={item} isAnimated={false} />)) }
-        </AnimatePresence>
-        {
-          event.isLoading && [1, 2, 3, 4, 5].map((index) => (
-            <div key={index} className="snap-start shrink-0">
-              <div className="w-full relative px-4 py-5 flex flex-col gap-1 animate-pulse rounded-r-xl">
-                <div className="h-2 w-32 bg-zinc-800 rounded-md mt-2"></div>
-                <div className="h-2 w-52 bg-zinc-800 rounded-md mt-2"></div>
-              </div>
+        <div 
+          className="relative h-full overflow-auto overflow-x-hidden" 
+          ref={parentRef}
+        >
+          <div
+            style={{
+              height: `${rowVirtualizer.getTotalSize()}px`,
+              width: '100%',
+              position: 'relative',
+            }}
+            >
+            <AnimatePresence initial={false} mode='sync'>
+              { 
+                virtualItems.map(virtualRow => {
+                  const event = events[virtualRow.index];
+                  const isAnimated = event.id === rtEvents[0]?.id; // Only animate the most recent real-time event
+
+                  return (
+                    <motion.div
+                      layout="position"
+                      key={event.id}
+                      initial={isAnimated ? { opacity: 0, scale: 0.9, y:-50 } : false}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      transition={{ duration: 0.18 }}
+                      /* Style Needed Virtualization */
+                      style={{
+                        position: 'absolute',
+                        top: virtualRow.start,
+                        left: 0,
+                        width: '100%',
+                      }}
+                      /* Needed for virtualization */
+                      data-index={virtualRow.index}
+                      ref={rowVirtualizer.measureElement}
+                      >
+                        <EventItem event={event} />
+                      </motion.div>
+                    )
+                })
+              }
+              </AnimatePresence>
+              {
+                event.isLoading && [1, 2, 3, 4, 5].map((index) => (
+                  <div key={index} className="snap-start shrink-0">
+                    <div className="w-full relative px-4 py-5 flex flex-col gap-1 animate-pulse rounded-r-xl">
+                      <div className="h-2 w-32 bg-zinc-800 rounded-md mt-2"></div>
+                      <div className="h-2 w-52 bg-zinc-800 rounded-md mt-2"></div>
+                    </div>
+                  </div>
+                ))
+              }
+
             </div>
-          ))
-        }
+          </div>
       </>
     );
   };
@@ -59,13 +113,13 @@ export const Feed = () => {
             <Terminal className="h-3 w-3" strokeWidth={1.5} />
             <span className="uppercase">sys.monitor</span>
             <span className="text-muted-foreground/20">{"/"}</span>
-            <span className="uppercase text-green-500">{workspace.list.filter(wk => wk.id === workspace.selected)[0]?.name}</span>
+            <span className="uppercase text-emerald-500/65">{workspace.list.filter(wk => wk.id === workspace.selected)[0]?.name}</span>
             {
               workspace.selected && (
                 <>
                   <ChevronRight className="h-3 w-3 text-muted-foreground/30" />
                   <WKSettings
-                    trigger={<Settings className="w-3 h-3 text-blue-500"/>}
+                    trigger={<Settings className="w-3 h-3 text-emerald-500/65 cursor-pointer"/>}
                     workspace={workspace.list.filter(wk => wk.id === workspace.selected)[0]}
                   />
                 </>
@@ -136,9 +190,9 @@ export const Feed = () => {
               <div
                 role="tab"
                 aria-selected={workspace.selected === wk.id}
-                onClick={() => {
+                onClick={ async () => {
                   if(workspace.selected === wk.id) return;
-                  workspace.selectWorkspaceById(wk.id);
+                  await workspace.selectWorkspaceById(wk.id);
                 }}
                 className={cn(
                   "relative min-h-4 shrink-0 px-3 text-sm transition-all duration-200 flex items-center gap-2 text-nowrap cursor-pointer",
@@ -164,7 +218,7 @@ export const Feed = () => {
         }
       </nav>
       {/* Event List */}
-      <div className='mt-6 pb-8 min-h-120 px-2 rounded-xl backdrop-blur-2xl'>
+      <div className='mt-6 pb-8 min-h-120 px-2 rounded-xl'>
         <div className="pt-8 flex items-center gap-3 mb-6">
           <h2 className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
             Activity Stream
@@ -174,11 +228,22 @@ export const Feed = () => {
             {rtEvents.length} new events
           </span>
         </div>
-        <div className="relative space-y-3 transition-all delay-100 divide-y divide-border">
+        <div className="relative space-y-3 transition-all delay-100"
+          >
           {/* FEED */}
-          {renderItems()}
+          {renderVirtualizedItems()}
           {
-            event.list.length === 0 && rtEvents.length === 0 && event.isLoading && (
+            event.isLoading && [1, 2, 3, 4, 5].map((index) => (
+              <div key={index} className="snap-start shrink-0">
+                <div className="w-full relative px-4 py-5 flex flex-col gap-1 animate-pulse rounded-r-xl">
+                  <div className="h-2 w-32 bg-zinc-800 rounded-md mt-2"></div>
+                  <div className="h-2 w-52 bg-zinc-800 rounded-md mt-2"></div>
+                </div>
+              </div>
+            ))
+          }
+          {
+            virtualItems.length === 0 && event.isLoading && (
               <div className='absolute bottom-0 w-full h-28 bg-linear-to-t from-black to-transparent z-10'></div>
             )
           }
@@ -206,61 +271,40 @@ export const Feed = () => {
   );
 };
 
-const EventItem = ({ event, isAnimated }: { event: any; isAnimated: boolean }) => {
+const EventItem = ({ event }: { event: IEvent }) => {
 
-  const time = niceDate(event.createdAt) || 'Unknown time';
+  const time = nicePastDate(event.createdAt) || 'Unknown time';
 
   return (
-    <motion.div
-      key={event.id}
-      layoutId={event.id}
-      initial={isAnimated ? { opacity: 0, y: -50, scale: 0.8 } : false}
-      animate={
-        isAnimated
-          ? {
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              transition: {
-                type: 'spring',
-                stiffness: 400,
-                damping: 30,
-                mass: 1,
-              },
-            }
-          : false
-      }
-      layout="preserve-aspect"
-    >
-      <div className="flex items-start justify-between gap-4 py-4 group">
-        <div className="flex items-start gap-6 min-w-0">
-            <span
-              className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full border border-zinc-950/50"
-              style={{ backgroundColor: event.color }}
-              aria-hidden="true"
-            />
-            <div className="min-w-0">
-              <p className="text-sm font-medium text-foreground">
-                {event.event}
-              </p>
-              <p className="text-sm text-muted-foreground mt-0.5 truncate">
-                {event.description}
-              </p>
-            </div>
+    
+    <div className="flex items-start justify-between gap-4 py-4 group">
+      <div className="flex items-start gap-6 min-w-0">
+          <span
+            className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full border border-zinc-950/50"
+            style={{ backgroundColor: event.color }}
+            aria-hidden="true"
+          />
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-foreground">
+              {event.event}
+            </p>
+            <p className="text-sm text-muted-foreground mt-0.5 truncate">
+              {event.description}
+            </p>
           </div>
-          {/* Time / Live indicator */}
-          <div className="flex items-center gap-2 shrink-0">
-            {
-              time === 'now' && (<LiveDot />)
-            }
-            <span
-              className={ cn('text-xs tabular-nums font-mono', time === 'now' ? 'text-emerald-400/80' : 'text-muted-foreground/60') }
-            >
-              {time}
-            </span>
-          </div>
-      </div>
-    </motion.div>
+        </div>
+        {/* Time / Live indicator */}
+        <div className="flex items-center gap-2 shrink-0">
+          {
+            time === 'now' && (<LiveDot />)
+          }
+          <span
+            className={ cn('text-xs tabular-nums font-mono', time === 'now' ? 'text-emerald-400/80' : 'text-muted-foreground/60') }
+          >
+            {time}
+          </span>
+        </div>
+    </div>
   );
 };
 

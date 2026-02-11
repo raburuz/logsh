@@ -1,23 +1,20 @@
 import { getServerSideUser } from "../actions/auth"
-import PushNotificationButton from "@/modules/push/components/push-notification";
 
 export const Profile = async () => {
 
   const user = await getServerSideUser();
 
   return (
-    <div className="flex flex-col gap-4">
-
-      <h1 className="text-white font-bold text-2xl">Profile</h1>
-      <div className="space-y-1">
+    <section className="flex flex-col gap-4 pb-10">
+      <h1 className="font-bold text-lg">Account</h1>
+      <div className="space-y-1 text-xs">
         <h3 className="font-medium">Name</h3>
-        <p className="text-white/50">{user?.name}</p>
+        <p className="text-zinc-500">{user?.name}</p>
       </div>
-      <div className="space-y-1">
+      <div className="space-y-1 text-xs">
         <h3 className="font-medium">Email</h3>
-        <p className="text-white/50">{user?.email}</p>
+        <p className="text-zinc-500">{user?.email}</p>
       </div>
-      <PushNotificationButton/>
-    </div>
+    </section>
   )
 }
