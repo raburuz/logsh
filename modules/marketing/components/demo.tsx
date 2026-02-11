@@ -26,7 +26,7 @@ const generateFakeEvent = (workspace: string) => {
   };
 };
 
-export const EventList = () => {
+export const AppDemo = () => {
   const [selectedWorkspace, setSelectedWorkspace] = useState(workspaces[0]);
   const [rtEvents, setRtEvents] = useState<any[]>([]);
   const [active, setActive] = useState('');
@@ -114,12 +114,14 @@ export const EventList = () => {
             <div className="text-lg font-medium text-foreground leading-none tracking-tight">
               <ScrambleText text="Dashboard" delay={100} />
             </div>
-            <p className="text-xs text-muted-foreground/60 mt-1.5 font-mono">
-              Real-time activity monitoring
-            </p>
+            <ScrambleText 
+              text="Real-time activity monitoring." 
+              delay={0} 
+              className="text-xs text-muted-foreground mt-1"
+            />
           </div>
           <div className="flex-1" />
-            <div className="flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/[0.05] px-2.5 py-1">
+            <div className="flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/5 px-2.5 py-1">
               <span className="relative flex h-1.5 w-1.5">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />

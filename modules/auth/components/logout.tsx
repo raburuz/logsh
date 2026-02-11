@@ -11,7 +11,7 @@ export const Logout = ( props: { className?: string }) => {
   }
 
   return (
-    <Button onClick={handleLogout} size={"sm"} className={props.className}>
+    <Button onClick={handleLogout} size={"xs"} className={props.className}>
       Logout
     </Button>
   )

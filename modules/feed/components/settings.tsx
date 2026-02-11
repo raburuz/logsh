@@ -25,12 +25,12 @@ export function WKSettings(
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-40 bg-black text-white/80 border border-zinc-900/20" align="start">
         <DropdownMenuGroup>
-          <DropdownMenuLabel>
-            <span className="uppercase font-semibold">{props.workspace?.name}{' '}</span> 
-            Settings
+          <DropdownMenuLabel className="text-xs">
+            <span className="font-semibold uppercase">{props.workspace?.name}{' '}</span> 
+            <span>Settings</span>
           </DropdownMenuLabel>
           <DropdownMenuItem 
-            className="hover:bg-transparent focus:bg-transparent cursor-pointer text-red-700 hover:text-red-600 focus:text-red-600"
+            className="hover:bg-transparent focus:bg-transparent cursor-pointer text-red-700 hover:text-red-600 focus:text-red-600 text-xs"
             onClick={() => deleteWorkspaceById(props.workspace?.id || '')}
           >
             <span>Delete</span>

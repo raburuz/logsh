@@ -3,7 +3,6 @@ import { config } from "../config"
 import { getServerSideUser } from "@/modules/auth/actions/auth"
 import { Logout } from "@/modules/auth/components/logout";
 import { isSelfHosted } from "../utils/self-hosted";
-import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Menu } from "lucide-react";
+import { CircleUser } from "lucide-react";
 
 export const Nav = async () => {
 
@@ -27,7 +26,7 @@ export const Nav = async () => {
         <span className="font-bold">{config.app.name}</span>
       </Link>
       <nav>
-        <ul className="flex flex-row items-center gap-4 text-sm">
+        <ul className="flex flex-row items-center gap-4 text-xs">
           {
             isSelfHosted ?
               (
@@ -35,7 +34,7 @@ export const Nav = async () => {
                   <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
                     <a href={config.app.url} target="_blank">App</a>
                   </li>
-                  <span className="text-white/80">·</span>
+                  <span className="text-zinc-900">/</span>
                 </>
               )
             : (
@@ -43,18 +42,18 @@ export const Nav = async () => {
                 <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
                   <Link href={"/"}>Home</Link>
                 </li>
-                <span className="text-white/80">·</span>
+                <span className="text-zinc-900">/</span>
                 <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
                   <Link href={"/pricing"}>Pricing</Link>
                 </li>
-                <span className="text-white/80">·</span>
+                <span className="text-zinc-900">/</span>
               </>
             ) 
           }
           <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
             <Link href={"/docs/get-started"}>Docs</Link>
           </li>
-          <span className="text-white/80">·</span>
+          <span className="text-zinc-900">/</span>
           <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
             <Link href={"/auth"}>Login</Link>
           </li>
@@ -74,23 +73,23 @@ export const Nav = async () => {
       <NavPhone/>
       {/* Desktop */}
         <nav className="hidden sm:flex">
-          <ul className="flex flex-row items-center gap-4 text-sm">
+          <ul className="flex flex-row items-center gap-4 text-xs">
             <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
               <Link href={"/dashboard"}>Dashboard</Link>
             </li>
-            <span className="text-white/80">·</span>
+            <span className="text-zinc-900">/</span>
             <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
               <Link href={"/docs/get-started"} target="_blank">Docs</Link>
             </li>
-            <span className="text-white/80">·</span>
+            <span className="text-zinc-900">/</span>
             <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
               <Link href={"/pricing"}>Pricing</Link>
             </li>
-            <span className="text-white/80">·</span>
+            <span className="text-zinc-900">/</span>
             <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
               <Link href={"/dashboard/profile"}>Profile</Link>
             </li>
-            <span className="text-white/80">·</span>
+            <span className="text-zinc-900">/</span>
             <Logout/>
           </ul>
         </nav>
@@ -105,7 +104,7 @@ export const NavPhone = async () => {
     <>
       <DropdownMenu>
       <DropdownMenuTrigger asChild className="sm:hidden">
-        <Menu className="cursor-pointer w-5 h-5 text-zinc-300 hover:text-white transition"/>
+        <CircleUser className="cursor-pointer w-5 h-5 text-zinc-300 hover:text-white transition"/>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="mr-2 sm:hidden">
         <DropdownMenuGroup>

@@ -26,7 +26,7 @@ const schema = z.object({
 
 type ISchema = z.infer<typeof schema>;
 
-export const CreateApiKeyForm = () => {
+export const CreateApiKeyForm = ( props: { trigger: React.ReactNode }) => {
 
   const {
     register,
@@ -53,7 +53,7 @@ export const CreateApiKeyForm = () => {
     <>
       <Dialog onOpenChange={onOpenChange}>
           <DialogTrigger asChild>
-            <Button size={"xs"} type="button">Create</Button>
+            {props.trigger}
           </DialogTrigger>
           <DialogContent className="sm:max-w-106.25 bg-black/50 backdrop-blur-lg border border-zinc-900/20">
           {

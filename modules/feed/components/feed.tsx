@@ -12,6 +12,7 @@ import { ScrambleText } from '@/modules/shared/components/scramble-text';
 import { CreateWorkspaceForm } from '../form/create';
 import { WKSettings } from './settings';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 
 export const Feed = () => {
@@ -74,36 +75,38 @@ export const Feed = () => {
           <span className="text-muted-foreground/30">v1.0.0</span>
         </div>
       <div className="flex items-center gap-3 mb-10">
-          {/* Animated logo */}
-          <div className="relative group">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-card border border-border transition-all duration-300 group-hover:border-muted-foreground/30">
-              <Activity
-                className="h-5 w-5 text-foreground transition-transform duration-300 group-hover:scale-110"
-                strokeWidth={1.5}
-              />
-            </div>
-            {/* Ring pulse on hover */}
-            <div className="absolute inset-0 rounded-xl border border-foreground/5 scale-100 opacity-0 group-hover:scale-[1.35] group-hover:opacity-100 transition-all duration-700 pointer-events-none" />
+        {/* Animated logo */}
+        <div className="relative group">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-card border border-border transition-all duration-300 group-hover:border-muted-foreground/30">
+            <Activity
+              className="h-5 w-5 text-foreground transition-transform duration-300 group-hover:scale-110"
+              strokeWidth={1.5}
+            />
           </div>
-          <div>
-            <div className="text-lg font-medium text-foreground leading-none tracking-tight">
-              <ScrambleText text="Dashboard" delay={100} />
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Real-time activity monitoring
-            </p>
+          {/* Ring pulse on hover */}
+          <div className="absolute inset-0 rounded-xl border border-foreground/5 scale-100 opacity-0 group-hover:scale-[1.35] group-hover:opacity-100 transition-all duration-700 pointer-events-none" />
+        </div>
+        <div>
+          <div className="text-lg font-medium text-foreground leading-none tracking-tight">
+            <ScrambleText text="Dashboard" delay={0} />
           </div>
-          <div className="flex-1" />
-            <div className="flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/5 px-2.5 py-1">
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
-              </span>
-              <span className="text-[10px] font-mono text-emerald-400/80 uppercase tracking-wider">
-                Live
-              </span>
-            </div>
-         </div>
+          <ScrambleText 
+            text="Real-time activity monitoring." 
+            delay={0} 
+            className="text-xs text-muted-foreground mt-1"
+          />
+        </div>
+        <div className="flex-1" />
+        <div className="flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/5 px-2.5 py-1">
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+          </span>
+          <span className="text-[10px] font-mono text-emerald-400/80 uppercase tracking-wider">
+            Live
+          </span>
+        </div>
+      </div>
 
       {/* Workspace Settings */}
       <div className="flex items-center justify-end gap-3 mb-6 text-xs">
@@ -122,15 +125,15 @@ export const Feed = () => {
         role="tablist"
       >
         {
-          workspace.isLoading && [1,2,3,4].map( _ => <div key={_} className="w-20 px-3 h-4 bg-zinc-800 rounded-md animate-pulse" />)
+          workspace.isLoading && [1,2,3,4].map( _ => <div key={_} className="-mt-2 w-20 px-3 h-4 py-1.5 bg-zinc-800 rounded-md animate-pulse" />)
         }
         {
           !workspace.isLoading && workspace.list.length === 0 && (<NoWorkspaces />)
         }
         { 
           workspace.list.map((wk, index) => (
-            <div key={wk.id} className='relative'>
-              <button
+            <div key={wk.id}>
+              <div
                 role="tab"
                 aria-selected={workspace.selected === wk.id}
                 onClick={() => {
@@ -138,13 +141,13 @@ export const Feed = () => {
                   workspace.selectWorkspaceById(wk.id);
                 }}
                 className={cn(
-                  "relative shrink-0 px-3 py-1.5 text-sm transition-all duration-200 flex items-center gap-2 text-nowrap",
+                  "relative min-h-4 shrink-0 px-3 text-sm transition-all duration-200 flex items-center gap-2 text-nowrap cursor-pointer",
                   workspace.selected === wk.id
                   ? "text-foreground font-medium"
                   : "text-muted-foreground hover:text-foreground/70"
                 )}
               >
-                {wk.name}
+                <span>{wk.name}</span>
                 <span
                   className={cn(
                     "text-[9px] font-mono px-1 py-0.5 rounded border transition-all duration-200",
@@ -155,13 +158,13 @@ export const Feed = () => {
                 >
                   {index + 1}
                 </span>
-              </button>
+              </div>
             </div>
           ))
         }
       </nav>
       {/* Event List */}
-      <div className='mt-6 pb-8 px-2 rounded-xl backdrop-blur-2xl'>
+      <div className='mt-6 pb-8 min-h-120 px-2 rounded-xl backdrop-blur-2xl'>
         <div className="pt-8 flex items-center gap-3 mb-6">
           <h2 className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
             Activity Stream
@@ -171,9 +174,14 @@ export const Feed = () => {
             {rtEvents.length} new events
           </span>
         </div>
-        <div className="space-y-3 transition-all delay-100 divide-y divide-border">
+        <div className="relative space-y-3 transition-all delay-100 divide-y divide-border">
           {/* FEED */}
           {renderItems()}
+          {
+            event.list.length === 0 && rtEvents.length === 0 && event.isLoading && (
+              <div className='absolute bottom-0 w-full h-28 bg-linear-to-t from-black to-transparent z-10'></div>
+            )
+          }
         </div>
         {
           event.cursor && (
@@ -270,6 +278,9 @@ const NoEvents = () => {
     <div className="w-full py-10 flex flex-col items-center justify-center gap-4">
       <span className="text-white/60 text-sm">No events found.</span>
       <span className="text-white/60 text-xs">Start performing actions in your workspace to see events here.</span>
+      <Button asChild size={"xs"} >
+        <Link href="/docs/get-started" target="_blank" rel="noreferrer">Documentation</Link>
+      </Button>
     </div>
   )
 }
