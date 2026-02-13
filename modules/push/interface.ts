@@ -16,3 +16,14 @@ export type PushNotification = {
     body?: string;
   };
 }
+export interface PushSubscriptionDevice { 
+  deviceId: string, 
+  id: string, 
+  status: string, 
+  deviceInfo: { 
+    device: string, 
+    browser: string, 
+    platform: string, 
+    userAgent: string 
+  } 
+}

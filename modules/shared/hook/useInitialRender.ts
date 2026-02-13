@@ -18,6 +18,7 @@ export const useInitialRender = () => {
     workspace.fetchWorkspaces();
     event.fetchStream();
     subscription.fetchSubscription();
+    pushNotification.registerDevice();
     pushNotification.registerSW();
   }, [])
 

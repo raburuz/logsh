@@ -8,9 +8,9 @@ export const Footer = async () => {
   const user = await getServerSideUser();
 
   if(user) return (
-    <div className="py-10 grid place-content-center">
+    <footer className="py-10 grid place-content-center w-full">
       <span className="text-xs text-zinc-500 lowercase">{config.app.name}</span>
-    </div>
+    </footer>
   );
 
   return (

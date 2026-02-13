@@ -56,6 +56,8 @@ export const pushSubscriptions = pgTable("push_subscriptions	", {
   endpoint: text("endpoint").notNull(),
   keys: jsonb('keys').$type<{ auth: string, p256dh:string }>().notNull().default({ auth: '', p256dh: '' }),
   deviceId: text("device_id").notNull(),
+  deviceInfo: jsonb('device_info').$type<{ userAgent: string, platform: string, browser: string, device: string }>().notNull().default({ userAgent: '', platform: '', browser: '', device: '' }),
+  status: text("status").notNull().default('active'),
 })
 
 export const eventRelations = relations( event, ({ one }) => ({

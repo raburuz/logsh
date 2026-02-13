@@ -47,7 +47,7 @@ export const ApiKeys = () => {
 
     <div className="flex items-center justify-end gap-3 mb-6 text-xs">
       <CreateApiKeyForm
-        trigger={<span className='text-zinc-300 cursor-pointer'>New api-key</span>}
+        trigger={()=><span className='text-zinc-300 cursor-pointer'>New api-key</span>}
       />
       <span className='text-zinc-900'>/</span>
       <Link href="/docs/get-started" target="_blank" rel="noreferrer" className="text-zinc-300 cursor-pointer">Documentation</Link>
@@ -115,7 +115,7 @@ const NoApiKeys = () => {
     <div className="w-full py-10 flex flex-col items-center justify-center gap-4">
       <span className="text-white/60 text-sm">No api keys found.</span>
       <CreateApiKeyForm
-        trigger={<Button size={'xs'}>Create one to get started.</Button>}
+        trigger={()=><Button size={'xs'} asChild><span>Create one to get started.</span></Button>}
       />
     </div>
   )

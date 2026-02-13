@@ -1,10 +1,11 @@
 "use client"
 
+import Link from "next/link";
+import { Activity, CalendarClock, Gauge, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/modules/auth/lib/client"
 import { niceFutureDate } from "@/modules/shared/lib/date";
 import { useSubscription } from "@/modules/shared/store/subscription";
-import { Activity, CalendarClock, Package } from "lucide-react";
 
 export const Subscription = () => {
 
@@ -21,7 +22,7 @@ export const Subscription = () => {
         </div>
         {subscription?.subscription ? (
           <div className="text-xs flex flex-col gap-2">
-            <p className="pb-0.5">You already have an active subscription.</p>
+            <p className="pb-0.5 text-zinc-500">You already have an active subscription.</p>
             <div className="flex items-center gap-2 pb-2">
               <Package className='w-4 h-4 '/>
               <span>Plan:</span>
@@ -37,6 +38,11 @@ export const Subscription = () => {
               <span>Next billing:</span>
               <span className="font-bold text-zinc-500">{ subscription.subscription?.periodEnd ? niceFutureDate(subscription.subscription.periodEnd) : undefined}</span>
             </div>
+            <div className="flex items-center gap-2 pb-2">
+              <Gauge className='w-4 h-4 '/>
+              <span>Usage:</span>
+              <span className="font-bold text-zinc-500">{subscription.usage.events} / {subscription.plan.limits.events.toLocaleString()} events </span>
+            </div>
             {
               ["past_due", "unpaid", "trialing"].includes(subscription.subscription?.status ?? '') && (
                 <div className="text-xs flex flex-col gap-2">
@@ -48,8 +54,13 @@ export const Subscription = () => {
           </div>
         ) : (
           <div className="text-xs flex flex-col gap-2">
-            <p className="text-zinc-500">You do not have an active subscription.</p>
-            <p className="text-red-800 font-semibold">Having a subscription is needed to send events.</p>
+            <p className="text-zinc-500">🚀 Upgrade your subscription and unlock limitless possibilities!</p>
+            <p className="text-blue-800 font-semibold">Sending events is just the start. With an active subscription, you gain full access to premium tools, insights, and features designed to help you grow faster and achieve more.</p>
+            <Button size={'xs'} className="w-fit mt-4" asChild>
+              <Link href="/pricing" >
+                👉 Start your upgrade
+              </Link>
+            </Button>
           </div>
         )}
       </div>

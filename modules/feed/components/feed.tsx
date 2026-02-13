@@ -165,7 +165,7 @@ export const Feed = () => {
       {/* Workspace Settings */}
       <div className="flex items-center justify-end gap-3 mb-6 text-xs">
           <CreateWorkspaceForm
-            trigger={<span className='text-zinc-300 cursor-pointer'>New workspace</span>}
+            trigger={()=><span className='text-zinc-300 cursor-pointer'>New workspace</span>}
           />
           <span className='text-zinc-900'>/</span>
           <span className='text-zinc-300 cursor-pointer' onClick={()=>{ setViewAllWorkspace(!viewAllWorkspace) }}>
@@ -334,7 +334,7 @@ const NoWorkspaces = () => {
     <div className="w-full py-6 flex flex-col items-center justify-center gap-4">
       <span className="text-white/60 text-sm">No workspaces found.</span>
       <CreateWorkspaceForm
-        trigger={<Button size={"xs"}>Create one to get started.</Button>}
+        trigger={()=><Button size={"xs"} asChild><span>Create one to get started.</span></Button>}
       />
     </div>
   )

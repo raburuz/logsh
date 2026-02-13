@@ -1,6 +1,7 @@
 
 export interface ISubscription {
   plan: IPlan; 
+  usage: ISubscriptionUsage;
   subscription: {
     id: string;
     plan: string;
@@ -39,4 +40,9 @@ export interface IPlan {
     days: number;
   },
   footer?: string;
+}
+export interface ISubscriptionUsage {
+  id: string;
+  events: number;
+  renewAt: Date;
 }

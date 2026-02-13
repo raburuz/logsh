@@ -1,6 +1,8 @@
+import { toast } from 'sonner';
 import { IWorkspace } from "../interface";
 
 export const useWorkspaceApi = () => {
+
 
   const getWorkspaces = async (): Promise<IWorkspace[]> => {
 
@@ -36,12 +38,14 @@ export const useWorkspaceApi = () => {
     });
 
     if (!response.ok) {
+      //const errorData = await response.json();
       throw new Error('Failed to create workspace');
     }
-
+    
     return;
-    } catch (error) {
-      
+  } catch (error) {
+    
+      toast.error(error instanceof Error ? error.message : 'Failed to create workspace');
       console.log('Error creating workspace:', error);
       return;
     }

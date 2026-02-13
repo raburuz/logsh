@@ -5,13 +5,19 @@ import { create } from 'zustand';
 import {
   hasRequiredLibs,
   urlBase64ToUint8Array,
-} from './utils';
+} from './utils/utils';
 import { toast } from 'sonner';
+import { PushSubscriptionDevice } from './interface';
+import { deviceIdZodSchema, generateDeviceId } from './utils/device';
 
 const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || '';
+const deviceIdKey = "deviceId";
 
 interface PushStoreState {
+  deviceId: string; //current device ID
+  devices: PushSubscriptionDevice[]
   permission: string;
+  isCreatingSubscription: boolean;
   subscription: {
     endpoint: string;
     keys: {
@@ -34,15 +40,38 @@ interface PushStoreActions {
   createPushSubscription: () => Promise<void>;
 
   //Service Worker
+  registerDevice: () => void;
   registerSW: () => Promise<void>;
+  fetchSubscriptions: () => Promise<void>;
 
 }
 
 export const usePushStore = create<PushStoreState & PushStoreActions>( ( set, get ) => ({
-  isSupported: true,
-  permission: "",
+  deviceId: "",
+  devices: [],
   subscription: null,
+  isSupported: true,
+  isCreatingSubscription: false,
+  permission: "",
   error: null,
+  registerDevice: () => {
+    
+    let existingDeviceId = localStorage.getItem(deviceIdKey);
+
+    if(!existingDeviceId) {
+      console.log("No existing device ID found, generating a new one.");
+      existingDeviceId = generateDeviceId();
+    }
+
+    if (!deviceIdZodSchema.safeParse(existingDeviceId).success){
+      console.warn("Existing device ID is invalid, generating a new one.");
+      existingDeviceId = generateDeviceId();
+    }
+    
+    localStorage.setItem(deviceIdKey, existingDeviceId);
+    set({ deviceId: existingDeviceId });
+   
+  },
   registerSW: async () => {
     try {
       await navigator.serviceWorker.register('/sw.js',{
@@ -128,17 +157,28 @@ export const usePushStore = create<PushStoreState & PushStoreActions>( ( set, ge
   createPushSubscription: async () => {
     const store = get();
 
+    set({ isCreatingSubscription: true });
+
     if (store.permission === 'denied') {
       set({ error: { 
         message: "Cannot subscribe because notification permission is denied", 
         suggestedAction: "Please enable notifications in your browser settings to subscribe." 
       } });
-      toast.warning("Please enable notifications in your browser settings to subscribe.")
+      toast.warning("Please enable notifications in your browser settings to subscribe.");
+      set({ isCreatingSubscription: false });
       return;
     }
 
     if(!store.subscription) {
+      console.log("No push subscription available to send to server");
+      set({ error: { message: "No push subscription available to send to server" } });
+      set({ isCreatingSubscription: false });
       return;
+    }
+
+    const subscriptionData = {
+      ...store.subscription,
+      deviceId: store.deviceId,
     }
 
     try {
@@ -147,12 +187,13 @@ export const usePushStore = create<PushStoreState & PushStoreActions>( ( set, ge
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(store.subscription),
+        body: JSON.stringify(subscriptionData),
       });
 
       set({ error: null });
       toast.success("You can now receive push notifications!");
       console.log('Successfully subscribed to push notifications on server');
+      store.fetchSubscriptions();
 
     } catch (error) {
       set({ error: { 
@@ -160,6 +201,18 @@ export const usePushStore = create<PushStoreState & PushStoreActions>( ( set, ge
         suggestedAction: "Please try again later or contact support." 
       } });
     }
+    set({ isCreatingSubscription: false });
   },
+
+  fetchSubscriptions: async () => {
+    try {
+      const response = await fetch('/api/push/subscription');
+      const resp = await response.json();
+      const data = resp.data as PushSubscriptionDevice[];
+      set({ devices: data });
+    } catch (error) {
+      console.log("Failed to fetch subscriptions from server", error);
+    }
+  }
 
 }));

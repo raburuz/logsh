@@ -1,0 +1,1 @@
+ALTER TABLE "push_subscriptions	" ALTER COLUMN "device_info" SET DEFAULT '{"userAgent":"","platform":"","browser":"","device":""}'::jsonb;

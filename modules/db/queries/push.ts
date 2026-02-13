@@ -2,18 +2,42 @@ import { and, eq, or } from "drizzle-orm";
 import { db } from "../db"
 import { pushSubscriptions , workspaceMember } from "../schemas/app"
 
+export const pushNotificationStatus = {
+  ACTIVE: 'active',
+  INACTIVE: 'inactive',
+} as const;
+
 export const pushSubscriptionQuery = {
-  create: async ( userId: string, data: { endpoint: string, deviceId: string, keys: { auth: string, p256dh: string } } ) => {
+  create: async ( 
+    userId: string, 
+    data: { 
+      endpoint: string, 
+      deviceId: string, 
+      deviceInfo: { userAgent: string, platform: string, browser: string, device: string } 
+      keys: { auth: string, p256dh: string }
+    } 
+  ) => {
     await db
     .insert(pushSubscriptions)
     .values({
       userId,
       endpoint: data.endpoint,
       deviceId: data.deviceId,
+      deviceInfo: data.deviceInfo,
       keys: data.keys,
+      status: pushNotificationStatus.ACTIVE,
     })
   },
-  create_or_update: async ( userId: string, data: { endpoint: string, deviceId: string, keys: { auth: string, p256dh: string } } ) => {
+  create_or_update: async ( 
+    userId: string, 
+    data: { 
+      endpoint: string, 
+      deviceId: string, 
+      deviceInfo: { userAgent: string, platform: string, browser: string, device: string }, 
+      keys: { auth: string, p256dh: string },
+      status: typeof pushNotificationStatus[keyof typeof pushNotificationStatus]
+    }
+  ) => {
     const response = await pushSubscriptionQuery.get({ 
       where: {
         userId,
@@ -26,10 +50,10 @@ export const pushSubscriptionQuery = {
       await db
         .update(pushSubscriptions )
         .set({
-          //update the device
-          deviceId: data.deviceId,
           endpoint: data.endpoint,
-          keys: data.keys
+          keys: data.keys,
+          status: data.status,
+          deviceInfo: data.deviceInfo,
         })
         .where(
           and(
@@ -96,8 +120,11 @@ export const pushSubscriptionQuery = {
   device_list: async ( by: { userId: string } ) => {
     return await db
     .select({
+      id: pushSubscriptions.id,
       endpoint: pushSubscriptions.endpoint,
-      device: pushSubscriptions.deviceId,
+      deviceId: pushSubscriptions.deviceId,
+      deviceInfo: pushSubscriptions.deviceInfo,
+      status: pushSubscriptions.status,
     })
     .from(pushSubscriptions)
     .where(
