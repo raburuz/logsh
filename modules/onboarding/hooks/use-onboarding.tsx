@@ -10,7 +10,7 @@ import { StepDashboard, StepFirstEvent, StepNotifications, StepPlan, StepWelcome
 interface StepConfig {
   component: React.ReactElement;
   action: () => Promise<void>;
-  canSkip?: boolean;
+  cta: string;
 }
 
 const STEP_KEYS = {
@@ -52,6 +52,7 @@ export const useOnboarding = () => {
     () => ({
       [STEP_KEYS.WELCOME]: {
         component: <StepWelcome />,
+        cta: "Let's go",
         action: async () => {
           const workspaceName = onboardingData.getWorkspace()?.trim();
 
@@ -72,7 +73,7 @@ export const useOnboarding = () => {
 
       [STEP_KEYS.NOTIFICATIONS]: {
         component: <StepNotifications />,
-        canSkip: true,
+        cta: "Continue",
         action: async () => {
           nextStep();
         },
@@ -80,6 +81,7 @@ export const useOnboarding = () => {
 
       [STEP_KEYS.FIRST_EVENT]: {
         component: <StepFirstEvent />,
+        cta: "Send my first event",
         action: async () => {
           const workspaceName = onboardingData.getWorkspace().trim();
 
@@ -98,6 +100,7 @@ export const useOnboarding = () => {
 
       [STEP_KEYS.DASHBOARD]: {
         component: <StepDashboard />,
+        cta: "Continue",
         action: async () => {
           await onboardingData.markUserAsOnboarded(),
           nextStep();
@@ -106,7 +109,7 @@ export const useOnboarding = () => {
 
       [STEP_KEYS.PLAN]: {
         component: <StepPlan />,
-        canSkip: true,
+        cta: "Start 14-day free trial",
         action: async () => {
           const price = onboardingData.getPrice();
 
@@ -169,7 +172,6 @@ export const useOnboarding = () => {
     totalSteps,
     isFirstStep,
     isLastStep,
-    canSkipCurrentStep: currentStepConfig?.canSkip ?? false,
     progress,
     
     // All steps

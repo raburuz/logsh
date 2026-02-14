@@ -95,11 +95,21 @@ export const pushSubscriptionQuery = {
 
     return response.at(0);
   },
-  delete: async ( data: { where: { endpoint: string } } ) => {
+  delete_by_endpoint: async ( data: { where: { endpoint: string } } ) => {
     await db
     .delete(pushSubscriptions )
     .where(
       eq(pushSubscriptions .endpoint, data.where.endpoint),
+    )
+  },
+  delete_by_device: async ( data: { where: { deviceId: string, userId: string } } ) => {
+    await db
+    .delete(pushSubscriptions )
+    .where(
+      and(
+        eq(pushSubscriptions .deviceId, data.where.deviceId),
+        eq(pushSubscriptions .userId, data.where.userId)
+      )
     )
   },
   get_workspace_members_subscriptions: async (workspaceId: string ) => {

@@ -56,8 +56,8 @@ export const StepWelcome = () => {
 
 export const StepNotifications = () => {
 
-  const [isChecked, setIsChecked] = useState(false);
   const pushNotification = usePushNotification();
+  const onboardingData = useOnboardingData();
 
   return (
     <div>
@@ -76,7 +76,7 @@ export const StepNotifications = () => {
           <div
             className={cn(
               "flex items-center justify-between rounded-lg border border-zinc-900/30 bg-zinc-900/10 px-4 py-3 text-zinc-500",
-              isChecked && "border-green-900 bg-green-900/10 text-zinc-300"
+              onboardingData.hasPushPermission && "border-green-900 bg-green-900/10 text-zinc-300"
             )}
           >
             <div className="flex items-center gap-3">
@@ -91,10 +91,14 @@ export const StepNotifications = () => {
               </div>
             </div>
             <Switch
-              checked={isChecked}
+              checked={onboardingData.hasPushPermission}
               onCheckedChange={(checked) =>{
-                setIsChecked(checked);
-                if(checked) pushNotification.subscribe();  
+                onboardingData.setHasPushPermission(checked);
+                if(checked) {
+                  pushNotification.subscribe();
+                } else {
+                  pushNotification.unsubscribe();
+                };  
               }}
             />
           </div>
@@ -180,7 +184,7 @@ export const StepFirstEvent = () => {
         <div className="absolute inset-0 rounded-full bg-green-600" />
       </div>
         <span className="text-xs text-zinc-500">
-          Send my first event 👇
+          Listening for events...
         </span>
       </div>
     </div>
@@ -255,7 +259,8 @@ export const StepDashboard = () => {
               key={i}
               className={cn(
                 "flex items-center gap-3 px-4 py-3 animate-in fade-in slide-in-from-bottom-1 duration-300 text-zinc-500",
-                event.highlight ? "bg-green-900/10 text-green-600" : ""
+                event.highlight ? "border border-emerald-500/10" : "",
+                i !== 0 ? "blur-[1px] select-none" : "blur-0"
               )}
               style={{ animationDelay: `${i * 100}ms`, animationFillMode: "both" }}
             >
@@ -263,7 +268,7 @@ export const StepDashboard = () => {
                 className="flex h-1 w-1 rounded-full bg-white self-start mt-1.5"
                 style={{ backgroundColor: event.color }}></div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium font-mono">
+                <p className="text-xs font-medium font-mono text-zinc-300">
                   {event.name}
                 </p>
                 <p className="text-[11px] truncate">
@@ -367,7 +372,7 @@ export const StepPlan = () => {
               className={cn(
                 "relative flex items-start gap-3 rounded-lg border p-3.5 text-left transition-all",
                 isSelected
-                  ? "border-primary bg-green-900/10"
+                  ? "border-green-400/10 bg-green-900/10"
                   : "border-zinc-900/30 bg-zinc-900/10 hover:border-zinc-900/30"
               )}
             >
@@ -376,7 +381,7 @@ export const StepPlan = () => {
                 className={cn(
                   "mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border transition-colors",
                   isSelected
-                    ? "border-primary bg-green-900/30"
+                    ? "border-green-400 bg-green-900/30"
                     : "border-zinc-500/40"
                 )}
               >

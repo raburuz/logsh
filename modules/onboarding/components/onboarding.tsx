@@ -66,33 +66,24 @@ export const Onboarding = () => {
               </Button>
             ) : <div></div> }
 
-            {!isLastStep ? (
-              <Button
-                onClick={ async () => {
-                  await executeCurrentStep();
-                }}
-                size="sm"
-                disabled={(currentStep === 0 && !onboardingData.workspace.trim()) || isLoading}
-                className="gap-1.5 ml-auto"
-              >
-                Continue
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Button>
-            ) : (
-              <Button 
-                size="sm" 
-                className="gap-1.5 ml-auto"
-                disabled={isLoading}
-                onClick={ async () => {
-                  await executeCurrentStep();
-                }}
-              >
-                <span>
-                  Start 14-day free trial
-                </span>
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Button>
-            )}
+            <Button
+              onClick={async () => {
+                await executeCurrentStep();
+              }}
+              size="sm"
+              disabled={
+                isLoading || 
+                (currentStep === 0 && !onboardingData.workspace.trim())
+              }
+              className="gap-1.5 ml-auto"
+            >
+              {
+                isLoading 
+                ? "Loading..." 
+                : currentStepConfig?.cta || "Continue"
+              }
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Button>
           </div>
         </div>
 

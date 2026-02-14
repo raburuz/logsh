@@ -38,6 +38,7 @@ interface PushStoreActions {
   //Subscription
   subscribe: () => Promise<void>;
   createPushSubscription: () => Promise<void>;
+  unsubscribe: () => Promise<void>;
 
   //Service Worker
   registerDevice: () => void;
@@ -212,6 +213,31 @@ export const usePushStore = create<PushStoreState & PushStoreActions>( ( set, ge
       set({ devices: data });
     } catch (error) {
       console.log("Failed to fetch subscriptions from server", error);
+    }
+  },
+  unsubscribe: async () => {
+    const store = get();
+    try {
+      await fetch('/api/push/unsubscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          deviceId: store.deviceId,
+        }),
+      });
+
+      set({ error: null });
+      toast.success("You have successfully unsubscribed from push notifications");
+      console.log('Successfully unsubscribed from push notifications on server');
+      store.fetchSubscriptions();
+
+    } catch (error) {
+      set({ error: { 
+        message: "Failed to unsubscribe on server", 
+        suggestedAction: "Please try again later or contact support." 
+      } });
     }
   }
 

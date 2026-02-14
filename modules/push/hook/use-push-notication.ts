@@ -20,6 +20,7 @@ export const usePushNotification = () => {
     //Subscription
     subscribe: pushNotification.subscribe,
     fetchSubscriptions: pushNotification.fetchSubscriptions,
+    unsubscribe: pushNotification.unsubscribe,
 
     //Service Worker
     registerSW: pushNotification.registerSW,
