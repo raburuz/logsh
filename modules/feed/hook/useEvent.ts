@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import { IEvents } from "../interface";
 
 export const useEventApi = () => {
@@ -26,10 +27,12 @@ export const useEventApi = () => {
         },
         body: JSON.stringify(data),
       });
+
+      const resp = await response.json();
+      
       if (!response.ok) {
         throw new Error('Failed to fetch events');
       }
-      const resp = await response.json();
       
       return resp.data;
       
@@ -43,11 +46,40 @@ export const useEventApi = () => {
     }
 
   }
+  const sendTestEvent = async ( data :{ body: { workspace: string } }  ): Promise<{}> => {
+
+    try {
+      const response = await fetch(`/api/event/test`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data.body),
+      });
+
+      const resp = await response.json();
+      
+      if (!response.ok) {
+        throw new Error('Failed to send event to API');
+      }
+      
+      toast.success('Event sent successfully!');
+
+      return resp.data;
+      
+    } catch (error) {
+      
+      console.log('Error sending event to API:', error);
+      return {}
+    }
+
+  }
 
 
   return {
     getEvents,
     sse,
+    sendTestEvent
   }
 
 }

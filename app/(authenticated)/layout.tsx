@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { getServerSideUser } from "@/modules/auth/actions/auth";
 import { redirect } from "next/navigation";
-import { Provider } from "@/modules/shared/components/provider";
+import { getServerSideUser } from "@/modules/auth/actions/auth";
+import { AppProvider } from "@/modules/shared/components/provider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -14,17 +14,17 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
 
-  const user = await getServerSideUser()
+  const user = await getServerSideUser();
 
   if(!user) {
-    return redirect('/auth')
+    return redirect('/auth');
   }
 
   return (
     <>
-      <Provider>
+      <AppProvider>
         {children}
-      </Provider>
+      </AppProvider>
     </>
   );
 }

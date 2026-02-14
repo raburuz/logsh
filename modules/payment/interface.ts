@@ -12,34 +12,32 @@ export interface ISubscription {
   } | undefined;
 }
 
+export type Interval = 'monthly' | 'yearly';
+
 export interface IPlan {
   isRecommended?: boolean;
   isFree: boolean;
-  type: 'recurring' | 'one-time';
-  id: string;
   name: string;
-  amount: number;
-  currency: string;
-  stripePriceId: string;
-  interval: 'month' | 'year' | "one-time";
+  description: string;
+  interval: {
+    [key in Interval]: {
+      stripePriceId: string;
+      amount: number;
+      discount?: {
+        text: string;
+        amount: number;
+        percentage: number;
+      };
+    }
+  }
   features: string[];
   limits: {
     events: number;
     eventsRetentionDays: number;
   };
   callToAction: string;
-  discount?: {
-    isActive: boolean;
-    couponId: string;
-    text: string;
-    amount: number;
-    porcentage: number;
-  };
-  trial?: {
-    isActive: boolean;
-    days: number;
-  },
-  footer?: string;
+  freeTrialDays?: number;
+  couponId?: string;
 }
 export interface ISubscriptionUsage {
   id: string;

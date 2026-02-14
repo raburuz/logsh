@@ -1,6 +1,7 @@
 // components/PushNotificationButton.tsx
 'use client';
 
+import { useEffect } from 'react';
 import { Activity, CircleAlert, Info, Monitor, MonitorSmartphone, Smartphone, Tablet } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { usePushNotification } from '../hook/use-push-notication';
@@ -13,6 +14,12 @@ import {
 
 export default function PushNotificationButton() {
   const pushNotification = usePushNotification();
+
+  useEffect(() => {
+    pushNotification.checkPermission();
+    pushNotification.fetchSubscriptions();
+  }, [])
+  
 
   const handleSubscribe = async () => {
    await pushNotification.subscribe();

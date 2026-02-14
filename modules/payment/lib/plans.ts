@@ -3,111 +3,91 @@ import { IPlan } from "../interface";
 export const plans: IPlan[] = [
   {
     isFree: false,
-    type: 'recurring',
-    id: "price_1",
     name: "Basic",
-    amount: 10,
-    currency: "USD",
-    stripePriceId: "price_1Sw52yLJAtHe4i9X2WQNEbDl",
-    interval: "month",
+    description: "For side projects and experimentation.",
+    interval: {
+      monthly: {
+        stripePriceId: "price_1Sw52yLJAtHe4i9X2WQNEbDl",
+        amount: 10,
+      },
+      yearly: {
+        stripePriceId: "price_1Sw52yLJAtHe4i9X2WQNEbDl",
+        amount: 8,
+      }
+    },
     features: [
-      "Unlimited Workspaces",
-      "25,000 events per month",
-      "Support"
+      "Unlimited workspaces",
+      "25,000 events / month",
+      "7-day event retention",
+      "Basic support"
     ],
     limits: {
       events: 25_000,
       eventsRetentionDays: 7,
     },
-    discount:{
-      isActive: true,
-      couponId: "fMXODZw0",
-      text: "Perfect for small apps",
-      amount: 7,
-      porcentage: 30,
-    },
-    trial: {
-      isActive: true,
-      days: 14,
-    },
+    freeTrialDays: 14,
     callToAction: "Start 14-day free trial",
-    footer: "$0.00 due today. No card required."
   },
   {
-    isRecommended: true,
     isFree: false,
-    type: 'recurring',
-    id: "price_2",
     name: "Pro",
-    amount: 16,
-    currency: "USD",
-    stripePriceId: "price_2_pro",
-    interval: "month",
+    isRecommended: true,
+    description: "For growing teams that need full visibility.",
+    interval: {
+      monthly: {
+        stripePriceId: "price_1Sw52yLJAtHe4i9X2WQNEbDl",
+        amount: 19,
+      },
+      yearly: {
+        stripePriceId: "price_1Sw52yLJAtHe4i9X2WQNEbDl",
+        amount: 16,
+      }
+    },
     features: [
-      "Unlimited Workspaces",
-      "50,000 events per month",
-      "Priority support",
+      "Unlimited workspaces",
+      "100,000 events / month",
+      "Unlimited API keys",
+      "90-day event retention",
+      "Push notifications",
+      "Priority support"
     ],
     limits: {
-      events: 50_000,
+      events: 100_000,
       eventsRetentionDays: 90,
     },
-    discount: {
-      isActive: true,
-      couponId: "first10",
-      text: "Perfect for growing apps",
-      amount: 12,
-      porcentage: 25,
-    },
+    freeTrialDays: 14,
     callToAction: "Start 14-day free trial",
-    footer: "$0.00 due today. No card required."
   },
   {
     isFree: false,
-    type: 'recurring',
-    id: "price_3",
-    name: "Master",
-    amount: 30,
-    currency: "USD",
-    stripePriceId: "price_3_master",
-    interval: "month",
+    name: "Scale",
+    description: "For high-volume products at any stage.",
+    interval: {
+      monthly: {
+        stripePriceId: "price_1Sw52yLJAtHe4i9X2WQNEbDl",
+        amount: 79,
+      },
+      yearly: {
+        stripePriceId: "price_1Sw52yLJAtHe4i9X2WQNEbDl",
+        amount: 63,
+      }
+    },
     features: [
-      "Unlimited Workspaces",
-      "150,000 events per month",
-      "Priority support",
+      "Unlimited workspaces",
+      "1,000,000 events / month",
+      "Unlimited API keys",
+      "365-day event retention",
+      "Push notifications",
+      "Dedicated support"
     ],
     limits: {
-      events: 150_000,
+      events: 1_000_000,
       eventsRetentionDays: 365,
     },
-    discount:{
-      isActive: true,
-      couponId: "first10",
-      text: "Best value for scaling apps",
-      amount: 27,
-      porcentage: 10,
-    },
-    callToAction: "Start 14-day free trial",
-    footer: "$0.00 due today. No card required."
-  },
-  //Most be the default plan
-  {
-    isFree: true,
-    type: 'recurring',
-    id: "price_0",
-    name: "None",
-    amount: 0,
-    currency: "USD",
-    stripePriceId: "price_0_free",
-    interval: "month",
-    features: [
-    ],
-    limits: {
-      events: 0,
-      eventsRetentionDays: 0,
-    },
+    freeTrialDays: 14,
     callToAction: "Start 14-day free trial",
   },
+  
 ]
 
 //https://www.better-auth.com/docs/plugins/stripe#subscription-management
@@ -115,13 +95,15 @@ export const planListToBetterAuthPlans = () => {
   return plans
   .filter( plan => !plan.isFree )
   .map( plan => {
+    //https://www.better-auth.com/docs/plugins/stripe#plan-configuration
     return {
       name: plan.name,
-      priceId: plan.stripePriceId,
+      priceId: plan.interval.monthly.stripePriceId,
+      annualDiscountPriceId: plan.interval.yearly.stripePriceId,
       limits: plan.limits,
-      freeTrial: plan.trial?.isActive ? {
-        days: plan.trial.days
-      } : undefined,
+      freeTrial: plan.freeTrialDays ? {
+        days: plan.freeTrialDays,
+      } : undefined
     }
   })
 };

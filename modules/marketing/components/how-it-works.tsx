@@ -8,19 +8,21 @@ export const HowItWorks = () => {
     <section className="relative py-20 mb-20 w-full overflow-hidden">
       <div className="max-w-4xl mx-auto px-4">
         {/* Badge */}
-        <div className="flex justify-center mb-2">
-          <span className="px-4 py-1.5 text-sm text-green-600 border border-green-800 rounded-full">
+        <div className="flex justify-center mb-3">
+          <span className="px-4 py-1.5 text-xs text-green-600 border border-green-800 rounded-full">
             How It Works
           </span>
         </div>
 
         {/* Main Heading */}
-        <h2 className="text-3xl md:text-4xl font-medium text-white text-center mb-4">
-          Monitor Your Applications Seamlessly
-        </h2>
-        <span className="block text-3xl md:text-4xl font-medium text-green-400 text-center mb-16">
-          3 Simple Steps
-        </span>
+        <div className="flex flex-col gap-4 text-center mb-16">
+          <h2 className="md:text-3xl text-2xl font-semibold tracking-tight text-zinc-100 text-balance">
+            Monitor Your Applications Seamlessly
+          </h2>
+          <span className="block md:text-3xl text-2xl font-semibold text-green-400">
+            3 Simple Steps
+          </span>
+        </div>
 
         {/* Timeline */}
         <div>

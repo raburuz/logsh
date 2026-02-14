@@ -72,7 +72,7 @@ export const Portal = () => {
 
   const handleManageSubscription = async () => {
     const { data: portal } = await authClient.subscription.billingPortal({
-      returnUrl: window.location.origin + "/auth/profile"
+      returnUrl: window.location.origin + "/profile"
     });
 
     if (portal?.url) {
@@ -92,7 +92,7 @@ export const CallToAction = () => {
 
   const handleManageSubscription = async () => {
     const { data: portal } = await authClient.subscription.billingPortal({
-      returnUrl: window.location.origin + "/auth/profile"
+      returnUrl: window.location.origin + "/profile"
     });
 
     if (portal?.url) {

@@ -24,7 +24,7 @@ export const getServerSideUser = async () => {
     name: session.user.name,
     image: session.user.image,
     emailVerified: session.user.emailVerified,
-
+    isOnboarded: session.user.isOnboarded,
   }
 
 }
@@ -43,6 +43,7 @@ export const getAuthenticatedUser = async () => {
     name: session.user.name,
     image: session.user.image,
     emailVerified: session.user.emailVerified,
+    isOnboarded: session.user.isOnboarded,
   }
 
 }

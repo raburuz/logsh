@@ -38,6 +38,16 @@ export const auth = betterAuth({
   advanced: {
     cookiePrefix: config.app.name.toLowerCase(),
   },
+  user: {
+    additionalFields:{
+      isOnboarded: {
+        type: "boolean",
+        default: false,
+        defaultValue: false,
+        required: true,
+      }
+    }
+  },
   // Plugins to extend functionality
   plugins: [
     magicLink({

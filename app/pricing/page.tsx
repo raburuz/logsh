@@ -1,12 +1,12 @@
 import { Testimonial } from "@/modules/marketing/components/testimonial";
-import { Plans } from "@/modules/payment/components/plans";
+import { Pricing } from "@/modules/payment/components/plans";
 
-export default function Pricing() {
+export default function PricingPage() {
 
   return (
     <>
     <main className="flex w-full flex-1 flex-col items-center px-2 sm:px-4 md:px-16 sm:items-start">
-      <Plans />
+      <Pricing />
       <Testimonial/>
     </main>
     </>

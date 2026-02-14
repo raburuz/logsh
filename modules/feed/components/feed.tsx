@@ -195,7 +195,7 @@ export const Feed = () => {
                   await workspace.selectWorkspaceById(wk.id);
                 }}
                 className={cn(
-                  "relative min-h-4 shrink-0 px-3 text-sm transition-all duration-200 flex items-center gap-2 text-nowrap cursor-pointer",
+                  "relative min-h-4 shrink-0 px-3 text-sm transition-all duration-200 flex items-center gap-2 text-nowrap cursor-pointer py-2",
                   workspace.selected === wk.id
                   ? "text-foreground font-medium"
                   : "text-muted-foreground hover:text-foreground/70"

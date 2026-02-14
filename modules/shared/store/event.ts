@@ -100,6 +100,7 @@ export const useEvent = () => {
     clean: event.clean,
     fetchEvents,
     fetchStream,
+    sendTestEvent: api.sendTestEvent
   }
 
 }

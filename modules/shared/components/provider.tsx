@@ -1,16 +1,28 @@
 "use client"
 
 import { Toaster } from '@/components/ui/sonner';
-import { useInitialRender } from '../hook/useInitialRender';
+import { useInitialAppRender, useInitialDashboardRender } from '../hook/useInitialRender';
 
-export const Provider = ({ children }: { children: React.ReactNode }) => {
+export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
-  useInitialRender();
+  useInitialAppRender();
 
   return (
     <>
       {children}
       <Toaster position='top-center' />
+    </>
+  )
+}
+
+
+export const DashboardProvider = ({ children }: { children: React.ReactNode }) => {
+
+  useInitialDashboardRender();
+
+  return (
+    <>
+      {children}
     </>
   )
 }

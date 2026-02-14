@@ -42,14 +42,16 @@ export const Comparison = () => {
 
   return (
     <section className="flex items-center justify-center px-4 py-20">
-      <div className="max-w-5xl mx-auto text-center">
-        {/* Header */}
-        <h2 className="mx-auto text-3xl md:text-4xl max-w-3xl font-bold text-white mb-4 text-balance">
-          Why {config.app.name} is Essential <span className="text-green-400">for you</span>r Applications
-        </h2>
-        <p className="text-[#888] text-base md:text-lg max-w-3xl mx-auto mb-12 text-pretty">
-          Save time, reduce costs, and get informed in real-time through {config.app.name}'s unified monitoring platform.
-        </p>
+      <div className="max-w-5xl mx-auto">
+        <div className="flex flex-col items-center text-center mb-8">
+          {/* Header */}
+          <h2 className="md:text-3xl text-2xl font-semibold tracking-tight text-zinc-100 text-balance">
+            Why {config.app.name} is Essential <br /> <span className="text-green-400">for you</span>r Applications
+          </h2>
+          <p className="mt-3 max-w-md text-sm leading-relaxed text-zinc-500">
+            Save time, reduce costs, and get informed in real-time through {config.app.name}'s unified monitoring platform.
+          </p>
+        </div>
 
         {/* Comparison Cards */}
         <div className="relative grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
@@ -61,7 +63,7 @@ export const Comparison = () => {
             <ul className="space-y-5">
               {withoutFeatures.map((feature, index) => (
                 <li key={index} className="flex items-start gap-3">
-                  <span className="text-[#888] text-sm leading-relaxed">
+                  <span className="text-zinc-500 text-sm leading-relaxed">
                     {feature}
                   </span>
                 </li>
@@ -76,8 +78,8 @@ export const Comparison = () => {
             <ul className="space-y-5 md:p-6">
               {withFeatures.map((feature, index) => (
                 <li key={index} className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-[#22c55e] mt-0.5 shrink-0" />
-                  <span className="text-[#888] text-sm leading-relaxed">
+                  <Check className="w-5 h-5 text-green-500 mt-0.5 shrink-0" />
+                  <span className="text-zinc-500 text-sm leading-relaxed">
                     {feature.text}
                     <span className="text-white font-semibold">{feature.bold}</span>
                     {feature.rest}

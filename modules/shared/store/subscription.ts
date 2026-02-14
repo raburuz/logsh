@@ -1,7 +1,7 @@
 "use client"
 
 import { create } from 'zustand'
-import { useSubscriptionApi } from '@/modules/payment/hooks/useSubscription';
+import { useSubscriptionApi } from '@/modules/payment/hooks/use-subscription';
 import { ISubscription } from '@/modules/payment/interface';
 
 interface ISubscriptionState {
@@ -9,15 +9,17 @@ interface ISubscriptionState {
 }
 
 interface ISubscriptionActions {
-  setSubscription: ( subscription: ISubscription ) => void;
+  setSubscription: ( subscription?: ISubscription ) => void;
   clean: () => void;
+  getSubscription: () => ISubscription | undefined;
 }
 
-export const useSubscriptionStore = create<ISubscriptionState & ISubscriptionActions>( ( set ) => ({
+export const useSubscriptionStore = create<ISubscriptionState & ISubscriptionActions>( ( set, get ) => ({
   subscription: undefined,
-  setSubscription: ( subscription: ISubscription ) => set( { subscription } ),
+  setSubscription: ( subscription?: ISubscription ) => set( { subscription } ),
   clean: () => set( { subscription: undefined } ),
- }))
+  getSubscription: () => get().subscription,
+}))
 
 export const useSubscription = () => {
   
@@ -25,16 +27,24 @@ export const useSubscription = () => {
   const api = useSubscriptionApi();
   
   const fetchSubscription = async () => {
-    try {
-      const data = await api.getSubscription();
-      subscriptions.setSubscription(data);
-    } catch (error) {
-      subscriptions.setSubscription(null as any);
+    const data = await api.getSubscription();
+    subscriptions.setSubscription(data);
+  }
+
+  const checkout = async ( props: { planName: string, isAnnual: boolean } ) => {
+
+    const data = await api.checkout( props );
+    if (data?.url) {
+      // Open the checkout URL in a new tab
+      window.open(data.url, "_blank", 'noopener,noreferrer');
     }
+
   }
 
   return {
     subscription: subscriptions.subscription,
+    getSubscription: subscriptions.getSubscription,
+    checkout,
     fetchSubscription,
     clean: subscriptions.clean,
   }

@@ -1,6 +1,7 @@
 import { stripeClient } from "@better-auth/stripe/client";
 import { createAuthClient } from "better-auth/client";
-import { apiKeyClient, magicLinkClient } from "better-auth/client/plugins";
+import { apiKeyClient, inferAdditionalFields, magicLinkClient } from "better-auth/client/plugins";
+import { auth } from "./server";
 
 export const authClient = createAuthClient({
   plugins: [
@@ -9,5 +10,6 @@ export const authClient = createAuthClient({
     stripeClient({
       subscription: true,
     }),
+    inferAdditionalFields<typeof auth>()
   ]
 });

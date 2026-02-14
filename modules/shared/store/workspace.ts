@@ -42,6 +42,13 @@ export const useWorkspace = () => {
     workspaces.setList( list );
     if( list.length > 0 ) {
       const id = list[0].id;
+
+      // If the currently selected workspace is still valid, keep it selected. Otherwise, select the first workspace in the list.
+      if(id === workspaces.selected ) {
+        workspaces.setIsLoading(false);
+        return;
+      }
+      // Select the first workspace by default
       workspaces.setList(list);
       workspaces.setSelected(id);
       event.fetchEvents(id);

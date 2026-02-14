@@ -2,38 +2,36 @@
 
 import Link from "next/link" 
 import { Button } from "@/components/ui/button"
-import { authClient } from "@/modules/auth/lib/client"
-import { IPlan } from "../interface"
 import { useSubscription } from "@/modules/shared/store/subscription"
+import { cn } from "@/lib/utils"
+import { IPlan } from "../interface"
 
-export const CheckoutButton = ( props: { plan: IPlan, isAuth: boolean } ) => {
+export const CheckoutButton = ( props: { plan: IPlan, isAnnual: boolean, isAuth: boolean } ) => {
 
-  const { subscription } = useSubscription();
+  const { subscription, checkout } = useSubscription();
 
   const handleUpgrade = async () => {
 
-    const { data, error } = await authClient.subscription.upgrade({
-      plan: props.plan.name,
-      //subscriptionId: data.subscriptionId,
-      successUrl: window.location.origin + "/auth/profile",
-      cancelUrl: window.location.origin + "/",
-      subscriptionId: subscription?.subscription?.stripeSubscriptionId || undefined,
-    })
+    if(!props.isAuth) return;
 
-    if (data?.url) {
-      window.location.href = data.url;
-    }
+    await checkout({
+      planName: props.plan.name,
+      isAnnual: props.isAnnual,
+    })
   }
 
   if(props.isAuth){
     return (
       <>
         <Button
-          className="bg-blue-600 hover:bg-blue-700" 
+          className={cn(
+            "mb-6 w-full",
+            props.plan.isRecommended ? "bg-green-700 hover:bg-green-800" : "",
+          )}
           onClick={handleUpgrade}
           disabled={subscription?.plan?.name === props.plan.name}
         >
-          {subscription?.plan?.name === props.plan.name ? "Current Plan" : props.plan.callToAction}
+          {subscription?.plan?.name === props.plan.name ? "Current plan" : props.plan.callToAction}
         </Button>
       </>
     )
@@ -42,7 +40,11 @@ export const CheckoutButton = ( props: { plan: IPlan, isAuth: boolean } ) => {
   return (
     <>
       <Button
-        className="bg-blue-600 hover:bg-blue-700" 
+        className={cn(
+          "mb-6 w-full",
+          props.plan.isRecommended ? "bg-green-700 hover:bg-green-800" : ""
+        )}
+        size="sm"
         asChild
       >
         <Link href="/auth?redirect=pricing">

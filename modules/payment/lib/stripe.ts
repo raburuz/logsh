@@ -6,7 +6,7 @@ import { findPlanByName, planListToBetterAuthPlans } from "./plans";
 export const stripeClient = new Stripe( 
   process.env.STRIPE_SECRET_KEY ?? '', 
   {
-    apiVersion: "2025-12-15.clover",
+    apiVersion: "2026-01-28.clover",
     appInfo: {
       name: config.app.name,
       version: config.app.version,
@@ -24,7 +24,9 @@ export const stripePlugin = stripe({
     plans: planListToBetterAuthPlans(),
     getCheckoutSessionParams(data, ctx) {
 
-      const coupon = findPlanByName(data.plan.name).discount?.couponId;
+      data.plan.annualDiscountLookupKey
+
+      const coupon = findPlanByName(data.plan.name)?.couponId;
       //https://docs.stripe.com/billing/subscriptions/coupons
       const discounts = coupon ? [{ coupon }] : undefined;
 

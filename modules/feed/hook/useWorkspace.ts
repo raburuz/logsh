@@ -3,7 +3,6 @@ import { IWorkspace } from "../interface";
 
 export const useWorkspaceApi = () => {
 
-
   const getWorkspaces = async (): Promise<IWorkspace[]> => {
 
     try {
@@ -14,11 +13,12 @@ export const useWorkspaceApi = () => {
         },
       });
 
+      const resp = await response.json();
+
       if (!response.ok) {
-        throw new Error('Failed to fetch workspaces');
+        throw new Error(resp.message || 'Failed to fetch workspaces');
       }
 
-      const resp = await response.json();
       
       return resp.data;
     } catch (error) {
@@ -37,9 +37,11 @@ export const useWorkspaceApi = () => {
       body: JSON.stringify({ name }),
     });
 
+    const resp = await response.json();
+
     if (!response.ok) {
       //const errorData = await response.json();
-      throw new Error('Failed to create workspace');
+      throw new Error(resp.message || 'Failed to create workspace');
     }
     
     return;
@@ -61,11 +63,11 @@ export const useWorkspaceApi = () => {
       },
     });
 
+    const resp = await response.json();
+
     if (!response.ok) {
       throw new Error('Failed to fetch workspaces');
     }
-    
-    const resp = await response.json();
     
     return resp.data;
   } catch (error) {

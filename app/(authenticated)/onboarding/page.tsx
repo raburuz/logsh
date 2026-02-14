@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { getServerSideUser } from '@/modules/auth/actions/auth'
-import { Onboarding } from '@/modules/shared/components/onboarding';
+import { Onboarding } from '@/modules/onboarding/components/onboarding';
 
 export default async function Page() {
 

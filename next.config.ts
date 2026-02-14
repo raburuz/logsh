@@ -15,7 +15,6 @@ const withMDX = createMDX({
 const nextConfig: NextConfig = {
   // Configure `pageExtensions` to include markdown and MDX files
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
-
   reactStrictMode: false,
   typedRoutes: true,
   poweredByHeader: false,

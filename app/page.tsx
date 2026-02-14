@@ -1,5 +1,5 @@
 import { config } from "@/modules/shared/config";
-import { Plans } from "@/modules/payment/components/plans";
+import { Pricing } from "@/modules/payment/components/plans";
 import { ActionButton } from "@/modules/marketing/components/action";
 import { Testimonial } from "@/modules/marketing/components/testimonial";
 import { HowItWorks } from "@/modules/marketing/components/how-it-works";
@@ -7,6 +7,7 @@ import { Comparison } from "@/modules/marketing/components/comparison";
 import { Founder } from "@/modules/marketing/components/founder";
 import { AppDemo } from "@/modules/marketing/components/demo";
 import ClarityStream from "@/modules/marketing/components/stream";
+import { CTA } from "@/modules/marketing/components/cta";
 
 export default function Home() {
 
@@ -36,8 +37,9 @@ export default function Home() {
       <Testimonial/>
       <HowItWorks/>
       <Comparison/>
-      <Plans />
+      <Pricing />
       <Founder/>
+      <CTA/>
     </main>
     </>
   );

@@ -87,7 +87,7 @@ export const Nav = async () => {
             </li>
             <span className="text-zinc-900">/</span>
             <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
-              <Link href={"/dashboard/profile"}>Account</Link>
+              <Link href={"/profile"}>Account</Link>
             </li>
             <span className="text-zinc-900">/</span>
             <Logout/>
@@ -110,7 +110,7 @@ export const NavPhone = async () => {
         <DropdownMenuGroup>
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <>
-            <Link href={"/dashboard/profile"}>
+            <Link href={"/profile"}>
               <DropdownMenuItem>Account</DropdownMenuItem>
             </Link>
           </>
