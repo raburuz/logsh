@@ -13,7 +13,7 @@ export async function GET(){
 
     const user = await getAuthenticatedUser();
 
-    const subscription = await db.subscription.get({by: { userId: user.id }});
+    const subscription = await db.subscription.get_usable_subscription({by: { userId: user.id }});
 
     return subscription;
 
@@ -44,7 +44,7 @@ export async function POST( request : Request ){
       })
     })
 
-    const sub = await db.subscription.get({by: { userId: user.id }});
+    const sub = await db.subscription.get_usable_subscription({by: { userId: user.id }});
 
     const data = await auth.api.upgradeSubscription({
       body: {

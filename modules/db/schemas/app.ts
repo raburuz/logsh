@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { index, integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { subscription, user } from "./auth";
 
 export const workspace = pgTable('workspace', {
@@ -7,7 +7,9 @@ export const workspace = pgTable('workspace', {
   name: text("name").notNull(),
   status: text("status").notNull().default('active'),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-})
+}, (table) => ({
+  workspaceNameIdx: index('workspace_name_idx').on(table.name),
+}))
 
 export const workspaceMember = pgTable('workspace_member', {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -17,7 +19,10 @@ export const workspaceMember = pgTable('workspace_member', {
   userId: text("user_id").notNull().references(()=> user.id, { onDelete: "cascade" }),
   role: text("role").notNull().default('owner'),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull()
-}) 
+}, (table) => ({
+  workspaceMemberUserIdIdx: index('workspace_member_user_id_idx').on(table.userId),
+  workspaceMemberWorkspaceIdIdx: index('workspace_member_workspace_id_idx').on(table.workspaceId),
+})) 
 
 export const event = pgTable('event', {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -29,7 +34,10 @@ export const event = pgTable('event', {
   event: text("event").notNull(),
   description: text("description"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-})
+}, (table) => ({
+  eventWorkspaceIdIdx: index('event_workspace_id_idx').on(table.workspaceId),
+  eventCreatedAtIdx: index('event_created_at_idx').on(table.createdAt),
+}))
 
 export const subscriptionUsage = pgTable("subscription_usage", {
 	id: uuid('id').primaryKey().defaultRandom(),
@@ -37,7 +45,9 @@ export const subscriptionUsage = pgTable("subscription_usage", {
 	events: integer('events').default(0).notNull(),
   lastEventAt: timestamp("last_event_at", { withTimezone: true }).defaultNow().notNull(),
   lastResetAt: timestamp("last_reset_at", { withTimezone: true }).defaultNow().notNull(),
-})
+}, (table) => ({
+  subscriptionUsageSubscriptionIdIdx: index('subscription_usage_subscription_id_idx').on(table.subscriptionId),
+}))
 
 export const pushSubscriptions = pgTable("push_subscriptions	", {
   id: uuid("id").primaryKey().defaultRandom(), 

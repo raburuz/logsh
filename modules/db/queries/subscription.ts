@@ -102,7 +102,8 @@ export const subscriptionQuery = {
     })
   },
 
-  get: async ( { by } : { by: { userId: string }}) => {
+  // Usable subscription means that the user has an active or trialing subscription
+  get_usable_subscription: async ( { by } : { by: { userId: string }}) => {
 
     const res = await db.transaction( async (tx) => {
 
@@ -121,7 +122,9 @@ export const subscriptionQuery = {
       );
 
       const sub = subs?.find(
-        sub => sub.status === 'active' || sub.status === "trialing"
+        sub => 
+          sub.status === 'active' || 
+          sub.status === "trialing"
       )
 
       if(!sub){

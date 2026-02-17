@@ -44,7 +44,7 @@ export const eventService = {
     if(cache.status) {
       return cache.value;
     } else {
-      const subscription = await db.subscription.get({ by: { userId } });
+      const subscription = await db.subscription.get_usable_subscription({ by: { userId } });
 
       if( !subscription ) throw new AppError(
         'bad_request', 

@@ -43,6 +43,8 @@ export const useWorkspaceApi = () => {
       //const errorData = await response.json();
       throw new Error(resp.message || 'Failed to create workspace');
     }
+
+    toast.success('Workspace created successfully');
     
     return;
   } catch (error) {

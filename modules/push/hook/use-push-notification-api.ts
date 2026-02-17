@@ -29,6 +29,7 @@ export const usePushNotificationApi = () => {
         console.log("Failed to subscribe to push notifications on server", resp.error);
       }
 
+      toast.success('Subscribed to push notifications successfully');
       return resp.data;
 
     } catch (error) {
@@ -55,6 +56,8 @@ export const usePushNotificationApi = () => {
         toast.error( resp.message || "Failed to unsubscribe from push notifications");
         console.log("Failed to unsubscribe from push notifications on server", resp.error);
       }
+
+      toast.warning('Unsubscribed from push notifications');
 
       return resp.data;
 

@@ -5,19 +5,19 @@ import { useSubscriptionApi } from '@/modules/payment/hooks/use-subscription';
 import { ISubscription } from '@/modules/payment/interface';
 
 interface ISubscriptionState {
-  subscription?: ISubscription;
+  subscription: ISubscription | null;
 }
 
 interface ISubscriptionActions {
-  setSubscription: ( subscription?: ISubscription ) => void;
+  setSubscription: ( subscription: ISubscription | null ) => void;
   clean: () => void;
-  getSubscription: () => ISubscription | undefined;
+  getSubscription: () => ISubscription | null;
 }
 
 export const useSubscriptionStore = create<ISubscriptionState & ISubscriptionActions>( ( set, get ) => ({
-  subscription: undefined,
-  setSubscription: ( subscription?: ISubscription ) => set( { subscription } ),
-  clean: () => set( { subscription: undefined } ),
+  subscription: null,
+  setSubscription: ( subscription: ISubscription | null ) => set( { subscription } ),
+  clean: () => set( { subscription: null } ),
   getSubscription: () => get().subscription,
 }))
 
