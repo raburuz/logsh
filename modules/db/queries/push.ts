@@ -54,6 +54,7 @@ export const pushSubscriptionQuery = {
           keys: data.keys,
           status: data.status,
           deviceInfo: data.deviceInfo,
+          deviceId: data.deviceId,
         })
         .where(
           and(
@@ -115,12 +116,12 @@ export const pushSubscriptionQuery = {
   get_workspace_members_subscriptions: async (workspaceId: string ) => {
     return await db
     .select({
-      enpoint: pushSubscriptions .endpoint,
-      keys: pushSubscriptions .keys,
+      endpoint: pushSubscriptions.endpoint,
+      keys: pushSubscriptions.keys,
       userId: workspaceMember.userId,
     })
     .from(workspaceMember)
-    .innerJoin(pushSubscriptions , eq(workspaceMember.userId, pushSubscriptions .userId))
+    .innerJoin(pushSubscriptions , eq(workspaceMember.userId, pushSubscriptions.userId))
     .where(
       and(
         eq(workspaceMember.workspaceId, workspaceId),

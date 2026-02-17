@@ -34,6 +34,32 @@ pnpm run dev
 
 ```
 
+### Launch Redis Database
+
+Launching your redis database in local
+
+
+Execute the command below:
+
+```
+
+# https://hub.docker.com/_/postgres
+
+docker run -d --name redis-stack -p 6379:6379 -p 8001:8001 -e REDIS_ARGS="--requirepass mypassword" redis/redis-stack:latest
+
+
+```
+
+Redis string connection
+
+```
+
+redis://default:mypassword@localhost:6379
+redis://localhost:6379
+
+```
+
+### Stripe Webhook
 ### Launch Postgresql Database
 
 Launching your postgres database in local

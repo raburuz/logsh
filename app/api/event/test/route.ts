@@ -4,38 +4,46 @@ import { db } from "@/modules/db";
 import { workspaceValidator } from "@/modules/feed/lib/zod";
 import { publishEvent } from "@/modules/shared/lib/redis";
 import { zodValidator } from "@/modules/shared/lib/zod";
-import { routeHandler } from "@/modules/shared/utils/handler";
+import { apiRouteHandler } from "@/modules/shared/utils/handler";
+import { sendNotificationToWorkspaceMembers } from "@/modules/push/server";
 
 //Create Event
 export async function POST( request : Request ) {
 
- return routeHandler( async () => {
- 
-    const bodyRequest = await request.json();
+  return apiRouteHandler( async ( ) => {
 
     const user = await getAuthenticatedUser();
 
-    const { body } = await zodValidator({ body: bodyRequest }, {
-        body: z.strictObject({
+    const { body } = await zodValidator({ 
+      body: await request.json() 
+    }, {
+      body: z.strictObject({
         workspace: workspaceValidator.name,
       })
     });
 
-    const workspaceId = await db.workspace.find_or_create(user.id, { name: body.workspace });
-
     const event = await db.event.create({
-      userId: user.id,
-      workspaceId: workspaceId.id,
-      event: "user.signup.test",
-      description: "New user registered",
-      icon: "🎉",
-      color: "#ffffff",
+      query: {
+        where: {
+          workspace: body.workspace,
+          userId: user.id,
+        },
+        data: {
+          event: "user.signup.test",
+          description: "New user registered",
+          icon: "🎉",
+          color: "#ffffff",
+        },
+      },
+      options: {
+        consumeEventUsage: false,
+      }
     });
 
     // Publish event to Redis SSE channel
     await publishEvent({
       userId: user.id,
-      workspaceId: workspaceId.id,
+      workspaceId: event.workspaceId,
       event: {
         id: event.id,
         event: "user.signup.test",
@@ -45,9 +53,23 @@ export async function POST( request : Request ) {
         createdAt: event.createdAt.toISOString(),
       },
     })
+
+    // Send push notifications to workspace members
+    await sendNotificationToWorkspaceMembers(
+      event.workspaceId,
+      {
+        type: 'event',
+        data: {
+          event: "user.signup.test",
+          description: "New user registered",
+        }
+      }
+    )
   
     return {}
      
+  },{
+    statusCode: 201,
   });
   
 }

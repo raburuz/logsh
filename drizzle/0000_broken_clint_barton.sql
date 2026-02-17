@@ -1,28 +1,29 @@
-CREATE TABLE "api_key_token_bucket" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"api_key_id" text NOT NULL,
-	"capacity" integer DEFAULT 0 NOT NULL,
-	"remaining" integer DEFAULT 0 NOT NULL,
-	"refill_interval" integer DEFAULT 0 NOT NULL,
-	"refill_amount" integer DEFAULT 0 NOT NULL,
-	"last_refill_at" timestamp with time zone DEFAULT now() NOT NULL
-);
---> statement-breakpoint
-CREATE TABLE "api_usage" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"user_id" text NOT NULL,
-	"events" integer DEFAULT 0 NOT NULL,
-	"renew_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"created_at" timestamp with time zone DEFAULT now() NOT NULL
-);
---> statement-breakpoint
 CREATE TABLE "event" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"workspace_id" uuid NOT NULL,
 	"icon" text DEFAULT '',
+	"color" text DEFAULT '#000000',
 	"event" text NOT NULL,
 	"description" text,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "push_subscriptions	" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"user_id" text NOT NULL,
+	"endpoint" text NOT NULL,
+	"keys" jsonb DEFAULT '{"auth":"","p256dh":""}'::jsonb NOT NULL,
+	"device_id" text NOT NULL,
+	"device_info" jsonb DEFAULT '{"userAgent":"","platform":"","browser":"","device":""}'::jsonb NOT NULL,
+	"status" text DEFAULT 'active' NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "subscription_usage" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"subscription_id" text NOT NULL,
+	"events" integer DEFAULT 0 NOT NULL,
+	"last_event_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"last_reset_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "workspace" (
@@ -119,6 +120,7 @@ CREATE TABLE "user" (
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"stripe_customer_id" text,
+	"is_onboarded" boolean DEFAULT false NOT NULL,
 	CONSTRAINT "user_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
@@ -131,9 +133,9 @@ CREATE TABLE "verification" (
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-ALTER TABLE "api_key_token_bucket" ADD CONSTRAINT "api_key_token_bucket_api_key_id_apikey_id_fk" FOREIGN KEY ("api_key_id") REFERENCES "public"."apikey"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "api_usage" ADD CONSTRAINT "api_usage_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "event" ADD CONSTRAINT "event_workspace_id_workspace_id_fk" FOREIGN KEY ("workspace_id") REFERENCES "public"."workspace"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "push_subscriptions	" ADD CONSTRAINT "push_subscriptions	_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "subscription_usage" ADD CONSTRAINT "subscription_usage_subscription_id_subscription_id_fk" FOREIGN KEY ("subscription_id") REFERENCES "public"."subscription"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "workspace_member" ADD CONSTRAINT "workspace_member_workspace_id_workspace_id_fk" FOREIGN KEY ("workspace_id") REFERENCES "public"."workspace"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "workspace_member" ADD CONSTRAINT "workspace_member_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "account" ADD CONSTRAINT "account_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint

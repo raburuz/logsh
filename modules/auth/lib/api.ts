@@ -1,7 +1,6 @@
 import { headers } from "next/headers";
 import { AppError } from "@/modules/shared/lib/error";
 import { auth } from "./server";
-import { db } from "@/modules/db";
 
 export const apiAuthentication = async () => {
 
@@ -26,6 +25,8 @@ export const apiAuthentication = async () => {
     });
 
   } catch (error) {
+    //Todo
+    // Black list the key for a short period if there are repeated failed attempts to prevent brute-force attacks
     throw new AppError(
       'bad_request', 
       'Invalid body parameters provided for API key verification. Please check the request body and try again.'
@@ -55,8 +56,9 @@ export const apiAuthentication = async () => {
         )
     }
   }
-
-  await db.api.rate_limit(session.key.id);
   
-  return session.key;
+  return {
+    id: session.key.id,
+    userId: session.key.userId, 
+  };
 }

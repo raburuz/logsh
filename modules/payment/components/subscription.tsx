@@ -17,34 +17,34 @@ export const Subscription = () => {
         <div className="w-full flex flex-row items-center justify-between gap-2">
           <h2 className="font-bold text-lg">Subscription</h2>
           {
-            subscription?.subscription ? <Portal/> : null
+            subscription ? <Portal/> : null
           }
         </div>
-        {subscription?.subscription ? (
+        {subscription ? (
           <div className="text-xs flex flex-col gap-2">
             <p className="pb-0.5 text-zinc-500">You already have an active subscription.</p>
             <div className="flex items-center gap-2 pb-2">
               <Package className='w-4 h-4 '/>
               <span>Plan:</span>
-              <span className="font-bold text-zinc-500">{subscription.plan.name} plan subscription</span>
+              <span className="font-bold text-zinc-500">{subscription.plan} plan subscription</span>
             </div>
             <div className="flex items-center gap-2 pb-2">
               <Activity  className='w-4 h-4 '/>
               <span>Status:</span>
-              <span className="font-bold text-zinc-500">{subscription.subscription.status}</span>
+              <span className="font-bold text-zinc-500">{subscription.status}</span>
             </div>
             <div className="flex items-center gap-2 pb-2">
               <CalendarClock className='w-4 h-4 '/>
               <span>Next billing:</span>
-              <span className="font-bold text-zinc-500">{ subscription.subscription?.periodEnd ? niceFutureDate(subscription.subscription.periodEnd) : undefined}</span>
+              <span className="font-bold text-zinc-500">{ subscription.periodEnd ? niceFutureDate(subscription.periodEnd) : undefined}</span>
             </div>
             <div className="flex items-center gap-2 pb-2">
               <Gauge className='w-4 h-4 '/>
               <span>Usage:</span>
-              <span className="font-bold text-zinc-500">{subscription.usage.events} / {subscription.plan.limits.events.toLocaleString()} events </span>
+              <span className="font-bold text-zinc-500">{subscription.usage.events} / {subscription.limits.events.toLocaleString()} events </span>
             </div>
             {
-              ["past_due", "unpaid", "trialing"].includes(subscription.subscription?.status ?? '') && (
+              ["past_due", "unpaid", "trialing"].includes(subscription.status ?? '') && (
                 <div className="text-xs flex flex-col gap-2">
                   <p className="text-red-800 font-medium">Once the trial ends, your subscription will pause unless you add a payment method.</p>
                 </div>

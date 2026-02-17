@@ -2,6 +2,7 @@ import { and, desc, eq } from "drizzle-orm";
 import { db } from "../db";
 import { workspace, workspaceMember } from "../schemas/app";
 import { AppError } from "@/modules/shared/lib/error";
+import { DbTransaction } from "../interface";
 
 export const workspaceStatus = {
   ACTIVE: 'active',
@@ -13,23 +14,35 @@ export const workspaceMemberRoles= {
 }
 
 export const workspaceQuery = {
-  create: async ( userId: string, data: { name: string } ) => {
+  create: async ( 
+    query: {
+      by: { userId: string },
+      data: { name: string }
+    },
+    options?: {
+      tx?: DbTransaction
+    }
+   ) => {
 
-    const alreadyExists = await workspaceQuery.exist(userId, data.name);
+    const { by, data } = query;
+    const { tx } = options ?? {};
+    const dbToUse = tx ?? db;
+
+    const alreadyExists = await workspaceQuery.exist(by.userId, data.name);
 
     if(alreadyExists) throw new AppError('bad_request', 'Workspace with this name already exists');
   
-    const [ wks ] = await db
+    const [ wks ] = await dbToUse
     .insert(workspace)
     .values({
       name: data.name.toLowerCase(),
       status: workspaceStatus.ACTIVE,
     }).returning({ id: workspace.id });
 
-    await db
+    await dbToUse
     .insert(workspaceMember)
     .values({
-      userId,
+      userId: by.userId,
       workspaceId: wks.id,
       role: workspaceMemberRoles.OWNER,
     });
@@ -63,8 +76,17 @@ export const workspaceQuery = {
     )
   },
   
-  get: async ( workspaceId: string ) => {
-    const result = await db
+  get: async (
+    query: {
+      by: { workspaceId: string}
+    },
+    options?: {
+      tx?: DbTransaction
+    }
+  ) => {
+    const { tx } = options ?? {};
+    const dbToUse = tx ?? db;
+    const result = await dbToUse
     .select({
       id: workspace.id,
       name: workspace.name,
@@ -72,7 +94,7 @@ export const workspaceQuery = {
     .from(workspace)
     .where(
       and(
-        eq( workspace.id, workspaceId ),
+        eq( workspace.id, query.by.workspaceId ),
         eq( workspace.status, workspaceStatus.ACTIVE)
       )
     )
@@ -103,9 +125,20 @@ export const workspaceQuery = {
     .orderBy( desc(workspace.createdAt) );
   },
 
-  find_or_create: async ( userId: string, data: { name: string, } ) => {
+  find_or_create: async (
+    query: {
+      by: { userId: string },
+      data: { name: string }
+    },
+    options?: {
+      tx?: DbTransaction
+    }
+  ) => {
+    const { by, data } = query;
+    const { tx } = options ?? {};
+    const dbToUse = tx ?? db;
   
-    let [ response ] = await db
+    let [ response ] = await dbToUse
     .select({
       id: workspace.id
     })
@@ -113,7 +146,7 @@ export const workspaceQuery = {
     .innerJoin(workspace, eq(workspace.id, workspaceMember.workspaceId))
     .where(
       and(
-        eq(workspaceMember.userId, userId),
+        eq(workspaceMember.userId, by.userId),
         eq(workspace.id, workspaceMember.workspaceId),
         eq(workspace.name, data.name),
         eq(workspace.status, workspaceStatus.ACTIVE)
@@ -122,7 +155,7 @@ export const workspaceQuery = {
     .limit(1);
   
     if(!response){
-      response = await workspaceQuery.create(userId, { name: data.name });
+      response = await workspaceQuery.create({ by, data }, { tx });
     }
   
     return {

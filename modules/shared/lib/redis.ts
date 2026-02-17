@@ -1,7 +1,11 @@
 import Redis from "ioredis"
 import { IEventSse } from "@/modules/feed/interface";
 
-const redis = new Redis(process.env.REDIS_URL ?? '')
+export const redisInstance = () => {
+  return new Redis(process.env.REDIS_URL ?? '')
+}
+
+const redis = redisInstance();
 
 /**
  * Publish event to user's channel

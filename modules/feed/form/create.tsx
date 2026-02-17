@@ -43,7 +43,7 @@ export const CreateWorkspaceForm = ( props: { trigger: () => React.ReactNode } )
   const workspaces = useWorkspace();
 
   const onSubmit = async (data: ISchema) => {
-    await workspaces.createWorkspace(data.name);
+    await workspaces.createWorkspace(data.name, { shadowEffect: 'update_workspace_list' });
     setIsOpen(false);
     reset();
   };

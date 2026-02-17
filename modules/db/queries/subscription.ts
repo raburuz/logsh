@@ -1,39 +1,153 @@
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { subscription } from "../schemas/auth"
 import { db } from "../db"
 import { findPlanByName } from "@/modules/payment/lib/plans";
-import { apiQuery } from "./api";
+import { subscriptionUsage } from "../schemas/app";
+import { DbTransaction } from "../interface";
+import dayjs from "dayjs";
 
 export const subscriptionQuery = {
 
-  get: async ( { by } : { by: { userId: string }}) => {
+  create_usage : async ( 
+    props: { data: { subscriptionId: string } },
+    options?: { tx?: DbTransaction }
+  ) => {
 
-    const response = await db
-    .select({
-      id: subscription.id,
-      plan: subscription.plan,
-      status: subscription.status,
-      stripeCustomerId: subscription.stripeCustomerId,
-      stripeSubscriptionId: subscription.stripeSubscriptionId,
-      periodEnd: subscription.periodEnd,
+    const { tx } = options || {};
+    const dbToUse = tx ? tx : db;
+
+    const { data } = props;
+    const response = await dbToUse
+    .insert(subscriptionUsage)
+    .values({
+      subscriptionId: data.subscriptionId, 
+      events: 0,
     })
-    .from(subscription)
-    .where(
-      eq(subscription.referenceId, by.userId)
-    );
+    .returning({ 
+      id: subscriptionUsage.id, 
+      events: subscriptionUsage.events, 
+      lastEventAt: subscriptionUsage.lastEventAt, 
+      lastResetAt: subscriptionUsage.lastResetAt,
+    });
 
-    const usage = await apiQuery.get_or_create_usage({ data : { userId: by.userId } });
-    
-    const sub  = response.find(
-      sub => sub.status === 'active' || sub.status === "trialing"
+    return response.at(0)
+  },
+
+  get_or_create_usage :  async (
+    props: {
+      data: { subscriptionId: string },
+      options?: { tx?: DbTransaction }
+    },
+  ) => {
+    const { data, options } = props;
+    const { subscriptionId } = data;
+    const { tx } = options || {};
+    const dbToUse = tx ? tx : db;
+
+    const resp = await dbToUse
+    .select({
+      id: subscriptionUsage.id,
+      events: subscriptionUsage.events, 
+      lastEventAt: subscriptionUsage.lastEventAt, 
+      lastResetAt: subscriptionUsage.lastResetAt,
+    })
+    .from(subscriptionUsage)
+    .where(
+      eq(subscriptionUsage.subscriptionId, subscriptionId)
     )
 
-    const plan = findPlanByName(sub?.plan);
+    let usage = resp.at(0); 
 
-    return {
-      subscription: sub,
-      plan,
-      usage,
+    if(!usage) {
+      usage = await subscriptionQuery.create_usage({ data: { subscriptionId } }, { tx });
     }
+
+    return usage;
+  },
+  update_usage: async ( 
+    { by, data }: { 
+        by: { subscriptionId: string }, 
+        data: { event: { quantity: number, action: 'add' | 'subtract' } }
+      },
+    options?: {
+      tx?: DbTransaction
+    }
+  ) => {
+  
+    const { tx } = options ?? {};
+    const dbToUse = tx ?? db;
+
+    const operator = data.event.action === 'add' ? sql`+` : sql`-`;
+      
+    await dbToUse
+    .update(subscriptionUsage)
+    .set({
+      events: sql`${subscriptionUsage.events} ${operator} ${data.event.quantity}`
+    })
+    .where(
+      eq(subscriptionUsage.subscriptionId, by.subscriptionId)
+    )
+
+  },
+
+  reset_usage: async () => {
+  
+    const now = dayjs();
+
+    await db
+    .update(subscriptionUsage)
+    .set({
+      events: 0,
+      lastResetAt: now.toDate(),
+    })
+  },
+
+  get: async ( { by } : { by: { userId: string }}) => {
+
+    const res = await db.transaction( async (tx) => {
+
+      const subs = await tx
+      .select({
+        id: subscription.id,
+        plan: subscription.plan,
+        status: subscription.status,
+        stripeCustomerId: subscription.stripeCustomerId,
+        stripeSubscriptionId: subscription.stripeSubscriptionId,
+        periodEnd: subscription.periodEnd,
+      })
+      .from(subscription)
+      .where(
+        eq(subscription.referenceId, by.userId)
+      );
+
+      const sub = subs?.find(
+        sub => sub.status === 'active' || sub.status === "trialing"
+      )
+
+      if(!sub){
+        return null;
+      }
+
+      const usage = await subscriptionQuery.get_or_create_usage({ 
+        data : { subscriptionId: sub.id }, 
+        options: { tx } 
+      });
+  
+      const plan = findPlanByName(sub.plan);
+
+      return {
+        id: sub.id,
+        plan: plan.name,
+        usage: usage,
+        limits: plan.limits,
+        status: sub.status,
+        stripeCustomerId: sub.stripeCustomerId,
+        stripeSubscriptionId: sub.stripeSubscriptionId,
+        periodEnd: sub.periodEnd,
+      }
+
+    })
+
+    return res;
   },
 }

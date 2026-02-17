@@ -1,5 +1,29 @@
 import { IPlan } from "../interface";
 
+export const defaultPlan: IPlan = {
+  isFree: true,
+  name: "Free",
+  description: "For testing and small projects.",
+  interval: {
+    monthly: {
+      stripePriceId: "",
+      amount: 0,
+    },
+    yearly: {
+      stripePriceId: "",
+      amount: 0,
+    }
+  },
+  features: [],
+  limits: {
+    events: 0,
+    eventsRetentionDays: 0,
+    eventPerSecond: 0,
+  },
+  freeTrialDays: 0,
+  callToAction: "",
+};
+
 export const plans: IPlan[] = [
   {
     isFree: false,
@@ -24,6 +48,7 @@ export const plans: IPlan[] = [
     limits: {
       events: 25_000,
       eventsRetentionDays: 7,
+      eventPerSecond: 100,
     },
     freeTrialDays: 14,
     callToAction: "Start 14-day free trial",
@@ -54,6 +79,7 @@ export const plans: IPlan[] = [
     limits: {
       events: 100_000,
       eventsRetentionDays: 90,
+      eventPerSecond: 1000,
     },
     freeTrialDays: 14,
     callToAction: "Start 14-day free trial",
@@ -83,6 +109,7 @@ export const plans: IPlan[] = [
     limits: {
       events: 1_000_000,
       eventsRetentionDays: 365,
+      eventPerSecond: 5000,
     },
     freeTrialDays: 14,
     callToAction: "Start 14-day free trial",
@@ -116,5 +143,6 @@ export const findPlanByName = ( name?: string ) => {
     if (plan) return plan;
   }
 
-  return plans.find( p => p.isFree )!;
+  //This could break the code when there is no free plan, we need to return something
+  return plans.find( p => p.isFree ) || defaultPlan;
 }

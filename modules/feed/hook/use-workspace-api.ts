@@ -3,7 +3,7 @@ import { IWorkspace } from "../interface";
 
 export const useWorkspaceApi = () => {
 
-  const getWorkspaces = async (): Promise<IWorkspace[]> => {
+  const getWorkspaces = async (): Promise<{ list: IWorkspace[] }> => {
 
     try {
         const response = await fetch('/api/workspace', {
@@ -23,7 +23,7 @@ export const useWorkspaceApi = () => {
       return resp.data;
     } catch (error) {
       console.log('Error fetching workspaces:', error);
-      return [];
+      return { list: [] };
     }
   }
 

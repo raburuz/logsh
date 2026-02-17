@@ -1,12 +1,12 @@
 import z from "zod";
 import { zodValidator } from "@/modules/shared/lib/zod";
-import { routeHandler } from "@/modules/shared/utils/handler";
+import { apiRouteHandler } from "@/modules/shared/utils/handler";
 import { getAuthenticatedUser } from "@/modules/auth/actions/auth";
 import { db } from "@/modules/db";
 
 export async function POST( request : Request ) {
 
-  return routeHandler( async () => {
+  return apiRouteHandler( async () => {
 
     const user = await getAuthenticatedUser();
     const data = await request.json();

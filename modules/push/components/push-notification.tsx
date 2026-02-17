@@ -4,25 +4,25 @@
 import { useEffect } from 'react';
 import { Activity, CircleAlert, Info, Monitor, MonitorSmartphone, Smartphone, Tablet } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { usePushNotification } from '../hook/use-push-notication';
 import { cn } from '@/lib/utils';
 import {
   Alert,
   AlertDescription,
   AlertTitle,
 } from "@/components/ui/alert"
+import { usePushNotification } from '../hook/use-push-notification';
 
 export default function PushNotificationButton() {
   const pushNotification = usePushNotification();
 
   useEffect(() => {
-    pushNotification.checkPermission();
-    pushNotification.fetchSubscriptions();
+    pushNotification.checkBrowserPermission();
+    pushNotification.fetchSubscribedDevices();
   }, [])
   
 
   const handleSubscribe = async () => {
-   await pushNotification.subscribe();
+   await pushNotification.subscribe({ shadowEffect: 'get_device_list' });
   };
 
   return (
@@ -33,7 +33,7 @@ export default function PushNotificationButton() {
       <div className='text-xs flex flex-col gap-2'>
         <p className="pb-0.5 text-zinc-500">Stay informed about important events and real-time updates.</p>
         {
-          pushNotification.permission === 'denied' && (
+          pushNotification.browserPermission === 'denied' && (
             <Alert className='w-fit my-2'>
               <CircleAlert />
               <AlertTitle>Action required</AlertTitle>
@@ -44,7 +44,7 @@ export default function PushNotificationButton() {
           )
         }
         {
-          !['granted', 'denied'].includes(pushNotification.permission) && (
+          !['granted', 'denied'].includes(pushNotification.browserPermission) && (
             <Alert className='w-fit my-2'>
               <Info />
               <AlertTitle>Action required</AlertTitle>
@@ -58,13 +58,13 @@ export default function PushNotificationButton() {
           <Activity className='w-4 h-4'/>
           <span>Status:</span>
           <span className={`${
-            pushNotification.permission === 'granted' 
+            pushNotification.browserPermission === 'granted' 
               ? 'text-green-800' 
-              : pushNotification.permission === 'denied'
+              : pushNotification.browserPermission === 'denied'
               ? 'text-red-800'
               : 'text-gray-800'
           }`}>
-            {pushNotification.permission === 'granted' ? 'Granted' : pushNotification.permission === 'denied' ? 'Denied' : 'Pending'}
+            {pushNotification.browserPermission === 'granted' ? 'Granted' : pushNotification.browserPermission === 'denied' ? 'Denied' : 'Pending'}
           </span>
         </div>
         <div className='flex flex-col pb-2'>
@@ -117,10 +117,10 @@ export default function PushNotificationButton() {
                         {
                           pushNotification.deviceId === device.deviceId && (
                             <>
-                            {pushNotification.permission === 'granted' && device.status === 'active' && <span className='text-green-800'>Notification are enabled on this device</span>}
-                            {pushNotification.permission === 'granted' && device.status === 'inactive' && <span className='text-red-800'>Notifications are disabled on this device</span>}
-                            {pushNotification.permission === 'denied' && <span className='text-red-800'>Permission denied. Please enable notifications in your browser settings.</span>}
-                            {!['granted', 'denied'].includes(pushNotification.permission) && <span className='text-zinc-400'>Permission pending. Please allow notifications in your browser settings.</span>}
+                            {pushNotification.browserPermission === 'granted' && device.status === 'active' && <span className='text-green-800'>Notification are enabled on this device</span>}
+                            {pushNotification.browserPermission === 'granted' && device.status === 'inactive' && <span className='text-red-800'>Notifications are disabled on this device</span>}
+                            {pushNotification.browserPermission === 'denied' && <span className='text-red-800'>Permission denied. Please enable notifications in your browser settings.</span>}
+                            {!['granted', 'denied'].includes(pushNotification.browserPermission) && <span className='text-zinc-400'>Permission pending. Please allow notifications in your browser settings.</span>}
                             </>
                           )
                           
@@ -133,30 +133,20 @@ export default function PushNotificationButton() {
                 )
             } 
           </div>
-      </div>
-        
-      </div>
-
-      {pushNotification.error && (
-        <div className="p-3 bg-red-900/10 border border-red-900/15 rounded text-xs font-semibold">
-          <p>{pushNotification.error.message}</p>
-          {pushNotification.error.suggestedAction && (
-            <p className='mt-1'>Suggested action: {pushNotification.error.suggestedAction}</p>
-          )}
         </div>
-      )}
+      </div>
 
       {
-        pushNotification.permission !== 'denied' && (
+        pushNotification.browserPermission !== 'denied' && (
           <div className="flex gap-3 pt-4">
             <Button
               size={'xs'}
               onClick={handleSubscribe}
               disabled={pushNotification.isCreatingSubscription}
             >
-              { !['granted', 'denied'].includes(pushNotification.permission) && 'Enable notifications' }
-              {  pushNotification.permission === 'granted' && pushNotification.devices?.some( device => device.deviceId === pushNotification.deviceId ) && 'Update Subscription' }
-              {  pushNotification.permission === 'granted' && !pushNotification.devices?.some( device => device.deviceId === pushNotification.deviceId ) && 'Subscribe to notifications' }
+              { !['granted', 'denied'].includes(pushNotification.browserPermission) && 'Enable notifications' }
+              {  pushNotification.browserPermission === 'granted' && pushNotification.devices?.some( device => device.deviceId === pushNotification.deviceId ) && 'Update Subscription' }
+              {  pushNotification.browserPermission === 'granted' && !pushNotification.devices?.some( device => device.deviceId === pushNotification.deviceId ) && 'Subscribe to notifications' }
             </Button>
           </div>
         )

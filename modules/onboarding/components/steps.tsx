@@ -15,7 +15,7 @@ import {
   Shield,
 } from "lucide-react"
 import { plans } from "@/modules/payment/lib/plans"
-import { usePushNotification } from "@/modules/push/hook/use-push-notication"
+import { usePushNotification } from "@/modules/push/hook/use-push-notification"
 import { useOnboardingData } from "../store"
 
 export const StepWelcome = () => {
@@ -44,6 +44,7 @@ export const StepWelcome = () => {
         </label>
         <Input
           id="workspace"
+          autoComplete="off"
           placeholder="e.g. My SaaS"
           value={onboardingData.workspace}
           onChange={(e) => onboardingData.setWorkspace(e.target.value)}
@@ -120,7 +121,7 @@ export const StepFirstEvent = () => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      channel: "${onboardingData.workspace || "my-workspace"}",
+      workspace: "${onboardingData.workspace || "my-workspace"}",
       event: "user.signup.test",
       description: "New user registered",
       color: "#ffffff",
@@ -198,7 +199,7 @@ export const StepDashboard = () => {
       description: "New user registered",
       highlight: true,
       time: "now",
-      color: "#10b981",
+      color: "#ffffff",
       icon: <User className="h-3.5 w-3.5" />,
     },
     {

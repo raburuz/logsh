@@ -263,7 +263,7 @@ export const Feed = () => {
           <div className="flex items-center gap-3">
             <span>{config.app.name}</span>
             <span className="text-muted-foreground/15">|</span>
-            <span>Runtime: Edge</span>
+            <span>Made by: Jean Ramirez</span>
           </div>
         </div>
       </div>

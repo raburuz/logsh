@@ -6,8 +6,8 @@ const errorCodes = new Set([404, 410]);
 
 webpush.setVapidDetails(
   process.env.VAPID_SUBJECT ?? '',
-  process.env.VAPID_PUBLIC_KEY ?? '',
-  process.env.VAPID_SECRET_KEY ?? '',
+  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? '',
+  process.env.VAPID_PRIVATE_KEY ?? '',
 )
 
 const sendPushNotification = async ({
@@ -32,11 +32,12 @@ const sendPushNotification = async ({
     await webpush.sendNotification(
       pushSubscriptionOptions, 
       message
-    )
+    );
+
   } catch (error) {
     const result = error as unknown as SendResult;
     if(errorCodes.has(result.statusCode)) {
-      db.pushSubscription.delete({ where: { endpoint } });
+      db.pushSubscription.delete_by_endpoint({ where: { endpoint } });
     }
   }
 
@@ -48,7 +49,7 @@ export const sendNotificationToWorkspaceMembers = async ( workspaceId: string, m
 
   push.forEach( async (member) => {
     await sendPushNotification({
-      endpoint: member.enpoint,
+      endpoint: member.endpoint,
       keys: member.keys,
       message: JSON.stringify(message),
     })

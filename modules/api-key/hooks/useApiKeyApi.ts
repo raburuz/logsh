@@ -31,7 +31,7 @@ export const useApi = () => {
 
   }
 
-  const getApiKeys = async ():  Promise<IApiKey[]> => {
+  const getApiKeys = async ():  Promise<{ list: IApiKey[] }> => {
     try {
       const response = await fetch('/api/api-key', {
         method: 'GET',
@@ -49,7 +49,7 @@ export const useApi = () => {
 
     } catch (error) {
       console.log(error);
-      return [];
+      return { list: [] };
     }
   }
 

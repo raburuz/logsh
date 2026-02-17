@@ -1,6 +1,5 @@
 import { getAuthenticatedUser } from "@/modules/auth/actions/auth";
-import { getChannelName } from "@/modules/shared/lib/redis";
-import Redis from "ioredis";
+import { getChannelName, redisInstance } from "@/modules/shared/lib/redis";
 
 export const runtime = 'nodejs';
 // This is required to enable streaming
@@ -15,7 +14,7 @@ export async function GET( request : Request ) {
   }
 
   // Initialize Upstash Redis client
-  const subscriber = new Redis(process.env.REDIS_URL ?? '');
+  const subscriber = redisInstance();
   
   // Create a TransformStream to handle streaming data
   const responseStream = new TransformStream();
@@ -23,6 +22,7 @@ export async function GET( request : Request ) {
   const encoder = new TextEncoder();
   
   await subscriber.subscribe(getChannelName(user.id));
+  
 
   // Send an initial comment to establish the SSE connection
   writer.write(encoder.encode('event: keep-alive\ndata: keep alive\n\n'));

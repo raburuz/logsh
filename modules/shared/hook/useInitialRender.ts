@@ -3,7 +3,7 @@ import { useEvent } from "../store/event";
 import { useWorkspace } from "../store/workspace";
 import { useApiKey } from "../store/api-key";
 import { useSubscription } from "../store/subscription";
-import { usePushNotification } from "@/modules/push/hook/use-push-notication";
+import { usePushNotification } from "@/modules/push/hook/use-push-notification";
 
 export const useInitialAppRender = () => {
 
@@ -11,7 +11,7 @@ export const useInitialAppRender = () => {
   
   useEffect(() => {
     pushNotification.registerDevice();
-    pushNotification.registerSW();
+    pushNotification.registerServiceWorker();
   }, [])
 
 }
@@ -23,7 +23,6 @@ export const useInitialDashboardRender = () => {
   const subscription = useSubscription();
   
   useEffect(() => {
-    console.log('render')
     apiKey.fetchApikeys();
     workspace.fetchWorkspaces();
     event.fetchStream();

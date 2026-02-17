@@ -28,7 +28,7 @@ export const useOnboardingStore = create<IOnboardingState & IOnboardingActions>(
     hasPushPermission: false,
     workspace: "",
     price: undefined,
-    setWorkspace: (v: string) => set({ workspace: v.trim() }),
+    setWorkspace: (v: string) => set({ workspace: v }),
     setPrice: (v: IPrice) => set({ price: v }),
     setHasPushPermission: (v: boolean) => set({ hasPushPermission: v }),
     getPrice: () => get().price,

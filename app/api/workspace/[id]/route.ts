@@ -2,10 +2,10 @@ import z from "zod";
 import { getAuthenticatedUser } from "@/modules/auth/actions/auth";
 import { db } from "@/modules/db";
 import { zodValidator } from "@/modules/shared/lib/zod";
-import { routeHandler } from "@/modules/shared/utils/handler";
+import { apiRouteHandler } from "@/modules/shared/utils/handler";
 
 export async function DELETE( request: Request, ctx: RouteContext<'/api/workspace/[id]'> ) {
-  return routeHandler( async () => {
+  return apiRouteHandler( async () => {
 
 
     const { id }  = await ctx.params;

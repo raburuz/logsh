@@ -1,41 +1,82 @@
-import { AppError } from "@/modules/shared/lib/error";
 import { db } from "../db";
 import { event, workspace } from "../schemas/app";
-import { apiQuery } from "./api";
 import { subscriptionQuery } from "./subscription";
 import { and, desc, eq, gte, lt, or } from "drizzle-orm";
-import { workspaceStatus } from "./workspace";
+import { workspaceQuery, workspaceStatus } from "./workspace";
 import { dayjs } from "@/modules/shared/lib/date";
 
 export const eventQuery = {
   create: async (
-    data: {
-      userId: string,
-      workspaceId: string,
-      event: string,
-      description: string,
-      color: string,
-      icon: string,
-    }
+    props: {
+      query : {
+        where: {
+          workspace: string,
+          userId: string,
+        },
+        data: {
+          event: string,
+          description: string,
+          color: string,
+          icon: string,
+        }
+      },
+      options: {
+        consumeEventUsage: false | { 
+          where: { subscriptionId: string }
+          query: { quantity: number }
+        },
+      }
+    },
   ) => {
+    const { data, where } = props.query;
+    const { options } = props;
+
+    const res = await db.transaction( async (tx) => {
+
+      // Workspace existence and creation if not exists
+      const wk = await workspaceQuery
+        .find_or_create({ 
+          by: { userId: where.userId }, 
+          data: { name: where.workspace },  
+        }, { tx });
+      
+      // Event creation
+      const [ response ] = await tx
+      .insert(event)
+      .values({
+        workspaceId: wk.id,
+        event: data.event,
+        description: data.description,
+        icon: data.icon,
+        color: data.color,
+      })
+      .returning({
+        id: event.id,
+        createdAt: event.createdAt,
+      })
+
+      //Limit consumption if specified in options
+      if(options.consumeEventUsage) {
+        await subscriptionQuery.update_usage({
+          by: { subscriptionId: options.consumeEventUsage.where.subscriptionId },
+          data: {
+            event: {
+              quantity: options.consumeEventUsage.query.quantity,
+              action: 'add',
+            }
+          }
+        }, { tx });
+      }
+
+      return {
+        id: response.id,
+        createdAt: response.createdAt,
+        workspaceId: wk.id,
+      };
     
-    await eventRestrictions.check_limit({ by: { userId: data.userId } })
-  
-    const [ response ] = await db
-    .insert(event)
-    .values({
-      workspaceId: data.workspaceId,
-      event: data.event,
-      description: data.description,
-      icon: data.icon,
-      color: data.color,
-    })
-    .returning({
-      id: event.id,
-      createdAt: event.createdAt,
-    })
-  
-    return response;
+    });
+
+    return res;
   
   },
   list: async (
@@ -115,24 +156,4 @@ export const eventQuery = {
       )
     )
   }
-}
-
-export const eventRestrictions = {
-  
-  check_limit : async ({ by }: { by: { userId: string } } ) => {
-
-    const [ api, subscription ] = await Promise.all([
-      apiQuery.get_usage({ by: { userId: by.userId }}),
-      subscriptionQuery.get({ by: { userId: by.userId }}),
-    ]);
-
-    //No subscription found
-    if( (api?.events ?? 0) >= subscription.plan.limits.events ) {
-      throw new AppError(
-        'payment_required',
-        'You have reached the maximum number of monthly events. To record more events, please upgrade to the basic plan or higher.'
-      )
-    }
-
-  },
 }

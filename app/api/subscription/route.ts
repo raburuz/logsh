@@ -5,13 +5,11 @@ import { auth } from "@/modules/auth/lib/server";
 import { db } from "@/modules/db"
 import { plans } from "@/modules/payment/lib/plans";
 import { zodValidator } from "@/modules/shared/lib/zod";
-import { routeHandler } from "@/modules/shared/utils/handler"
-import { AppError } from "@/modules/shared/lib/error";
-import { APIError } from "better-auth";
+import { apiRouteHandler } from "@/modules/shared/utils/handler"
 
 export async function GET(){
 
-  return routeHandler( async () => {
+  return apiRouteHandler( async () => {
 
     const user = await getAuthenticatedUser();
 
@@ -24,7 +22,7 @@ export async function GET(){
 
 export async function POST( request : Request ){
 
-  return routeHandler( async () => {
+  return apiRouteHandler( async () => {
 
     const user = await getAuthenticatedUser();
 
@@ -46,14 +44,14 @@ export async function POST( request : Request ){
       })
     })
 
-    const subs = await db.subscription.get({by: { userId: user.id }});
+    const sub = await db.subscription.get({by: { userId: user.id }});
 
     const data = await auth.api.upgradeSubscription({
       body: {
           plan: body.planName, // required
           annual: body.isAnnual, //required
           referenceId: user.id, // required if you want to reuse the same subscription
-          subscriptionId: subs.subscription?.stripeSubscriptionId ?? undefined,
+          subscriptionId: sub?.stripeSubscriptionId ?? undefined,
           successUrl: "/profile", // required
           cancelUrl: "/profile", // required
           returnUrl: "/profile",

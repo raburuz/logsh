@@ -1,67 +1,35 @@
-import z from "zod";
-import * as emoji from "node-emoji";
-import { routeHandler } from "@/modules/shared/utils/handler";
-import { zodValidator } from "@/modules/shared/lib/zod";
-import { db } from "@/modules/db";
+import { NextRequest } from "next/server";
+import { apiRouteHandler } from "@/modules/shared/utils/handler";
 import { apiAuthentication } from "@/modules/auth/lib/api";
-import { workspaceValidator } from "@/modules/feed/lib/zod";
-import { publishEvent } from "@/modules/shared/lib/redis";
+import { eventService } from "@/modules/shared/services/event";
+import { RateLimit } from "@/modules/shared/lib/rate-limit";
+import { getClientIp } from "@/modules/shared/lib/ip";
 
 //Create Event
-export async function POST( request : Request ) {
+export async function POST( request : NextRequest ) {
 
- return routeHandler( async () => {
- 
-    const bodyRequest = await request.json();
+  return apiRouteHandler( async () => {
 
+    // Apply global rate limit based on client IP to prevent abuse of the API endpoint
+    const ip = await getClientIp();
+
+    await RateLimit.bucket(`global_api:${ip}`, {
+      refillAmount: 10000,
+      refillIntervalSeg: 1,
+      tokensPerRequest: 1,
+      blockDurationSeg: 2,
+      redisKeyPrefix: 'global',
+    })
+
+    // Authenticate API request and get the associated API key
     const api = await apiAuthentication();
 
-    const { body } = await zodValidator({ body: bodyRequest }, {
-      body: z.strictObject({
-      event: z.string().trim().min(1, "Event name is required").max(150, "Event name must be 150 characters or less"),
-      description: z.string().trim().min(1, "Description can not be a empty string")
-      .max(250, "Description must be 250 characters or less").optional().default(""),
-      color: z.string().trim().regex(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/, "Color must be a valid hex code").optional().default("#18181b"),
-      //https://www.npmjs.com/package/node-emoji
-      icon: z.string()
-        .trim()
-        .optional()
-        .default("🔥") 
-        .refine((val) => {
-          const result = emoji.find(val);
-          return !!result
-        }, {
-          message: "Icon must be a valid emoji",
-        }),
-      workspace: workspaceValidator.name,
-    })
-    });
-
-    const workspaceId = await db.workspace.find_or_create(api.userId, { name: body.workspace });
-
-    const event = await db.event.create({
+    await eventService.createViaAPI({
+      apikeyId: api.id,
       userId: api.userId,
-      event: body.event,
-      description: body.description,
-      icon: body.icon,
-      workspaceId: workspaceId.id,
-      color: body.color,
-    });
-
-    // Publish event to Redis SSE channel
-    await publishEvent({
-      userId: api.userId,
-      workspaceId: workspaceId.id,
-      event: {
-        id: event.id,
-        event: body.event,
-        description: body.description,
-        color: body.color,
-        icon: body.icon,
-        createdAt: event.createdAt.toISOString(),
-      },
+      request,
     })
-  
+
     return {}
      
   });

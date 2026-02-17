@@ -4,7 +4,7 @@ import { ISubscription } from "../interface";
 
 export const useSubscriptionApi = () => {
 
-  const getSubscription = async (): Promise<ISubscription | undefined> => {
+  const getSubscription = async (): Promise<ISubscription | null> => {
 
     try {
       
@@ -25,7 +25,7 @@ export const useSubscriptionApi = () => {
       
     } catch (error) {
       console.log("Error fetching subscription:", error);
-      return undefined;
+      return null;
     }
 
   }

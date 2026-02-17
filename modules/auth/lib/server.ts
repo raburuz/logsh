@@ -70,7 +70,9 @@ export const auth = betterAuth({
       requireName: true,
       rateLimit: {
         enabled: false,
-      }
+      },
+      
+      
     }),
     stripePlugin,
   ]

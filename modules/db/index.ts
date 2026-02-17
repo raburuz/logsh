@@ -1,5 +1,4 @@
 import { db as $db } from "./db"
-import { apiQuery } from "./queries/api"
 import { eventQuery } from "./queries/event"
 import { pushSubscriptionQuery } from "./queries/push"
 import { subscriptionQuery } from "./queries/subscription"
@@ -20,7 +19,6 @@ export const db = {
   },
   ...({
     workspace: workspaceQuery,
-    api: apiQuery,
     event: eventQuery,
     subscription: subscriptionQuery,
     pushSubscription: pushSubscriptionQuery,

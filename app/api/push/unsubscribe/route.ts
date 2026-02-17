@@ -3,11 +3,11 @@ import { db } from "@/modules/db"
 import { getAuthenticatedUser } from "@/modules/auth/actions/auth";
 import { deviceIdZodSchema } from "@/modules/push/utils/device";
 import { zodValidator } from "@/modules/shared/lib/zod";
-import { routeHandler } from "@/modules/shared/utils/handler"
+import { apiRouteHandler } from "@/modules/shared/utils/handler"
 
 export async function POST( request: Request ){
 
-  return routeHandler( async () => {
+  return apiRouteHandler( async () => {
 
     const user = await getAuthenticatedUser();
 

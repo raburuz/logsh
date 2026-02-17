@@ -3,7 +3,7 @@
 import { create } from 'zustand'
 import { useEvent } from './event';
 import { IWorkspace } from '@/modules/feed/interface';
-import { useWorkspaceApi } from '@/modules/feed/hook/useWorkspace';
+import { useWorkspaceApi } from '@/modules/feed/hook/use-workspace-api';
 
 interface IWorkspaceState {
   isLoading: boolean;
@@ -38,7 +38,8 @@ export const useWorkspace = () => {
 
   const fetchWorkspaces = async () => {
     workspaces.setIsLoading(true);
-    const list = await api.getWorkspaces();
+    const data = await api.getWorkspaces();
+    const list = data.list;
     workspaces.setList( list );
     if( list.length > 0 ) {
       const id = list[0].id;
@@ -90,9 +91,11 @@ export const useWorkspace = () => {
     await event.fetchEvents( workspaceId );
   }
 
-  const createWorkspace = async ( name: string ) => {
+  const createWorkspace = async ( name: string, data?: { shadowEffect: 'update_workspace_list' } ) => {
     await api.createWorkspace( name );
-    await fetchWorkspaces();
+    if( data?.shadowEffect === 'update_workspace_list' ) {
+      await fetchWorkspaces();
+    }
   };
 
   return {

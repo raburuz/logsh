@@ -1,15 +1,13 @@
 
 export interface ISubscription {
-  plan: IPlan; 
+  id: string;
+  plan: string;
+  status: string | null;
+  stripeCustomerId: string | null;
+  stripeSubscriptionId: string | null;
+  periodEnd: Date | null;
+  limits: IPlan['limits'];
   usage: ISubscriptionUsage;
-  subscription: {
-    id: string;
-    plan: string;
-    status: string | null;
-    stripeCustomerId: string | null;
-    stripeSubscriptionId: string | null;
-    periodEnd: Date | null;
-  } | undefined;
 }
 
 export type Interval = 'monthly' | 'yearly';
@@ -34,6 +32,7 @@ export interface IPlan {
   limits: {
     events: number;
     eventsRetentionDays: number;
+    eventPerSecond: number;
   };
   callToAction: string;
   freeTrialDays?: number;
@@ -42,5 +41,6 @@ export interface IPlan {
 export interface ISubscriptionUsage {
   id: string;
   events: number;
-  renewAt: Date;
+  lastEventAt: Date;
+  lastResetAt: Date;
 }

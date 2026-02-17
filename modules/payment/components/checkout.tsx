@@ -29,9 +29,9 @@ export const CheckoutButton = ( props: { plan: IPlan, isAnnual: boolean, isAuth:
             props.plan.isRecommended ? "bg-green-700 hover:bg-green-800" : "",
           )}
           onClick={handleUpgrade}
-          disabled={subscription?.plan?.name === props.plan.name}
+          disabled={subscription?.plan === props.plan.name}
         >
-          {subscription?.plan?.name === props.plan.name ? "Current plan" : props.plan.callToAction}
+          {subscription?.plan === props.plan.name ? "Current plan" : props.plan.callToAction}
         </Button>
       </>
     )

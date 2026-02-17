@@ -2,7 +2,7 @@
 
 import { IEvent, IEvents, IEventSse } from '@/modules/feed/interface';
 import { create } from 'zustand'
-import { useEventApi } from '@/modules/feed/hook/useEvent';
+import { useEventApi } from '@/modules/feed/hook/use-event-api';
 interface IEventState {
   list: IEvent[][];
   realTimeList: IEventSse[];

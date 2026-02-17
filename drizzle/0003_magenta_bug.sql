@@ -1,2 +1,0 @@
-ALTER TABLE "push_subscriptions	" ADD COLUMN "device_info" jsonb DEFAULT '{"userAgent":"","platform":"","browser":""}'::jsonb NOT NULL;--> statement-breakpoint
-ALTER TABLE "push_subscriptions	" ADD COLUMN "status" text DEFAULT 'active' NOT NULL;

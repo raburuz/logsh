@@ -1,6 +1,6 @@
 import { relations } from "drizzle-orm";
 import { integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { apikey, user } from "./auth";
+import { subscription, user } from "./auth";
 
 export const workspace = pgTable('workspace', {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -31,23 +31,12 @@ export const event = pgTable('event', {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 })
 
-export const apiUsage = pgTable("api_usage", {
+export const subscriptionUsage = pgTable("subscription_usage", {
 	id: uuid('id').primaryKey().defaultRandom(),
-	userId: text("user_id").notNull().references(()=> user.id, { onDelete: 'cascade' }),
+	subscriptionId: text("subscription_id").notNull().references(()=> subscription.id, { onDelete: 'cascade' }),
 	events: integer('events').default(0).notNull(),
-  renewAt: timestamp("renew_at", { withTimezone: true }).defaultNow().notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-})
-
-//Token Bucket Algorithm
-export const apiKeyTokenBucket = pgTable("api_key_token_bucket", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  apiKeyId: text("api_key_id").notNull().references(()=> apikey.id, { onDelete: 'cascade' }),
-  capacity: integer("capacity").default(0).notNull(), // maximum number of tokens in the bucket
-  remaining: integer("remaining").default(0).notNull(), // current number of tokens in the bucket
-  refillInterval: integer("refill_interval").default(0).notNull(), // in milliseconds
-  refillAmount: integer("refill_amount").default(0).notNull(), // number of tokens to add each interval 
-  lastRefillAt: timestamp("last_refill_at", { withTimezone: true }).defaultNow().notNull(),
+  lastEventAt: timestamp("last_event_at", { withTimezone: true }).defaultNow().notNull(),
+  lastResetAt: timestamp("last_reset_at", { withTimezone: true }).defaultNow().notNull(),
 })
 
 export const pushSubscriptions = pgTable("push_subscriptions	", {
@@ -76,5 +65,12 @@ export const pushNotificationRelations = relations( pushSubscriptions, ({ one })
   user: one( user, {
     fields: [pushSubscriptions.userId],
     references: [user.id],
+  }),
+}))
+
+export const subscriptionUsageRelations = relations( subscriptionUsage, ({ one }) => ({
+  subscription: one( subscription, {
+    fields: [subscriptionUsage.subscriptionId],
+    references: [subscription.id],
   }),
 }))

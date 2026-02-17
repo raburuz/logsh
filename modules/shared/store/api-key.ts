@@ -35,7 +35,7 @@ export const useApiKey= () => {
   
   const fetchApikeys = async () => {
     const data = await api.getApiKeys();
-    apiKey.setList(data); 
+    apiKey.setList(data.list); 
     apiKey.setIsLoading(false);
   };
   

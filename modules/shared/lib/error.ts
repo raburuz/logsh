@@ -50,3 +50,17 @@ export class AppError extends Error {
     );
   }
 }
+
+export class RateLimitError extends AppError {
+
+  header: Record<string, string>;
+
+  constructor( 
+    message = 'Rate limit exceeded. Try again later.', 
+    headers: Record<string, string> = {}
+  ) {
+    super('rate_limit_exceeded', message);
+    this.header = headers;
+  }
+
+} 
