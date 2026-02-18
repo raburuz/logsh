@@ -6,8 +6,7 @@ import { apiRouteHandler } from "@/modules/shared/utils/handler";
 
 export async function DELETE( request: Request, ctx: RouteContext<'/api/workspace/[id]'> ) {
   return apiRouteHandler( async () => {
-
-
+    
     const { id }  = await ctx.params;
 
     const { params } = await zodValidator({
@@ -18,8 +17,8 @@ export async function DELETE( request: Request, ctx: RouteContext<'/api/workspac
 
 
     const user = await getAuthenticatedUser();
-    
-    await db.workspace.delete({ by: { userId: user.id }, where: { workspaceId: params.workspaceId } });  
+
+    await db.workspace.delete({  by: { projectName: 'defaults', userId: user.id }, where: { workspaceId: params.workspaceId } });  
     
     return {};
   } );

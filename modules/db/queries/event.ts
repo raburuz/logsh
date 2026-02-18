@@ -4,12 +4,14 @@ import { subscriptionQuery } from "./subscription";
 import { and, desc, eq, gte, lt, or } from "drizzle-orm";
 import { workspaceQuery, workspaceStatus } from "./workspace";
 import { dayjs } from "@/modules/shared/lib/date";
+import { projectQuery } from "./project";
 
 export const eventQuery = {
   create: async (
     props: {
       query : {
         where: {
+          project: string,
           workspace: string,
           userId: string,
         },
@@ -33,10 +35,17 @@ export const eventQuery = {
 
     const res = await db.transaction( async (tx) => {
 
+      // Project existence and creation if not exists
+      const prj = await projectQuery
+        .find_or_create({
+          by: { userId: where.userId },
+          data: { name: where.project },
+        }, { tx });
+
       // Workspace existence and creation if not exists
       const wk = await workspaceQuery
         .find_or_create({ 
-          by: { userId: where.userId }, 
+          by: { projectId: prj.id }, 
           data: { name: where.workspace },  
         }, { tx });
       
@@ -72,6 +81,7 @@ export const eventQuery = {
         id: response.id,
         createdAt: response.createdAt,
         workspaceId: wk.id,
+        projectId: prj.id,
       };
     
     });

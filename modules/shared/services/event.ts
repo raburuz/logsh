@@ -3,10 +3,11 @@ import * as emoji from "node-emoji";
 import { db } from "@/modules/db"
 import { cacheKey, getCache, setCache } from "../lib/cache";
 import { RateLimit } from "../lib/rate-limit";
-import { publishEvent } from "../lib/redis";
 import { zodValidator } from "../lib/zod";
 import { workspaceValidator } from "@/modules/feed/lib/zod";
 import { AppError } from "../lib/error";
+import { sendNotificationToWorkspaceMembers } from "@/modules/push/server";
+import { publishEvent } from "../lib/pub-sub";
 
 interface ISubscriptionCache {
   subscriptionId: string;
@@ -33,6 +34,7 @@ const schema = {
         message: "Icon must be a valid emoji",
       }),
     workspace: workspaceValidator.name,
+    notify: z.boolean().optional().default(false),
   })
 }
 
@@ -97,6 +99,7 @@ export const eventService = {
     const event = await db.event.create({
       query: {
         where: {
+          project: 'default',
           workspace: body.workspace,
           userId: userId,
         },
@@ -143,5 +146,20 @@ export const eventService = {
         createdAt: event.createdAt.toISOString(),
       },
     })
+
+    if(body.notify){
+      // Send push notifications to workspace members
+      await sendNotificationToWorkspaceMembers(
+        event.projectId,
+        {
+          type: 'event',
+          data: {
+            event: "user.signup.test",
+            description: "New user registered",
+          }
+        }
+      )
+    }
+
   } 
 }

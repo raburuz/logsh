@@ -1,6 +1,6 @@
 import { and, eq, or } from "drizzle-orm";
 import { db } from "../db"
-import { pushSubscriptions , workspaceMember } from "../schemas/app"
+import { pushSubscriptions , projectMember } from "../schemas/app"
 
 export const pushNotificationStatus = {
   ACTIVE: 'active',
@@ -113,18 +113,18 @@ export const pushSubscriptionQuery = {
       )
     )
   },
-  get_workspace_members_subscriptions: async (workspaceId: string ) => {
+  get_members_subscriptions: async (projectId: string ) => {
     return await db
     .select({
       endpoint: pushSubscriptions.endpoint,
       keys: pushSubscriptions.keys,
-      userId: workspaceMember.userId,
+      userId: projectMember.userId,
     })
-    .from(workspaceMember)
-    .innerJoin(pushSubscriptions , eq(workspaceMember.userId, pushSubscriptions.userId))
+    .from(projectMember)
+    .innerJoin(pushSubscriptions , eq(projectMember.userId, pushSubscriptions.userId))
     .where(
       and(
-        eq(workspaceMember.workspaceId, workspaceId),
+        eq(projectMember.projectId, projectId),
       )
     );
   },

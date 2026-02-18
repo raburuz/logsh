@@ -3,6 +3,7 @@
 import { create } from 'zustand'
 import { useSubscriptionApi } from '@/modules/payment/hooks/use-subscription';
 import { ISubscription } from '@/modules/payment/interface';
+import { toast } from 'sonner';
 
 interface ISubscriptionState {
   subscription: ISubscription | null;
@@ -32,6 +33,11 @@ export const useSubscription = () => {
   }
 
   const checkout = async ( props: { planName: string, isAnnual: boolean } ) => {
+
+    if(subscriptions.getSubscription()?.plan === props.planName){
+      toast.warning('You are already on this plan.');
+      return;
+    } 
 
     const data = await api.checkout( props );
     if (data?.url) {

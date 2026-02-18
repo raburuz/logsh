@@ -1,28 +1,33 @@
 import { relations } from "drizzle-orm";
-import { index, integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { subscription, user } from "./auth";
+
+export const project = pgTable('project', {
+  id: uuid("id").primaryKey().defaultRandom(),
+  status: text("status").notNull().default('active'),
+  name: text("name").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+})
 
 export const workspace = pgTable('workspace', {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
   status: text("status").notNull().default('active'),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-}, (table) => ({
-  workspaceNameIdx: index('workspace_name_idx').on(table.name),
-}))
-
-export const workspaceMember = pgTable('workspace_member', {
-  id: uuid("id").primaryKey().defaultRandom(),
-  workspaceId: uuid("workspace_id")
+  projectId: uuid("project_id")
     .notNull()
-    .references(() => workspace.id, { onDelete: "cascade" }),
+    .references(() => project.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+})
+
+export const projectMember = pgTable('project_member', {
+  id: uuid("id").primaryKey().defaultRandom(),
+  projectId: uuid("project_id")
+    .notNull()
+    .references(() => project.id, { onDelete: "cascade" }),
   userId: text("user_id").notNull().references(()=> user.id, { onDelete: "cascade" }),
   role: text("role").notNull().default('owner'),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull()
-}, (table) => ({
-  workspaceMemberUserIdIdx: index('workspace_member_user_id_idx').on(table.userId),
-  workspaceMemberWorkspaceIdIdx: index('workspace_member_workspace_id_idx').on(table.workspaceId),
-})) 
+}) 
 
 export const event = pgTable('event', {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -34,10 +39,7 @@ export const event = pgTable('event', {
   event: text("event").notNull(),
   description: text("description"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-}, (table) => ({
-  eventWorkspaceIdIdx: index('event_workspace_id_idx').on(table.workspaceId),
-  eventCreatedAtIdx: index('event_created_at_idx').on(table.createdAt),
-}))
+})
 
 export const subscriptionUsage = pgTable("subscription_usage", {
 	id: uuid('id').primaryKey().defaultRandom(),
@@ -45,9 +47,7 @@ export const subscriptionUsage = pgTable("subscription_usage", {
 	events: integer('events').default(0).notNull(),
   lastEventAt: timestamp("last_event_at", { withTimezone: true }).defaultNow().notNull(),
   lastResetAt: timestamp("last_reset_at", { withTimezone: true }).defaultNow().notNull(),
-}, (table) => ({
-  subscriptionUsageSubscriptionIdIdx: index('subscription_usage_subscription_id_idx').on(table.subscriptionId),
-}))
+})
 
 export const pushSubscriptions = pgTable("push_subscriptions	", {
   id: uuid("id").primaryKey().defaultRandom(), 
@@ -59,6 +59,11 @@ export const pushSubscriptions = pgTable("push_subscriptions	", {
   status: text("status").notNull().default('active'),
 })
 
+export const projectRelations = relations( project, ({ many }) => ({
+  workspace: many( workspace ),
+  members: many( projectMember ),
+}))
+
 export const eventRelations = relations( event, ({ one }) => ({
   workspace: one( workspace, {
     fields: [event.workspaceId],
@@ -66,8 +71,11 @@ export const eventRelations = relations( event, ({ one }) => ({
   }),
 }))
 
-export const workspaceRelations = relations( workspace, ({ many }) => ({
-  members: many( workspaceMember ),
+export const workspaceRelations = relations( workspace, ({ one, many }) => ({
+  project: one( project, {
+    fields: [workspace.projectId],
+    references: [project.id],
+  }),
   events: many( event ),
 }))
 

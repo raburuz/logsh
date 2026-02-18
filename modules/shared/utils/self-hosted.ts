@@ -1,1 +1,0 @@
-export const isSelfHosted = process.env.NEXT_PUBLIC_IS_SELF_HOSTED === "true";

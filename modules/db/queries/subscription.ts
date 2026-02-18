@@ -4,7 +4,7 @@ import { db } from "../db"
 import { findPlanByName } from "@/modules/payment/lib/plans";
 import { subscriptionUsage } from "../schemas/app";
 import { DbTransaction } from "../interface";
-import dayjs from "dayjs";
+import { dayjs } from "@/modules/shared/lib/date";
 
 export const subscriptionQuery = {
 
@@ -76,13 +76,15 @@ export const subscriptionQuery = {
   
     const { tx } = options ?? {};
     const dbToUse = tx ?? db;
+    const now = dayjs();
 
     const operator = data.event.action === 'add' ? sql`+` : sql`-`;
       
     await dbToUse
     .update(subscriptionUsage)
     .set({
-      events: sql`${subscriptionUsage.events} ${operator} ${data.event.quantity}`
+      events: sql`${subscriptionUsage.events} ${operator} ${data.event.quantity}`,
+      lastEventAt: now.toDate(),
     })
     .where(
       eq(subscriptionUsage.subscriptionId, by.subscriptionId)
@@ -90,16 +92,63 @@ export const subscriptionQuery = {
 
   },
 
-  reset_usage: async () => {
-  
-    const now = dayjs();
+  reset_usage : async (
+    props: { 
+      by: { 
+        subscriptionId: string,
+        userId: string,
+      } 
+    }
+  ) => {
 
-    await db
+    const { subscriptionId, userId } = props.by;
+
+    if (subscriptionId) {
+      await subscriptionQuery.reset_usage_by_subscription({
+        by: { subscriptionId },
+      });
+      return;
+    }
+
+    if (userId) {
+      await subscriptionQuery.reset_usage_by_user({
+        by: { userId },
+      });
+      return;
+    }
+  },
+
+  reset_usage_by_subscription: async (
+    { by }: { by: { subscriptionId: string } },
+    options?: { tx?: DbTransaction }
+  ) => {
+    const now = dayjs();
+    const { tx } = options ?? {};
+    const dbToUse = tx ?? db;
+
+    await dbToUse
     .update(subscriptionUsage)
     .set({
       events: 0,
       lastResetAt: now.toDate(),
     })
+    .where(
+      eq(subscriptionUsage.subscriptionId, by.subscriptionId)
+    )
+  },
+
+  reset_usage_by_user: async (
+    { by }: { by: { userId: string } }
+  ) => {
+    const sub = await subscriptionQuery.get_usable_subscription({ by: { userId: by.userId } });
+
+    if (!sub) {
+      return;
+    }
+
+    await subscriptionQuery.reset_usage_by_subscription({
+      by: { subscriptionId: sub.id }
+    });
   },
 
   // Usable subscription means that the user has an active or trialing subscription

@@ -51,7 +51,8 @@ export const sendLogshEvent = async ( data ) => {
         workspace: data.workspace,    // Your workspace name
         event: data.event,            // Event name
         description: data.description, // Event description
-        color: data.color,              // Event color Hex (optional) 
+        color: data.color,             // Event color Hex (optional) 
+        notify: data.notify,           // Whether to send a push notification (optional, default: false)
       }),
     }
   )

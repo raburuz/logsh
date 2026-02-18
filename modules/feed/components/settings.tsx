@@ -7,7 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { IWorkspace } from "../interface"
-import { useWorkspace } from "@/modules/shared/store/workspace";
+import { useProject } from "@/modules/shared/store/project";
 
 export function WKSettings( 
   props: {
@@ -16,7 +16,7 @@ export function WKSettings(
   }
 ){
 
-  const { deleteWorkspaceById } = useWorkspace();
+  const { deleteWorkspaceById } = useProject();
 
   return (
     <DropdownMenu>

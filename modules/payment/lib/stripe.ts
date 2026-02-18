@@ -1,5 +1,7 @@
 import Stripe from "stripe"
 import { stripe } from "@better-auth/stripe"
+import { db } from "@/modules/db";
+import { logsh } from "@/modules/shared/lib/logsh";
 import { config } from "../../shared/config";
 import { findPlanByName, planListToBetterAuthPlans } from "./plans";
 
@@ -43,30 +45,42 @@ export const stripePlugin = stripe({
           payment_method_collection: "if_required"
         }
       }
-    },
+    },  
     onSubscriptionComplete: async ( data ) => {
-      //This happends when the user pay a sub for the first time
-      const userId = data.subscription.referenceId; 
-      /* try {
-        await db.api.update_renewal_date_to_next_month({
-          by: { 
-            userId,
-          },
-        })
-      } catch (error) {
-        console.log(`Something went wrong. Cannot update renewal date for user: ${userId}, error ${error}`)
-      } */
+      //This happends when the user pay a sub for the first time or when a trial end and the user is converted to a paid sub
+      await resetSubscriptionUsage({ subscription: { id: data.subscription.id, referenceId: data.subscription.referenceId } });
     },
     onSubscriptionUpdate: async (data) => {
-      //Updates are prorated by default for better auth, so we continue normally 
+      //This can happend when the user change plan or when the subscription is renewed
+      await resetSubscriptionUsage({ subscription: { id: data.subscription.id, referenceId: data.subscription.referenceId } });
     },
 
     onSubscriptionCancel : async (data) => {
-      //Conserve the renewal date
+      // This can happend when the user cancel the sub or when the sub is cancelled by Stripe because of payment failure for example
+      await resetSubscriptionUsage({ subscription: { id: data.subscription.id, referenceId: data.subscription.referenceId } });
     },
 
     onSubscriptionDeleted: async (data) => {
-      //Conserve the renewal date
-    },
+      // This can happend when the subscription is deleted, either by the user or by Stripe
+      await resetSubscriptionUsage({ subscription: { id: data.subscription.id, referenceId: data.subscription.referenceId } });
+    }
   },
 });
+
+export const resetSubscriptionUsage = async ( data: { subscription: { id: string, referenceId: string } } ) => {
+  try {
+    await db.subscription.reset_usage({
+      by: {
+        subscriptionId: data.subscription.id,
+        userId: data.subscription.referenceId,
+      }
+    })
+  } catch (error) {
+    await logsh({
+      workspace: 'stripe_error',
+      event: 'reset_usage_failed',
+      description: `Failed to reset usage for subscription ${data.subscription.id} and user ${data.subscription.referenceId}`,
+      color: '#ff0000',
+    })
+  }
+}

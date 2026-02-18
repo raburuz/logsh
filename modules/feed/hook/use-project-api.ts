@@ -1,12 +1,12 @@
 import { toast } from 'sonner';
-import { IWorkspace } from "../interface";
+import { IProject, IWorkspace } from "../interface";
 
-export const useWorkspaceApi = () => {
+export const useProjectApi = () => {
 
-  const getWorkspaces = async (): Promise<{ list: IWorkspace[] }> => {
+  const getProject = async (): Promise<IProject> => {
 
     try {
-        const response = await fetch('/api/workspace', {
+        const response = await fetch('/api/project', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -16,18 +16,17 @@ export const useWorkspaceApi = () => {
       const resp = await response.json();
 
       if (!response.ok) {
-        throw new Error(resp.message || 'Failed to fetch workspaces');
+        throw new Error(resp.message || 'Failed to fetch project');
       }
-
       
       return resp.data;
     } catch (error) {
-      console.log('Error fetching workspaces:', error);
-      return { list: [] };
+      console.log('Error fetching project:', error);
+      return { id: '', name: '', workspaces: { list: [] } };
     }
   }
 
-  const createWorkspace = async ( name: string ): Promise<void> => {
+  const createWorkspace = async ( name: string ): Promise<IWorkspace> => {
     try {
       const response = await fetch('/api/workspace', {
       method: 'POST',
@@ -46,12 +45,12 @@ export const useWorkspaceApi = () => {
 
     toast.success('Workspace created successfully');
     
-    return;
+    return resp.data;
   } catch (error) {
     
       toast.error(error instanceof Error ? error.message : 'Failed to create workspace');
       console.log('Error creating workspace:', error);
-      return;
+      return { id: '', name: '' };
     }
   }
 
@@ -98,8 +97,8 @@ export const useWorkspaceApi = () => {
   }
 
   return {
+    getProject,
     createWorkspace,
-    getWorkspaces,
     getWorkspaceById,
     deleteWorkspace,
   }

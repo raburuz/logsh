@@ -2,10 +2,10 @@ import z from "zod";
 import { getAuthenticatedUser } from "@/modules/auth/actions/auth";
 import { db } from "@/modules/db";
 import { workspaceValidator } from "@/modules/feed/lib/zod";
-import { publishEvent } from "@/modules/shared/lib/redis";
 import { zodValidator } from "@/modules/shared/lib/zod";
 import { apiRouteHandler } from "@/modules/shared/utils/handler";
 import { sendNotificationToWorkspaceMembers } from "@/modules/push/server";
+import { publishEvent } from "@/modules/shared/lib/pub-sub";
 
 //Create Event
 export async function POST( request : Request ) {
@@ -25,6 +25,7 @@ export async function POST( request : Request ) {
     const event = await db.event.create({
       query: {
         where: {
+          project: 'default',
           workspace: body.workspace,
           userId: user.id,
         },
@@ -56,7 +57,7 @@ export async function POST( request : Request ) {
 
     // Send push notifications to workspace members
     await sendNotificationToWorkspaceMembers(
-      event.workspaceId,
+      event.projectId,
       {
         type: 'event',
         data: {

@@ -1,5 +1,6 @@
 import { getAuthenticatedUser } from "@/modules/auth/actions/auth";
-import { getChannelName, redisInstance } from "@/modules/shared/lib/redis";
+import { getChannelName } from "@/modules/shared/lib/pub-sub";
+import { redis } from "@/modules/shared/lib/redis";
 
 export const runtime = 'nodejs';
 // This is required to enable streaming
@@ -14,7 +15,7 @@ export async function GET( request : Request ) {
   }
 
   // Initialize Upstash Redis client
-  const subscriber = redisInstance();
+  const subscriber = redis.duplicate();
   
   // Create a TransformStream to handle streaming data
   const responseStream = new TransformStream();

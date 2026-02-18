@@ -25,3 +25,11 @@ export interface IWorkspace {
   id: string;
   name: string;
 }
+
+export interface IProject {
+  id: string;
+  name: string;
+  workspaces: {
+    list: IWorkspace[];
+  };
+}

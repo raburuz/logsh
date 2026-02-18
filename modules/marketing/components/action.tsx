@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button"
 import { getServerSideUser } from "@/modules/auth/actions/auth"
-import { isSelfHosted } from "@/modules/shared/utils/self-hosted";
 import { ArrowRight } from "lucide-react";
 
 export const ActionButton = async () => {
@@ -30,8 +29,6 @@ export const ActionButton = async () => {
 
 
 export const ActionBanner = () => {
-
-  if(isSelfHosted) return null
 
   return (
     <div className="sticky top-0 p-2 text-center border-b border-zinc-900/20 bg-black z-50">

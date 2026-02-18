@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useEvent } from "../store/event";
-import { useWorkspace } from "../store/workspace";
+import { useProject } from "../store/project";
 import { useApiKey } from "../store/api-key";
 import { useSubscription } from "../store/subscription";
 import { usePushNotification } from "@/modules/push/hook/use-push-notification";
@@ -18,13 +18,13 @@ export const useInitialAppRender = () => {
 export const useInitialDashboardRender = () => {
 
   const apiKey = useApiKey();
-  const workspace = useWorkspace();
+  const project = useProject();
   const event = useEvent();
   const subscription = useSubscription();
   
   useEffect(() => {
     apiKey.fetchApikeys();
-    workspace.fetchWorkspaces();
+    project.fetchProject();
     event.fetchStream();
     subscription.fetchSubscription();
   }, [])

@@ -1,22 +1,19 @@
 import { and, desc, eq } from "drizzle-orm";
 import { db } from "../db";
-import { workspace, workspaceMember } from "../schemas/app";
+import { project, workspace } from "../schemas/app";
 import { AppError } from "@/modules/shared/lib/error";
 import { DbTransaction } from "../interface";
+import { projectQuery } from "./project";
 
 export const workspaceStatus = {
   ACTIVE: 'active',
   DELETED: 'deleted',
 }
 
-export const workspaceMemberRoles= {
-  OWNER: 'owner',
-}
-
 export const workspaceQuery = {
   create: async ( 
     query: {
-      by: { userId: string },
+      by: { projectId: string },
       data: { name: string }
     },
     options?: {
@@ -28,7 +25,7 @@ export const workspaceQuery = {
     const { tx } = options ?? {};
     const dbToUse = tx ?? db;
 
-    const alreadyExists = await workspaceQuery.exist(by.userId, data.name);
+    const alreadyExists = await workspaceQuery.exist(by.projectId, data.name);
 
     if(alreadyExists) throw new AppError('bad_request', 'Workspace with this name already exists');
   
@@ -37,17 +34,12 @@ export const workspaceQuery = {
     .values({
       name: data.name.toLowerCase(),
       status: workspaceStatus.ACTIVE,
-    }).returning({ id: workspace.id });
+      projectId: by.projectId,
+    })
+    .returning({ id: workspace.id, name: workspace.name });
 
-    await dbToUse
-    .insert(workspaceMember)
-    .values({
-      userId: by.userId,
-      workspaceId: wks.id,
-      role: workspaceMemberRoles.OWNER,
-    });
-  
-    return { id: wks.id }
+    
+    return { id: wks.id, name: wks.name }
   
   },
 
@@ -55,25 +47,38 @@ export const workspaceQuery = {
     query: {
       by: {
         userId: string,
-      },
+        projectName: string
+      }
       where: {
         workspaceId: string 
       }
     } 
   ) => {
 
-    const isOwner = await workspaceQuery.is_owner( query.by.userId, query.where.workspaceId )
+    await db.transaction( async (tx) => {
 
-    if(!isOwner) throw new AppError('unauthorized', 'This workspace can only be deleted by its owner');
+      const project = await projectQuery.get(
+        { 
+          identifyBy: { type: 'name', value: query.by.projectName }, 
+          where: { userId: query.by.userId } 
+        }, { tx });
 
-    await db
-    .update(workspace)
-    .set({
-      status: workspaceStatus.DELETED,
+      if(!project) throw new AppError('not_found', 'Project linked to this workspace not found');
+
+      await tx
+      .update(workspace)
+      .set({
+        status: workspaceStatus.DELETED,
+      })
+      .where(
+        and(
+          eq(workspace.projectId, project.id),
+          eq(workspace.id, query.where.workspaceId),
+        )
+      );
+        
     })
-    .where(
-      eq(workspace.id, query.where.workspaceId)
-    )
+
   },
   
   get: async (
@@ -103,23 +108,18 @@ export const workspaceQuery = {
     return result.length === 0 ? null : result[0];
   },
 
-  list : async ( userId: string ) => {
+  list : async ( query: { by: { projectId: string } }) => {
 
     return await db
     .select({
       id: workspace.id,
       name: workspace.name,
     })
-    .from(workspaceMember)
-    .innerJoin(workspace, 
+    .from(workspace)
+    .innerJoin( project, 
       and(
-        eq(workspaceMember.workspaceId, workspace.id),
+        eq(workspace.projectId, query.by.projectId),
         eq(workspace.status, workspaceStatus.ACTIVE)
-      )
-    )
-    .where(
-      and(
-        eq(workspaceMember.userId, userId),
       )
     )
     .orderBy( desc(workspace.createdAt) );
@@ -127,7 +127,7 @@ export const workspaceQuery = {
 
   find_or_create: async (
     query: {
-      by: { userId: string },
+      by: { projectId: string },
       data: { name: string }
     },
     options?: {
@@ -142,12 +142,10 @@ export const workspaceQuery = {
     .select({
       id: workspace.id
     })
-    .from(workspaceMember)
-    .innerJoin(workspace, eq(workspace.id, workspaceMember.workspaceId))
+    .from(workspace)
     .where(
       and(
-        eq(workspaceMember.userId, by.userId),
-        eq(workspace.id, workspaceMember.workspaceId),
+        eq(workspace.projectId, by.projectId),
         eq(workspace.name, data.name),
         eq(workspace.status, workspaceStatus.ACTIVE)
       )
@@ -164,46 +162,23 @@ export const workspaceQuery = {
     }
   },
 
-  exist: async ( userId: string, name: string ) => {
+  exist: async ( projectId: string, name: string ) => {
   
     const [ response ] = await db
     .select({
-      id: workspaceMember.id
+      id: workspace.id
     })
-    .from(workspaceMember)
-    .leftJoin(workspace, eq(workspace.id, workspaceMember.workspaceId))
+    .from(workspace)
     .where(
       and(
-        eq(workspaceMember.userId, userId),
-        eq(workspaceMember.role, workspaceMemberRoles.OWNER),
-        //Workspace condition
+        eq(workspace.projectId, projectId),
         eq(workspace.name, name),
         eq(workspace.status, workspaceStatus.ACTIVE),
       )
     )
-    .limit(1)
+    .limit(1);
   
     return Boolean(response)
   },
 
-  is_owner: async ( 
-    userId: string, 
-    workspaceId: string 
-  ) => {
-    const result = await db
-    .select({
-      id: workspaceMember.id,
-    })
-    .from(workspaceMember)
-    .where(
-      and(
-        eq(workspaceMember.workspaceId, workspaceId),
-        eq(workspaceMember.userId, userId),
-        eq(workspaceMember.role, workspaceMemberRoles.OWNER),
-      )
-    )
-    .limit(1);
-  
-    return result.length > 0;
-  },
 }

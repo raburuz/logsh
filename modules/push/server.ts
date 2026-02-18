@@ -45,7 +45,7 @@ const sendPushNotification = async ({
 
 export const sendNotificationToWorkspaceMembers = async ( workspaceId: string, message: PushNotification ) => {
 
-  const push = await db.pushSubscription.get_workspace_members_subscriptions(workspaceId);
+  const push = await db.pushSubscription.get_members_subscriptions(workspaceId);
 
   push.forEach( async (member) => {
     await sendPushNotification({

@@ -18,7 +18,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { config } from "@/modules/shared/config"
 import { workspaceValidator } from "../lib/zod";
-import { useWorkspace } from "@/modules/shared/store/workspace";
+import { useProject } from "@/modules/shared/store/project";
 
 const schema = z.object({
   name: workspaceValidator.name,
@@ -40,10 +40,10 @@ export const CreateWorkspaceForm = ( props: { trigger: () => React.ReactNode } )
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const workspaces = useWorkspace();
+  const project = useProject();
 
   const onSubmit = async (data: ISchema) => {
-    await workspaces.createWorkspace(data.name, { shadowEffect: 'update_workspace_list' });
+    await project.createWorkspace(data.name, { shadowEffect: 'update_workspace_list' });
     setIsOpen(false);
     reset();
   };

@@ -1,12 +1,8 @@
 import { RateLimiterRedis, RateLimiterMemory, IRateLimiterOptions } from "rate-limiter-flexible";
-import { redisInstance } from "./redis";
 import { RateLimitError } from "./error";
-
-const redis = redisInstance();
+import { redis, isRedisReady } from "./redis";
 
 export const RateLimit = {
-
-  isRedisReady: () => redis.status === 'ready',
 
   bucket : async ( key: string, options: {
     refillAmount: number;
@@ -30,7 +26,7 @@ export const RateLimit = {
 
     try {
 
-      if( RateLimit.isRedisReady() ) {
+      if( isRedisReady() ) {
         const rateLimiter = new RateLimiterRedis({
           storeClient: redis,
           ...rateLimiterOptions,

@@ -2,7 +2,7 @@
 import { useMemo, useCallback, useState } from "react"
 import { useOnboardingData } from "../store";
 import { useSubscription } from "@/modules/shared/store/subscription";
-import { useWorkspace } from "@/modules/shared/store/workspace";
+import { useProject } from "@/modules/shared/store/project";
 import { useEvent } from "@/modules/shared/store/event";
 import { StepDashboard, StepFirstEvent, StepNotifications, StepPlan, StepWelcome } from "../components/steps";
 
@@ -26,7 +26,7 @@ export const useOnboarding = () => {
 
   const onboardingData = useOnboardingData();
   const subs = useSubscription();
-  const workspace = useWorkspace();
+  const project = useProject();
   const event = useEvent();
 
   const [currentStep, setCurrentStep] = useState(0);
@@ -62,7 +62,7 @@ export const useOnboarding = () => {
           }
 
           try {
-            await workspace.createWorkspace(workspaceName);
+            await project.createWorkspace(workspaceName);
             nextStep();
           } catch (error) {
             console.error('Failed to create workspace:', error);
@@ -124,7 +124,7 @@ export const useOnboarding = () => {
         },
       },
     }),
-    [onboardingData, workspace, event, subs, nextStep]
+    [onboardingData, project, event, subs, nextStep]
   );
 
   const handleStepAction = useCallback(async (action: () => Promise<void>) => {

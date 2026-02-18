@@ -1,11 +1,8 @@
-import { redisInstance } from "./redis"
+import { redis } from "./redis"
 
 export const cacheKey = {
   subscription: ( userId: string ) => `subscription:${userId}`,
 }
-
-const redis = redisInstance();
-
 
 export const setCache = ( key: string, value: string, ttlAsSeconds?: number ) => {
   if (ttlAsSeconds) {

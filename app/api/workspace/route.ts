@@ -1,9 +1,9 @@
+import z from "zod";
 import { getAuthenticatedUser } from "@/modules/auth/actions/auth";
 import { db } from "@/modules/db";
 import { zodValidator } from "@/modules/shared/lib/zod";
 import { apiRouteHandler } from "@/modules/shared/utils/handler";
 import { workspaceValidator } from "@/modules/feed/lib/zod";
-import z from "zod";
 
 //Create a new workspace
 export async function POST( request: Request ) {
@@ -20,29 +20,14 @@ export async function POST( request: Request ) {
       })
     });
 
-   await db.workspace.create({ by: { userId: user.id }, data: { name: body.name } });
+    const project = await db.project.find_or_create({ by: { userId: user.id }, data: { name: 'default' } });
 
+    const workspace = await db.workspace.create({ by: { projectId: project.id }, data: { name: body.name } });
 
     return {
-      message: "Workspace created successfully",
+      id: workspace.id,
+      name: workspace.name,
     }
 
   });
-}
-
-//Get all workspaces
-export async function GET() {
-
-  return apiRouteHandler( async () => {
-
-    const user = await getAuthenticatedUser(); 
-
-    const list = await db.workspace.list(user.id);
-
-    return {
-      list
-    };
-
-  });
-
 }

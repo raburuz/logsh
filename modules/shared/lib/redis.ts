@@ -1,21 +1,38 @@
-import Redis from "ioredis"
-import { IEventSse } from "@/modules/feed/interface";
+// lib/redis.ts
+import Redis from "ioredis";
 
-export const redisInstance = () => {
-  return new Redis(process.env.REDIS_URL ?? '')
+declare global {
+  var _redis: Redis | undefined;
 }
 
-const redis = redisInstance();
+const REDIS_URL = process.env.REDIS_URL ?? "";
 
-/**
- * Publish event to user's channel
- * Cost: 1 PUBLISH command
- */
-export const publishEvent = async ( data: IEventSse) => {
+const redisInstance =
+  global._redis ??
+  new Redis(REDIS_URL, {
+    maxRetriesPerRequest: 3,
+    enableReadyCheck: true,
+    retryStrategy: times => {
+      return Math.min(times * 50, 2000); // Exponential backoff
+    },
+    reconnectOnError: err => {
+      return err.message.includes("READONLY"); 
+    },
+    connectTimeout: 10_000, // 10 seconds
+    commandTimeout: 5_000, // 5 seconds
+    keepAlive: 10_000, // 10 seconds
+    enableAutoPipelining: true,
+    maxLoadingRetryTime: 10_000, // 10 seconds
+    // TLS configuration based on environment variable
+    tls: process.env.REDIS_TLS === "true" ? {} : undefined,
+  });
 
-  // Publish to user-specific channel
-  await redis.publish(getChannelName(data.userId), JSON.stringify(data));
-
+if (process.env.NODE_ENV !== "production") {
+  global._redis = redisInstance;
 }
 
-export const getChannelName = (userId: string): string => `user:${userId}`;
+export const isRedisReady = () => {
+  return redisInstance.status === "ready";
+}
+
+export const redis = redisInstance;
