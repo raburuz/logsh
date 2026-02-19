@@ -35,6 +35,20 @@ const schema = {
       }),
     workspace: workspaceValidator.name,
     notify: z.boolean().optional().default(false),
+    metadata: z.record(
+      z.string().min(1, "Key cannot be empty").max(100, "Key must be 100 characters or less"), 
+      z.union(
+        [
+        z.string().max(500, "Value must be 500 characters or less"), 
+        z.number(), 
+        z.boolean()
+      ], {
+        error: 'Metadata value must be string, number or boolean'
+      }
+      )
+    )
+    .optional()
+    .default({})
   })
 }
 
@@ -108,6 +122,7 @@ export const eventService = {
           description: body.description,
           color: body.color,
           icon: body.icon,
+          metadata: body.metadata,
         },
       }, 
       options: {
@@ -144,6 +159,7 @@ export const eventService = {
         color: body.color,
         icon: body.icon,
         createdAt: event.createdAt.toISOString(),
+        metadata: body.metadata,
       },
     })
 

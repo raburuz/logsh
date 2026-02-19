@@ -20,6 +20,7 @@ export const eventQuery = {
           description: string,
           color: string,
           icon: string,
+          metadata: Record<string, any>,
         }
       },
       options: {
@@ -58,6 +59,7 @@ export const eventQuery = {
         description: data.description,
         icon: data.icon,
         color: data.color,
+        metadata: data.metadata,
       })
       .returning({
         id: event.id,
@@ -142,6 +144,7 @@ export const eventQuery = {
       color: event.color,
       workspace: workspace.name,
       workspaceId: event.workspaceId,
+      metadata: event.metadata,
     })
     .from(event)
     .innerJoin(workspace, eq(event.workspaceId, workspace.id))

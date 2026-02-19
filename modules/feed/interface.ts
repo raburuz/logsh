@@ -5,6 +5,7 @@ export interface IEvent {
   description: string;
   color: string;
   icon: string;
+  metadata: Record<string, any>;
 }
 
 export interface IEvents{
