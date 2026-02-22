@@ -34,7 +34,7 @@ export const sendToLogsh = async (data: {
           metadata: data.metadata,
           notify: data.notify ?? false,
         }),
-      })
+      });
 
     if (!response.ok) {
       throw new Error(`Failed to send log to Logsh: ${response.statusText}`);

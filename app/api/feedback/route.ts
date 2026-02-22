@@ -33,7 +33,7 @@ export const POST = withUser( async ({ user, request } ) => {
   if(!response.success){
     throw new ApiHttpError({
       name: 'internal_server_error',
-      message: `Failed to send feedback. If the problem persists, please contact support.`
+      message: response.error ? response.error : `Failed to send feedback. If the problem persists, please contact support.`
     })
   }
 

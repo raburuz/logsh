@@ -9,47 +9,18 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet"
 import {
-  AtSign,
-  UserPlus,
-  Megaphone,
-  Users,
-  Send,
   Hash,
   Clock,
   Terminal,
   Copy,
   Check,
-  ArrowUpRight,
-  Layers,
-  Activity,
-  Globe,
-  Tag,
-  Zap,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { IEvent } from "../interface"
 import { nicePastDate } from "@/modules/shared/lib/date"
 import { dominantColorFromEmoji } from "@/modules/shared/utils/dominatColorFromEmoji"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
-
-const iconMap = {
-  mention: AtSign,
-  subscriber: UserPlus,
-  ad: Megaphone,
-  segment: Users,
-  campaign: Send,
-}
-
-const detailIcons: Record<string, React.ElementType> = {
-  source: Globe,
-  list: Tag,
-  origin: ArrowUpRight,
-  channel: Hash,
-  platform: Layers,
-  audience: Users,
-  count: Activity,
-  status: Zap,
-}
+import { config } from "@/modules/shared/config"
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false)
@@ -101,8 +72,6 @@ export function ActivityDrawer({
   const detailEntries = Object.entries(event.metadata).filter(
     ([, v]) => v !== undefined
   ) as [string, string][]
-
-  const timestamp = new Date().toISOString()
 
   const color = dominantColorFromEmoji(event.icon || "❓")?.hex ?? "#ffffff";
 
@@ -174,7 +143,6 @@ export function ActivityDrawer({
 
               <div className="rounded-lg border border-zinc-900/60 overflow-hidden">
                 {detailEntries.map(([key, value], i) => {
-                  const DIcon = detailIcons[key] || Hash
                   return (
                     <div
                       key={key}
@@ -184,7 +152,7 @@ export function ActivityDrawer({
                         i < detailEntries.length - 1 && "border-b border-zinc-900/60/50"
                       )}
                     >
-                      <DIcon className="h-3 w-3 shrink-0 text-zinc-300/40" />
+                      <Hash className="h-3 w-3 shrink-0 text-zinc-300/40" />
                       <span className="w-32 shrink-0 text-[11px] text-zinc-500">
                         {key}
                       </span>
@@ -233,7 +201,7 @@ export function ActivityDrawer({
                       <span className="text-zinc-300/80">{`"${event.description}"`}</span>,{"\n"}
                       {"  "}<span className="text-zinc-300/70">{'"timestamp"'}</span>
                       <span className="text-zinc-500/50">:</span>{" "}
-                      <span className="text-zinc-300/80">{`"${timestamp}"`}</span>,{"\n"}
+                      <span className="text-zinc-300/80">{`"${event.createdAt}"`}</span>,{"\n"}
                       {detailEntries.map(([k, v], i) => (
                         <span key={k+v+i}>
                           {"  "}<span className="text-zinc-300/70">{`"${k}"`}</span>
@@ -255,11 +223,12 @@ export function ActivityDrawer({
           {/* Footer */}
           <div className="mt-auto border-t border-zinc-900/60 px-5 py-3">
             <div className="flex items-center justify-between text-[9px] uppercase tracking-widest text-zinc-500/40">
-              <span>SYS.MONITOR v2.4.1</span>
-              <span className="flex items-center gap-1.5">
-                <span className="h-1 w-1 rounded-full bg-white/50" />
-                Stream Active
-              </span>
+              <span>SYS.MONITOR</span>
+              <div className="flex items-center gap-1.5">
+                <span>{config.app.name}</span>
+                <span>/</span>
+                <span>Stream Active</span>
+              </div>
             </div>
           </div>
         </div>

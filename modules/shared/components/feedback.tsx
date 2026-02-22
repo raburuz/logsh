@@ -3,6 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form"
 import { MessageCircle, Send } from "lucide-react";
+import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FeedBackSchema, feedBackSchema } from "../lib/zod/schemas/feedback";
 import { Textarea } from "@/components/ui/textarea";
@@ -27,9 +28,34 @@ export const Feedback = () => {
     mode: "onSubmit",
   });
 
+  const postFeedback = async (data: FeedBackSchema) => {
+    setState("loading");
+    try {
+      const response = await fetch("/api/feedback", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+
+      const res = await response.json()
+
+      if( !response.ok ) {
+        throw new Error(res.message);
+      }
+      setState("success");
+      
+    } catch (error) {
+      setState("error");
+      const err = error as Error;
+      toast.error( err.message || "Something went wrong. Please try again later.");
+    }
+
+  }
 
   const handleSubmit = async ( data: FeedBackSchema) => {
-    setState("success");
+    await postFeedback(data);
   }
 
   return (
@@ -82,7 +108,7 @@ export const Feedback = () => {
                         <span>or</span>
                         <Link href="/docs/api-reference" className="text-blue-800">see docs</Link>
                       </div>
-                      <Button size={'sm'}>Send</Button>
+                      <Button size={'sm'} disabled={state === "loading"}>Send</Button>
                     </div>
                 </form>
               </>
