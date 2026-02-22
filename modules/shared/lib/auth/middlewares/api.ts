@@ -83,7 +83,7 @@ export const withApi = ( handler: ApiHandler<any>, options?: ApiRouteOptions ) =
 
       const ip = await getClientIp();
       
-      await RateLimit.bucket(`global_api:${ip}`, {
+      await RateLimit.bucket(`api:${ip}`, {
         refillAmount: 10000,
         refillIntervalSeg: 1,
         tokensPerRequest: 1,

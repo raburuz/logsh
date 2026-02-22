@@ -1,7 +1,6 @@
 /* NEXT */
 import type { Metadata } from 'next';
 import { config } from '../config';
-import { headers } from 'next/dist/server/request/headers';
 
 
 const { seo: seoAttributes , socialMedia } = config.marketing;
@@ -16,9 +15,7 @@ interface IDefaultMetadataProps{
 
 const defaultMetadata= async ( data?: IDefaultMetadataProps ): Promise<Metadata> => {
 
-  const headersList = await headers();
-  const host = headersList.get('host') as string;
-  const domain = "https://" + host;
+  const domain = "https://" + config.app.domain;
 
   const title = data?.title ?? default_title; 
   const description = data?.description ?? default_description; 

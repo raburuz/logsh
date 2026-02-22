@@ -1,12 +1,21 @@
 import { withUser } from "@/modules/shared/lib/auth/middlewares/user";
+import { ApiHttpError } from "@/modules/shared/lib/error";
 import { getChannelName } from "@/modules/shared/lib/pub-sub";
-import { redis } from "@/modules/shared/lib/redis";
+import { isRedisReady, redis } from "@/modules/shared/lib/redis";
 
 // This is required to enable streaming
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export const GET = withUser( async ({ request, user }) => {
+
+  if(!isRedisReady()) {
+    throw new ApiHttpError({
+      name: "internal_server_error",
+      message: "Event streaming service is currently unavailable. Please try again later.",
+      details: "Wait until the streaming service is ready before establishing SSE connection."
+    });
+  }
   
   // Initialize Upstash Redis client
   const subscriber = redis.duplicate();

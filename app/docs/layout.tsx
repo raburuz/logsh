@@ -60,7 +60,7 @@ export default function Layout({
               <div key={item.title}>
                 <div className="flex flex-row items-center gap-1.5 mb-2">
                   <span>·</span>
-                  <Link href={item.href} className="hover:text-white">{item.title}</Link>
+                  <Link href={item.href as any} className="hover:text-white">{item.title}</Link>
                 </div>
                 <div className="pr-4 mb-3">
                   {
@@ -68,7 +68,7 @@ export default function Layout({
                       <div key={child.title} className="pl-4">
                         <div className="flex flex-row items-center gap-1.5">
                           <span>-</span>
-                          <Link href={child.href} className="text-sm hover:text-white text-white/60">{child.title}</Link>
+                          <Link href={child.href as any} className="text-sm hover:text-white text-white/60">{child.title}</Link>
                         </div>
                       </div>
                     ))

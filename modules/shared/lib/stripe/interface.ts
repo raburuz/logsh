@@ -23,8 +23,6 @@ export interface IPlan {
       amount: number;
       discount?: {
         text: string;
-        amount: number;
-        percentage: number;
       };
     }
   }

@@ -32,12 +32,15 @@ export const plans: IPlan[] = [
     description: "For side projects and experimentation.",
     interval: {
       monthly: {
-        stripePriceId: isProduction ? "price_1Sw52yLJAtHe4i9X2WQNEbDl" : "price_1Sw52yLJAtHe4i9X2WQNEbDl",
+        stripePriceId: isProduction ? "price_1T3h0KLJAtHe4i9XHpjbRGDZ" : "price_1Sw52yLJAtHe4i9X2WQNEbDl",
         amount: 10,
       },
       yearly: {
-        stripePriceId: isProduction ? "price_1Sw52yLJAtHe4i9X2WQNEbDl" : "price_1Sw52yLJAtHe4i9X2WQNEbDl",
-        amount: 8,
+        stripePriceId: isProduction ? "price_1T3h5DLJAtHe4i9XUlIWrcaT" : "price_1Sw52yLJAtHe4i9X2WQNEbDl",
+        amount: 100,
+        discount: {
+          text: "Save $20 with annual billing",
+        }
       }
     },
     features: [
@@ -61,12 +64,15 @@ export const plans: IPlan[] = [
     description: "For growing teams that need full visibility.",
     interval: {
       monthly: {
-        stripePriceId: isProduction ? "price_1Sw52yLJAtHe4i9X2WQNEbDl" : "price_1Sw52yLJAtHe4i9X2WQNEbDl",
+        stripePriceId: isProduction ? "price_1T3hUFLJAtHe4i9XVXruZ2U5" : "price_1Sw52yLJAtHe4i9X2WQNEbDl",
         amount: 19,
       },
       yearly: {
-        stripePriceId: isProduction ? "price_1Sw52yLJAtHe4i9X2WQNEbDl" : "price_1Sw52yLJAtHe4i9X2WQNEbDl",
-        amount: 16,
+        stripePriceId: isProduction ? "price_1T3hUZLJAtHe4i9XN2mts5vz" : "price_1Sw52yLJAtHe4i9X2WQNEbDl",
+        amount: 190,
+        discount: {
+          text: "Save $38 with annual billing",
+        }
       }
     },
     features: [
@@ -91,12 +97,15 @@ export const plans: IPlan[] = [
     description: "For high-volume products at any stage.",
     interval: {
       monthly: {
-        stripePriceId: isProduction ? "price_1Sw52yLJAtHe4i9X2WQNEbDl" : "price_1Sw52yLJAtHe4i9X2WQNEbDl",
+        stripePriceId: isProduction ? "price_1T3hV7LJAtHe4i9XB0PcIK09" : "price_1Sw52yLJAtHe4i9X2WQNEbDl",
         amount: 79,
       },
       yearly: {
-        stripePriceId: isProduction ? "price_1Sw52yLJAtHe4i9X2WQNEbDl" : "price_1Sw52yLJAtHe4i9X2WQNEbDl",
-        amount: 63,
+        stripePriceId: isProduction ? "price_1T3hVWLJAtHe4i9XUOgP1k5F" : "price_1Sw52yLJAtHe4i9X2WQNEbDl",
+        amount: 790,
+        discount: {
+          text: "Save $158 with annual billing",
+        }
       }
     },
     features: [

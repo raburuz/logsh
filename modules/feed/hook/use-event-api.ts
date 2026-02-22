@@ -5,15 +5,26 @@ export const useEventApi = () => {
 
   const sse = async () => {
 
-    const response = await fetch('/api/event/sse', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'text/event-stream',
-      },
-      }
-    );
+    try {
+      const response = await fetch('/api/event/sse', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'text/event-stream',
+        },
+        }
+      );
 
-    return response.body?.getReader();
+      if(!response.ok){
+        throw new Error('Failed to connect to SSE endpoint');
+      }
+  
+      return response.body?.getReader();
+      
+    } catch (error) {
+      console.log('Error connecting to SSE endpoint:', error);
+      return null;
+    }
+
 
   }
 

@@ -5,11 +5,13 @@ declare global {
   var _redis: Redis | undefined;
 }
 
-const REDIS_URL = process.env.REDIS_URL ?? "";
-
 const redisInstance =
   global._redis ??
-  new Redis(REDIS_URL, {
+  new Redis({
+    host: process.env.REDIS_HOST ?? "localhost",
+    port: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT) : undefined,
+    username: process.env.REDIS_USERNAME ?? "default",
+    password: process.env.REDIS_PASSWORD ?? '',
     maxRetriesPerRequest: 3,
     enableReadyCheck: true,
     retryStrategy: times => {
@@ -25,6 +27,7 @@ const redisInstance =
     maxLoadingRetryTime: 10_000, // 10 seconds
     // TLS configuration based on environment variable
     tls: process.env.REDIS_TLS === "true" ? {} : undefined,
+    lazyConnect: false, // Connect immediately 
   });
 
 if (process.env.NODE_ENV !== "production") {

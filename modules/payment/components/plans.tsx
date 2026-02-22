@@ -60,7 +60,7 @@ export const Pricing = () => {
               onClick={() => setBilling("yearly")}
             >
               Yearly
-              <span className="ml-1.5 text-xs text-primary">-20%</span>
+              <span className="ml-1.5 text-xs text-orange-700">2 months free</span>
             </button>
           </div>
         </div>
@@ -80,14 +80,14 @@ export const Pricing = () => {
 
               <div className="mb-6">
                 <h3 className="text-sm font-medium text-foreground">{plan.name}</h3>
-                <p className="mt-1 text-xs text-muted-foreground">{plan.description}</p>
+                <p className="mt-1 text-xs text-zinc-500">{plan.description}</p>
               </div>
 
               <div className="mb-6 flex items-baseline gap-1">
                 <span className="text-3xl font-semibold tracking-tight text-foreground">
                   ${billing === "monthly" ? plan.interval.monthly.amount : plan.interval.yearly.amount}
                 </span>
-                <span className="text-sm text-muted-foreground">/ mo</span>
+                <span className="text-sm text-zinc-500">{billing === "monthly" ? "/ mo" : "/ yr"}</span>
               </div>
 
               {
@@ -97,10 +97,18 @@ export const Pricing = () => {
               }
 
               <ul className="flex flex-col gap-2.5">
+                {
+                  plan.interval.yearly.discount && billing === "yearly" && (
+                    <li className="flex items-start gap-2.5">
+                      <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-orange-700" />
+                      <span className="text-sm text-orange-700">{plan.interval.yearly.discount.text}</span>
+                    </li>
+                  )
+                }
                 {plan.features.map((feature) => (
                   <li key={feature} className="flex items-start gap-2.5">
                     <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-green-700" />
-                    <span className="text-sm text-muted-foreground">{feature}</span>
+                    <span className="text-sm text-zinc-500">{feature}</span>
                   </li>
                 ))}
               </ul>
@@ -108,7 +116,7 @@ export const Pricing = () => {
           ))}
         </div>
         <div>
-          <p className="mt-8 text-center text-xs text-muted-foreground">
+          <p className="mt-8 text-center text-xs text-zinc-500">
             All plans include a 14-day free trial. No credit card required.
           </p>
         </div>

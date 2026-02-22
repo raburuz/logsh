@@ -104,7 +104,7 @@ export const Feedback = () => {
                     <div className="mt-4 flex justify-between items-center">
                       <div className="text-xs space-x-2">
                         <span>Need help?</span>
-                        <Link href="/" className="text-blue-800">Contact us</Link>
+                        <a href={`mailto:${config.email.help}`} className="text-blue-800" >Contact us</a>
                         <span>or</span>
                         <Link href="/docs/api-reference" className="text-blue-800">see docs</Link>
                       </div>

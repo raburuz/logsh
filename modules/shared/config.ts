@@ -9,6 +9,7 @@ export const config = {
   email: {
     fromAuth: 'security@notify.logsh.co',
     author: 'jean@notify.logsh.co',
+    help: 'hello@notify.logsh.co'
   },
   marketing: {
     socialMedia: {
