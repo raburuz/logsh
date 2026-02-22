@@ -64,24 +64,38 @@ export const RateLimit = {
     redisKeyPrefix?: string,
   } ) => {
 
+    const rateLimiterOptions: IRateLimiterOptions = {
+      keyPrefix: `rl:fixed_window${options.redisKeyPrefix ? `:${options.redisKeyPrefix}` : ''}`,
+      // Maximum number of tokens
+      points: options.maxRequests, 
+      // Refill x tokens every x seconds
+      duration: options.windowSizeSeg,
+      // Allow burst
+      execEvenly: false,
+      // Block for x seconds if consumed more than points
+      blockDuration: options.blockDurationSeg,
+      // Optional: Set a short in-memory block to prevent multiple requests from hitting Redis when the limit is exceeded
+      //inMemoryBlockDuration: options.blockDurationSeg,
+    }
+
     try {
 
-      const limiter = new RateLimiterRedis({
-        storeClient: redis,
-        keyPrefix: `rl:fixed_window${options.redisKeyPrefix ? `:${options.redisKeyPrefix}` : ''}`,
-        // Maximum number of tokens
-        points: options.maxRequests, 
-        // Refill x tokens every x seconds
-        duration: options.windowSizeSeg,
-        // Allow burst
-        execEvenly: false,
-        // Block for x seconds if consumed more than points
-        blockDuration: options.blockDurationSeg,
-        // Optional: Set a short in-memory block to prevent multiple requests from hitting Redis when the limit is exceeded
-        //inMemoryBlockDuration: options.blockDurationSeg,
-      })
-  
-      await limiter.consume(key);
+      if( isRedisReady() ){
+        const limiter = new RateLimiterRedis({
+          storeClient: redis,
+          ...rateLimiterOptions,
+        })
+    
+        await limiter.consume(key);
+
+      } else {
+        const limiter = new RateLimiterMemory({
+          ...rateLimiterOptions,
+        })
+        
+        await limiter.consume(key);
+
+      }
       
     } catch (error) {
 
@@ -95,7 +109,5 @@ export const RateLimit = {
       })
       
     }
-
   }
-
 }

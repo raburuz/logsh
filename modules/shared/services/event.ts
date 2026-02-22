@@ -1,55 +1,17 @@
-import z from "zod";
-import * as emoji from "node-emoji";
 import { db } from "@/modules/db"
 import { cacheKey, getCache, setCache } from "../lib/cache";
 import { RateLimit } from "../lib/rate-limit";
 import { zodValidator } from "../lib/zod/zod";
-import { workspaceValidator } from "@/modules/feed/lib/zod";
 import { ApiHttpError } from "../lib/error";
 import { sendNotificationToWorkspaceMembers } from "@/modules/push/server";
 import { publishEvent } from "../lib/pub-sub";
+import { eventApiCreationSchema } from "../lib/zod/schemas/event";
 
 interface ISubscriptionCache {
   subscriptionId: string;
   eventUsage: number;
   eventLimit: number;
   eventPerSecond: number;
-}
-
-const schema = {
-  body: z.strictObject({
-    event: z.string().trim().min(1, "Event name is required").max(150, "Event name must be 150 characters or less"),
-    description: z.string().trim().min(1, "Description can not be a empty string")
-    .max(250, "Description must be 250 characters or less").optional().default(""),
-    color: z.string().trim().regex(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/, "Color must be a valid hex code").optional().default("#ffffff"),
-    //https://www.npmjs.com/package/node-emoji
-    icon: z.string()
-      .trim()
-      .optional()
-      .default("🔥") 
-      .refine((val) => {
-        const result = emoji.find(val);
-        return !!result
-      }, {
-        message: "Icon must be a valid emoji",
-      }),
-    workspace: workspaceValidator.name,
-    notify: z.boolean().optional().default(false),
-    metadata: z.record(
-      z.string().min(1, "Key cannot be empty").max(100, "Key must be 100 characters or less"), 
-      z.union(
-        [
-        z.string().max(500, "Value must be 500 characters or less"), 
-        z.number(), 
-        z.boolean()
-      ], {
-        error: 'Metadata value must be string, number or boolean'
-      }
-      )
-    )
-    .optional()
-    .default({})
-  })
 }
 
 export const eventService = {
@@ -64,7 +26,8 @@ export const eventService = {
 
       if( !subscription ) throw new ApiHttpError({
         name: 'bad_request',
-        message: 'Your current plan does not allow you to create events. Please upgrade to a paid plan to access this feature.'
+        message: 'Your current plan does not allow you to create events. Please upgrade to a paid plan to access this feature.',
+        details: 'No active subscription found for this user. Please subscribe to a plan that includes event creation to use this feature.',
       });
 
       return {
@@ -89,7 +52,8 @@ export const eventService = {
     if( subscription.eventUsage >= subscription.eventLimit ) {
       throw new ApiHttpError({
         name: 'rate_limit_exceeded',
-        message: 'You have reached the maximum number of monthly events. Please upgrade your plan to create more events.'
+        message: 'You have reached the maximum number of monthly events. Please upgrade your plan to create more events.',
+        details: 'Your current subscription plan allows a maximum of ' + subscription.eventLimit + ' events per month. Please upgrade to a higher-tier plan to increase this limit and continue creating events.',
       });
     }
 
@@ -106,7 +70,7 @@ export const eventService = {
 
     const bodyRequest = await request.json();
 
-    const { body } = await zodValidator({ body: bodyRequest }, schema );
+    const { body } = await zodValidator({ body: bodyRequest }, { body: eventApiCreationSchema });
 
     const EVENT_QUANTITY_CONSUMED = 1;
 
@@ -148,7 +112,7 @@ export const eventService = {
     )
 
     // Publish event to Redis SSE channel
-    await publishEvent({
+    publishEvent({
       userId: userId,
       workspaceId: event.workspaceId,
       event: {
@@ -163,13 +127,13 @@ export const eventService = {
 
     if(body.notify){
       // Send push notifications to workspace members
-      await sendNotificationToWorkspaceMembers(
+      sendNotificationToWorkspaceMembers(
         event.projectId,
         {
           type: 'event',
           data: {
-            event: "user.signup.test",
-            description: "New user registered",
+            event: body.event,
+            description: `${body.icon} ${body.description}`,
           }
         }
       )
