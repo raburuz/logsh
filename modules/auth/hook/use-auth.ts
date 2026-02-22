@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { authClient } from "../lib/client";
+import { authClient } from "@/modules/shared/lib/auth/client";
 
 export const useAuth = () => {
 

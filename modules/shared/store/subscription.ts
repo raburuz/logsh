@@ -2,7 +2,7 @@
 
 import { create } from 'zustand'
 import { useSubscriptionApi } from '@/modules/payment/hooks/use-subscription';
-import { ISubscription } from '@/modules/payment/interface';
+import { ISubscription } from '@/modules/shared/lib/stripe/interface';
 import { toast } from 'sonner';
 
 interface ISubscriptionState {

@@ -1,6 +1,7 @@
+
 import { db } from "@/modules/db";
 import { dayjs } from "@/modules/shared/lib/date";
-import { apiRouteHandler } from "@/modules/shared/utils/handler";
+import { apiRouteHandler } from "@/modules/shared/lib/auth/middlewares/user";
 
 export async function GET(request: Request) {
 

@@ -3,9 +3,9 @@ import * as emoji from "node-emoji";
 import { db } from "@/modules/db"
 import { cacheKey, getCache, setCache } from "../lib/cache";
 import { RateLimit } from "../lib/rate-limit";
-import { zodValidator } from "../lib/zod";
+import { zodValidator } from "../lib/zod/zod";
 import { workspaceValidator } from "@/modules/feed/lib/zod";
-import { AppError } from "../lib/error";
+import { ApiHttpError } from "../lib/error";
 import { sendNotificationToWorkspaceMembers } from "@/modules/push/server";
 import { publishEvent } from "../lib/pub-sub";
 
@@ -62,10 +62,10 @@ export const eventService = {
     } else {
       const subscription = await db.subscription.get_usable_subscription({ by: { userId } });
 
-      if( !subscription ) throw new AppError(
-        'bad_request', 
-        'Your current plan does not allow you to create events. Please upgrade to a paid plan to access this feature.'
-      );
+      if( !subscription ) throw new ApiHttpError({
+        name: 'bad_request',
+        message: 'Your current plan does not allow you to create events. Please upgrade to a paid plan to access this feature.'
+      });
 
       return {
         eventUsage: subscription.usage?.events ?? 0,
@@ -87,10 +87,10 @@ export const eventService = {
     const subscription = await eventService.subscription(userId);
 
     if( subscription.eventUsage >= subscription.eventLimit ) {
-      throw new AppError(
-        'rate_limit_exceeded', 
-        'You have reached the maximum number of monthly events. Please upgrade your plan to create more events.'
-      );
+      throw new ApiHttpError({
+        name: 'rate_limit_exceeded',
+        message: 'You have reached the maximum number of monthly events. Please upgrade your plan to create more events.'
+      });
     }
 
     // Apply rate limit using token bucket algorithm
@@ -120,7 +120,6 @@ export const eventService = {
         data: {
           event: body.event,
           description: body.description,
-          color: body.color,
           icon: body.icon,
           metadata: body.metadata,
         },
@@ -156,7 +155,6 @@ export const eventService = {
         id: event.id,
         event: body.event,
         description: body.description,
-        color: body.color,
         icon: body.icon,
         createdAt: event.createdAt.toISOString(),
         metadata: body.metadata,

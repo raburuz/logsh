@@ -1,7 +1,7 @@
 import { eq, sql } from "drizzle-orm";
 import { subscription } from "../schemas/auth"
 import { db } from "../db"
-import { findPlanByName } from "@/modules/payment/lib/plans";
+import { findPlanByName } from "@/modules/shared/lib/stripe/plans";
 import { subscriptionUsage } from "../schemas/app";
 import { DbTransaction } from "../interface";
 import { dayjs } from "@/modules/shared/lib/date";

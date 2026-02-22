@@ -1,5 +1,11 @@
 import { Testimonial } from "@/modules/marketing/components/testimonial";
 import { Pricing } from "@/modules/payment/components/plans";
+import { seo } from "@/modules/shared/utils/seo";
+
+export const metadata = seo({
+  title: "logsh.co - Pricing Plans",
+  description: "Explore our flexible pricing plans designed to fit your needs. Get real-time visibility and alerts for your apps with One Day.",
+})
 
 export default function PricingPage() {
 

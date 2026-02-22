@@ -1,18 +1,12 @@
 import { db } from "@/modules/db"
-import { getAuthenticatedUser } from "@/modules/auth/actions/auth";
-import { apiRouteHandler } from "@/modules/shared/utils/handler"
+import { withUser } from "@/modules/shared/lib/auth/middlewares/user"
 
-export async function GET(){
+export const GET = withUser( async ({ user, request }) => {
 
-  return apiRouteHandler( async () => {
+  const devices = await db.pushSubscription.device_list({ userId: user.id });
+  
+  return {
+    list: devices
+  };
 
-    const user = await getAuthenticatedUser();
-
-    const devices = await db.pushSubscription.device_list({ userId: user.id });
-    
-    return {
-      list: devices
-    };
-
-  })
-}
+})

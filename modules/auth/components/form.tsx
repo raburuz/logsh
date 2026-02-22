@@ -14,9 +14,10 @@ import { config } from "@/modules/shared/config"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Google } from "./google"
-import { authClient } from "../lib/client"
+import { authClient } from "@/modules/shared/lib/auth/client"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useState } from "react"
 
 const schema = z.object({
   email: z.email("Invalid email address"),
@@ -25,6 +26,10 @@ const schema = z.object({
 type ISchema = z.infer<typeof schema>;
 
 export function AuthForm() {
+
+  const [isClicked, setIsClicked] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
 
   const {
     register,
@@ -37,12 +42,21 @@ export function AuthForm() {
 
   const origin = typeof window !== 'undefined' ? window.location.origin : ''
 
-  const magicLink = ( data: ISchema) => {
-    authClient.signIn.magicLink({
+  const magicLink = async ( data: ISchema) => {
+    setIsClicked(true);
+    setError(null);
+    setMessage(null);
+    const resp = await authClient.signIn.magicLink({
       email: data.email,
-      callbackURL: `${origin}/dashboard`,
-      newUserCallbackURL: `${origin}/dashboard`,
+      callbackURL: `${origin}${config.redirects.toDashboard}`,
+      newUserCallbackURL: `${origin}${config.redirects.toOnboarding}`,
     });
+    if (resp.error) {
+      setError(resp.error.message ?? 'An error occurred while sending the magic link. Please try again.');
+      setIsClicked(false);
+      return;
+    }
+    setMessage('Magic link sent! Please check your email.');
   }
 
   return (
@@ -76,7 +90,9 @@ export function AuthForm() {
             </div>
         </CardContent>
         <CardFooter className="flex-col gap-2">
-          <Button type="submit" className="w-full">
+          {error && <p className="text-xs text-red-500">{error}</p>}
+          {message && <p className="text-xs text-green-500">{message}</p>}
+          <Button type="submit" className="w-full" disabled={isClicked}>
             Login with Email
           </Button>
           <Google/>

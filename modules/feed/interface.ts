@@ -3,7 +3,6 @@ export interface IEvent {
   event: string;
   createdAt: string;
   description: string;
-  color: string;
   icon: string;
   metadata: Record<string, any>;
 }

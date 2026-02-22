@@ -1,4 +1,5 @@
-import { IPlan } from "../interface";
+import { isProduction } from "@/modules/shared/utils/constraint";
+import { IPlan } from "./interface";
 
 export const defaultPlan: IPlan = {
   isFree: true,
@@ -31,11 +32,11 @@ export const plans: IPlan[] = [
     description: "For side projects and experimentation.",
     interval: {
       monthly: {
-        stripePriceId: "price_1Sw52yLJAtHe4i9X2WQNEbDl",
+        stripePriceId: isProduction ? "price_1Sw52yLJAtHe4i9X2WQNEbDl" : "price_1Sw52yLJAtHe4i9X2WQNEbDl",
         amount: 10,
       },
       yearly: {
-        stripePriceId: "price_1Sw52yLJAtHe4i9X2WQNEbDl",
+        stripePriceId: isProduction ? "price_1Sw52yLJAtHe4i9X2WQNEbDl" : "price_1Sw52yLJAtHe4i9X2WQNEbDl",
         amount: 8,
       }
     },
@@ -60,11 +61,11 @@ export const plans: IPlan[] = [
     description: "For growing teams that need full visibility.",
     interval: {
       monthly: {
-        stripePriceId: "price_1Sw52yLJAtHe4i9X2WQNEbDl",
+        stripePriceId: isProduction ? "price_1Sw52yLJAtHe4i9X2WQNEbDl" : "price_1Sw52yLJAtHe4i9X2WQNEbDl",
         amount: 19,
       },
       yearly: {
-        stripePriceId: "price_1Sw52yLJAtHe4i9X2WQNEbDl",
+        stripePriceId: isProduction ? "price_1Sw52yLJAtHe4i9X2WQNEbDl" : "price_1Sw52yLJAtHe4i9X2WQNEbDl",
         amount: 16,
       }
     },
@@ -90,11 +91,11 @@ export const plans: IPlan[] = [
     description: "For high-volume products at any stage.",
     interval: {
       monthly: {
-        stripePriceId: "price_1Sw52yLJAtHe4i9X2WQNEbDl",
+        stripePriceId: isProduction ? "price_1Sw52yLJAtHe4i9X2WQNEbDl" : "price_1Sw52yLJAtHe4i9X2WQNEbDl",
         amount: 79,
       },
       yearly: {
-        stripePriceId: "price_1Sw52yLJAtHe4i9X2WQNEbDl",
+        stripePriceId: isProduction ? "price_1Sw52yLJAtHe4i9X2WQNEbDl" : "price_1Sw52yLJAtHe4i9X2WQNEbDl",
         amount: 63,
       }
     },

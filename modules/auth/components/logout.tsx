@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { authClient } from "../lib/client"
+import { authClient } from "@/modules/shared/lib/auth/client"
 
 export const Logout = ( props: { className?: string }) => {
 

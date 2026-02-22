@@ -1,8 +1,8 @@
 import Stripe from "stripe"
 import { stripe } from "@better-auth/stripe"
 import { db } from "@/modules/db";
-import { logsh } from "@/modules/shared/lib/logsh";
-import { config } from "../../shared/config";
+import { sendToLogsh } from "@/modules/shared/lib/logsh";
+import { config } from "../../config";
 import { findPlanByName, planListToBetterAuthPlans } from "./plans";
 
 export const stripeClient = new Stripe( 
@@ -45,24 +45,75 @@ export const stripePlugin = stripe({
           payment_method_collection: "if_required"
         }
       }
-    },  
+    },
     onSubscriptionComplete: async ( data ) => {
-      //This happends when the user pay a sub for the first time or when a trial end and the user is converted to a paid sub
+      // Called when a subscription is successfully created via checkout
       await resetSubscriptionUsage({ subscription: { id: data.subscription.id, referenceId: data.subscription.referenceId } });
+      await sendToLogsh({
+        workspace: "logsh_subscriptions",
+        event: "subscription.created",
+        description: "A new subscription has been created in Stripe",
+        notify: true,
+        icon: "🟢",
+        metadata: {
+          provider: "stripe",
+          url: "https://dashboard.stripe.com/subscriptions",
+          userId: data.subscription.referenceId,
+          subscriptionId: data.subscription.id,
+        }
+      })
     },
     onSubscriptionUpdate: async (data) => {
-      //This can happend when the user change plan or when the subscription is renewed
+      // Called when a subscription is updated
       await resetSubscriptionUsage({ subscription: { id: data.subscription.id, referenceId: data.subscription.referenceId } });
+      await sendToLogsh({
+        workspace: "logsh_subscriptions",
+        event: "subscription.updated",
+        description: "A subscription has been updated in Stripe",
+        notify: true,
+        icon: "🔵",
+        metadata: {
+          provider: "stripe",
+          url: "https://dashboard.stripe.com/subscriptions",
+          userId: data.subscription.referenceId,
+          subscriptionId: data.subscription.id,
+        }
+      })
     },
 
     onSubscriptionCancel : async (data) => {
-      // This can happend when the user cancel the sub or when the sub is cancelled by Stripe because of payment failure for example
+      // Called when a subscription is canceled
       await resetSubscriptionUsage({ subscription: { id: data.subscription.id, referenceId: data.subscription.referenceId } });
+      await sendToLogsh({
+        workspace: "logsh_subscriptions",
+        event: "subscription.canceled",
+        description: "A subscription has been canceled in Stripe",
+        notify: true,
+        icon: "🔴",
+        metadata: {
+          provider: "stripe",
+          url: "https://dashboard.stripe.com/subscriptions",
+          userId: data.subscription.referenceId,
+          subscriptionId: data.subscription.id,
+        }
+      })
     },
-
     onSubscriptionDeleted: async (data) => {
-      // This can happend when the subscription is deleted, either by the user or by Stripe
+      // Called when a subscription is deleted
       await resetSubscriptionUsage({ subscription: { id: data.subscription.id, referenceId: data.subscription.referenceId } });
+      await sendToLogsh({
+        workspace: "logsh_subscriptions",
+        event: "subscription.deleted",
+        description: "A subscription has been deleted in Stripe",
+        notify: true,
+        icon: "⚫",
+        metadata: {
+          provider: "stripe",
+          url: "https://dashboard.stripe.com/subscriptions",
+          userId: data.subscription.referenceId,
+          subscriptionId: data.subscription.id,
+        }
+      })
     }
   },
 });
@@ -76,11 +127,16 @@ export const resetSubscriptionUsage = async ( data: { subscription: { id: string
       }
     })
   } catch (error) {
-    await logsh({
+    await sendToLogsh({
       workspace: 'stripe_error',
       event: 'reset_usage_failed',
       description: `Failed to reset usage for subscription ${data.subscription.id} and user ${data.subscription.referenceId}`,
-      color: '#ff0000',
+      icon: '❌',
+      metadata: {
+        userId: data.subscription.referenceId,
+        subscriptionId: data.subscription.id,
+        error: (error as Error).message,
+      }
     })
   }
 }

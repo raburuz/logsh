@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Activity, CalendarClock, Gauge, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { authClient } from "@/modules/auth/lib/client"
+import { authClient } from "@/modules/shared/lib/auth/client"
 import { niceFutureDate } from "@/modules/shared/lib/date";
 import { useSubscription } from "@/modules/shared/store/subscription";
 

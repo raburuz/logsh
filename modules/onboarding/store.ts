@@ -1,7 +1,7 @@
 "use client"
 
 import { create } from 'zustand'
-import { authClient } from '../auth/lib/client';
+import { authClient } from '@/modules/shared/lib/auth/client';
 
 interface IPrice {
   plan: string;

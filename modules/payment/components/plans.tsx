@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, useState } from "react"
 import { Check, CreditCard, Shield } from "lucide-react"
-import { plans } from "@/modules/payment/lib/plans"
+import { plans } from "@/modules/shared/lib/stripe/plans"
 import { cn } from "@/lib/utils"
 import { CheckoutButton } from "./checkout"
 import { useAuth } from "@/modules/auth/hook/use-auth"

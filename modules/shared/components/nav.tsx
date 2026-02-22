@@ -1,6 +1,5 @@
 import Link from "next/link"
 import { config } from "../config"
-import { getServerSideUser } from "@/modules/auth/actions/auth"
 import { Logout } from "@/modules/auth/components/logout";
 import {
   DropdownMenu,
@@ -12,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { CircleUser } from "lucide-react";
+import { getServerSideUser } from "../lib/auth/middlewares/user";
 
 export const Nav = async () => {
 

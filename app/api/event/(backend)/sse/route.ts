@@ -1,19 +1,13 @@
-import { getAuthenticatedUser } from "@/modules/auth/actions/auth";
+import { withUser } from "@/modules/shared/lib/auth/middlewares/user";
 import { getChannelName } from "@/modules/shared/lib/pub-sub";
 import { redis } from "@/modules/shared/lib/redis";
 
-export const runtime = 'nodejs';
 // This is required to enable streaming
+export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-export async function GET( request : Request ) {
-
-  //Authentication check
-  const user = await getAuthenticatedUser();
-  if (!user) {
-    return new Response('Unauthorized', { status: 401 });
-  }
-
+export const GET = withUser( async ({ request, user }) => {
+  
   // Initialize Upstash Redis client
   const subscriber = redis.duplicate();
   
@@ -24,7 +18,7 @@ export async function GET( request : Request ) {
   
   await subscriber.subscribe(getChannelName(user.id));
   
-
+  
   // Send an initial comment to establish the SSE connection
   writer.write(encoder.encode('event: keep-alive\ndata: keep alive\n\n'));
   
@@ -41,22 +35,17 @@ export async function GET( request : Request ) {
   
   // Handle client disconnect
   request.signal.addEventListener('abort', () => {
-
+  
     //Must close all the conections
     subscriber.quit();
     clearInterval(interval);
     writer.close();
     console.log('SSE connection closed by client');
   });
+
   // Headers for SSE with the response, including necessary cache control
-  return new Response(responseStream.readable, {
-    headers: {
-      'Content-Type': 'text/event-stream',
-      'Cache-Control': 'no-cache',
-      'Connection': 'keep-alive',
-    },
-  })
+  return responseStream.readable;
 
-
-
-}
+}, {
+  enableStreaming: true,
+})

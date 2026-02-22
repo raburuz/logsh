@@ -1,7 +1,6 @@
 import { relations } from "drizzle-orm";
 import { integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { subscription, user } from "./auth";
-import { metadata } from "@/app/layout";
 
 export const project = pgTable('project', {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -36,7 +35,6 @@ export const event = pgTable('event', {
     .notNull()
     .references(() => workspace.id, { onDelete: "cascade" }),
   icon: text("icon").default(''),
-  color: text("color").default('#000000'),
   event: text("event").notNull(),
   description: text("description"),
   metadata: jsonb("metadata").$type<{[x:string]: any}>().default({}),

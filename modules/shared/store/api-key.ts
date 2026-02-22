@@ -3,7 +3,7 @@
 import { create } from 'zustand'
 import { IApiKey } from '@/modules/api-key/interface';
 import { useApi } from '@/modules/api-key/hooks/useApiKeyApi';
-import { authClient } from '@/modules/auth/lib/client';
+import { authClient } from '@/modules/shared/lib/auth/client';
 
 interface IApiKeyState {
   list: IApiKey[];

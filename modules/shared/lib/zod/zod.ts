@@ -1,7 +1,7 @@
 /* LIBRARIES */
 import { z, ZodType } from "zod";
 /* App */
-import { AppError } from "./error";
+import { ApiHttpError } from "../error";
 
 export type InferSchemaValues<T extends ZodType<any>> = z.infer<T>;
 
@@ -38,10 +38,10 @@ export const zodValidator = async <
       path: issue.path.join('.'),
     }));
 
-    throw new AppError( 
-      'validation_error',
-      `${result.error?.issues[0].message}.`
-    );
+    throw new ApiHttpError({ 
+      name: 'validation_error',
+      message: `${result.error?.issues[0].message}.`
+    });
     
   }
 

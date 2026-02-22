@@ -2,7 +2,7 @@ import { and, asc, desc, eq } from "drizzle-orm";
 import { db } from "../db";
 import { DbTransaction } from "../interface";
 import { project, projectMember } from "../schemas/app";
-import { AppError } from "@/modules/shared/lib/error";
+import { ApiHttpError } from "@/modules/shared/lib/error";
 
 export const ProjectMemberRoles= {
   OWNER: 'owner',
@@ -150,7 +150,7 @@ export const projectQuery = {
 
     const isOwner = await projectQuery.is_owner( query.by.userId, query.where.projectId )
 
-    if(!isOwner) throw new AppError('unauthorized', 'This project can only be deleted by its owner');
+    if(!isOwner) throw new ApiHttpError({ name: 'unauthorized', message: 'This project can only be deleted by its owner' });
 
     await db
     .update(project)

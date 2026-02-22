@@ -17,10 +17,9 @@ export const eventQuery = {
         },
         data: {
           event: string,
-          description: string,
-          color: string,
+          description: string
           icon: string,
-          metadata: Record<string, any>,
+          metadata?: Record<string, any>,
         }
       },
       options: {
@@ -58,7 +57,6 @@ export const eventQuery = {
         event: data.event,
         description: data.description,
         icon: data.icon,
-        color: data.color,
         metadata: data.metadata,
       })
       .returning({
@@ -141,7 +139,6 @@ export const eventQuery = {
       description: event.description,
       createdAt: event.createdAt,
       icon: event.icon,
-      color: event.color,
       workspace: workspace.name,
       workspaceId: event.workspaceId,
       metadata: event.metadata,

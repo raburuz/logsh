@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { config } from "../config"
-import { getServerSideUser } from "@/modules/auth/actions/auth";
+import { getServerSideUser } from "../lib/auth/middlewares/user";
 
 export const Footer = async () => {
 

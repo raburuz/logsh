@@ -4,7 +4,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { useSubscription } from "@/modules/shared/store/subscription"
 import { cn } from "@/lib/utils"
-import { IPlan } from "../interface"
+import { IPlan } from "@/modules/shared/lib/stripe/interface"
 
 export const CheckoutButton = ( props: { plan: IPlan, isAnnual: boolean, isAuth: boolean } ) => {
 

@@ -14,7 +14,7 @@ import {
   Rocket,
   Shield,
 } from "lucide-react"
-import { plans } from "@/modules/payment/lib/plans"
+import { plans } from "@/modules/shared/lib/stripe/plans"
 import { usePushNotification } from "@/modules/push/hook/use-push-notification"
 import { useOnboardingData } from "../store"
 
@@ -124,7 +124,12 @@ export const StepFirstEvent = () => {
       workspace: "${onboardingData.workspace || "my-workspace"}",
       event: "user.signup.test",
       description: "New user registered",
-      color: "#ffffff",
+      icon: "🎉",
+      notify: true,
+      metadata: {
+        user_id: "test_12345",
+        plan: "pro"
+      }
     }),
   })`
 
@@ -199,24 +204,21 @@ export const StepDashboard = () => {
       description: "New user registered",
       highlight: true,
       time: "now",
-      color: "#ffffff",
-      icon: <User className="h-3.5 w-3.5" />,
+      icon: "🎉",
     },
     {
       name: "payment.completed",
       description: "Pro plan -- $29/mo",
       highlight: false,
       time: "1m ago",
-      color: "#3b82f6",
-      icon: <CreditCard className="h-3.5 w-3.5" />,
+      icon: "💳",
     },
     {
       name: "deploy.success",
       description: "v2.4.1 deployed to production",
       highlight: false,
       time: "5m ago",
-      color: "#8b5cf6",
-      icon: <Rocket className="h-3.5 w-3.5" />,
+      icon: "🚀",
     },
   ]
 
@@ -260,14 +262,17 @@ export const StepDashboard = () => {
               key={i}
               className={cn(
                 "flex items-center gap-3 px-4 py-3 animate-in fade-in slide-in-from-bottom-1 duration-300 text-zinc-500",
-                event.highlight ? "border border-emerald-500/10" : "",
+                event.highlight ? "bg-green-900/10" : "",
                 i !== 0 ? "blur-[1px] select-none" : "blur-0"
               )}
               style={{ animationDelay: `${i * 100}ms`, animationFillMode: "both" }}
             >
-              <div 
-                className="flex h-1 w-1 rounded-full bg-white self-start mt-1.5"
-                style={{ backgroundColor: event.color }}></div>
+              <div className="text-[10px]">
+                <span>#23edee</span>
+              </div>
+              <div className="p-1 text-sm rounded-sm bg-zinc-900 self-start mt-0.5">
+                  {event.icon}
+                </div>
               <div className="flex-1 min-w-0">
                 <p className="text-xs font-medium font-mono text-zinc-300">
                   {event.name}

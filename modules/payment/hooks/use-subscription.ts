@@ -1,6 +1,6 @@
 "use client"
 
-import { ISubscription } from "../interface";
+import { ISubscription } from "../../shared/lib/stripe/interface";
 
 export const useSubscriptionApi = () => {
 

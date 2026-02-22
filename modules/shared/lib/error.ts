@@ -1,39 +1,29 @@
+import { HTTP_ERROR_CODE_KEY, HTTP_ERROR_CODES_BY_KEY } from "../contraint";
 
-export const APP_ERROR_CODES_BY_KEY = {
-  unauthorized: 401,
-  payment_required: 402,
-  forbidden: 403,
-  not_found: 404,
-  internal_server_error: 500,
-  application_error: 500,
-  conflict: 409,
-  bad_request: 400,
-  invalid_access: 422,
-  invalid_parameter: 422,
-  invalid_region: 422,
-  rate_limit_exceeded: 429,
-  validation_error: 403,
-  method_not_allowed: 405,
-} as const;
+export class ApiHttpError extends Error {
 
-export type APP_ERROR_CODE_KEY = keyof typeof APP_ERROR_CODES_BY_KEY;
+  public readonly httpStatusCode: number;
+  public readonly name: HTTP_ERROR_CODE_KEY;
+  public readonly httpHeaders?: Record<string, string>;
+  public readonly details?: string;
 
-export class AppError extends Error {
-  
-  public readonly statusCode: number;
-  public readonly name: APP_ERROR_CODE_KEY;
-  
   constructor( 
-    name: APP_ERROR_CODE_KEY, 
-    message: string, 
+    data: {
+      name: HTTP_ERROR_CODE_KEY, 
+      message: string, 
+      httpHeaders?: Record<string, string>,
+      details?: string
+    }
   ){
     super();
      
-    this.name = name;
-    this.message = message;
-    this.statusCode = APP_ERROR_CODES_BY_KEY[this.name];
+    this.name = data.name;
+    this.message = data.message;
+    this.details = data.details;
+    this.httpStatusCode = HTTP_ERROR_CODES_BY_KEY[this.name];
+    this.httpHeaders = data.httpHeaders;
   
-    Object.setPrototypeOf(this, AppError.prototype);
+    Object.setPrototypeOf(this, ApiHttpError.prototype);
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, this.constructor);
     }
@@ -50,17 +40,3 @@ export class AppError extends Error {
     );
   }
 }
-
-export class RateLimitError extends AppError {
-
-  header: Record<string, string>;
-
-  constructor( 
-    message = 'Rate limit exceeded. Try again later.', 
-    headers: Record<string, string> = {}
-  ) {
-    super('rate_limit_exceeded', message);
-    this.header = headers;
-  }
-
-} 

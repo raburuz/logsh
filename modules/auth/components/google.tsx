@@ -1,14 +1,16 @@
 "use client"
 
 import { Button } from '@/components/ui/button'
-import { authClient } from '../lib/client';
+import { authClient } from '@/modules/shared/lib/auth/client';
+import { config } from '@/modules/shared/config';
 
 export const Google = () => {
 
   const handleGoogleSignIn = async () => {
     await authClient.signIn.social({
       provider: "google",
-      callbackURL: `${window.location.origin}/dashboard`,
+      callbackURL: `${window.location.origin}${config.redirects.toDashboard}`,
+      newUserCallbackURL: `${window.location.origin}${config.redirects.toOnboarding}`,
     });
   }
 

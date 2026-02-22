@@ -1,32 +1,26 @@
 import z from "zod";
 import { db } from "@/modules/db"
-import { getAuthenticatedUser } from "@/modules/auth/actions/auth";
 import { deviceIdZodSchema } from "@/modules/push/utils/device";
-import { zodValidator } from "@/modules/shared/lib/zod";
-import { apiRouteHandler } from "@/modules/shared/utils/handler"
+import { zodValidator } from "@/modules/shared/lib/zod/zod";
+import { withUser } from "@/modules/shared/lib/auth/middlewares/user"
 
-export async function POST( request: Request ){
+export const POST = withUser( async ({ user, request }) => {
 
-  return apiRouteHandler( async () => {
+  const { body } = await zodValidator(
+    {
+      body: await request.json(),
+    },
+    {
+      body: z.object({
+        deviceId: deviceIdZodSchema,
+      })
+    }
+  ); 
+  
+  const subscription = await db.pushSubscription.delete_by_device({ 
+    where: { userId: user.id, deviceId: body.deviceId } 
+  });
+  
+  return subscription;
 
-    const user = await getAuthenticatedUser();
-
-    const { body } = await zodValidator(
-      {
-        body: await request.json(),
-      },
-      {
-        body: z.object({
-          deviceId: deviceIdZodSchema,
-        })
-      }
-    ); 
-
-    const subscription = await db.pushSubscription.delete_by_device({ 
-      where: { userId: user.id, deviceId: body.deviceId } 
-    });
-
-    return subscription;
-
-  })
-}
+})

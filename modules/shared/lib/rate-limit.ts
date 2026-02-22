@@ -1,6 +1,6 @@
 import { RateLimiterRedis, RateLimiterMemory, IRateLimiterOptions } from "rate-limiter-flexible";
-import { RateLimitError } from "./error";
 import { redis, isRedisReady } from "./redis";
+import { ApiHttpError } from "./error";
 
 export const RateLimit = {
 
@@ -44,12 +44,14 @@ export const RateLimit = {
 
       
     } catch (error) {
-      throw new RateLimitError(
-        `Rate limit exceeded. Try again after ${options.refillIntervalSeg} seconds.`,
-        {
+      throw new ApiHttpError({
+        name: 'rate_limit_exceeded',
+        message: `Rate limit exceeded. Try again after ${options.refillIntervalSeg} seconds.`,
+        details: `You have exceeded the allowed number of requests. Please wait for ${options.refillIntervalSeg} seconds before trying again.`,
+        httpHeaders: {
           'Retry-After': options.refillIntervalSeg.toString(),
         }
-      )
+      })
     }
 
   },
@@ -81,12 +83,14 @@ export const RateLimit = {
       
     } catch (error) {
 
-      throw new RateLimitError(
-        `Rate limit exceeded. Try again after ${options.windowSizeSeg} seconds.`,
-        {
-          'Retry-After': options.windowSizeSeg.toString(),
+      throw new ApiHttpError({
+        name: 'rate_limit_exceeded',
+        message: `Rate limit exceeded. Try again after ${options.windowSizeSeg} seconds.`,
+        details: `You have exceeded the allowed number of requests. Please wait for ${options.windowSizeSeg} seconds before trying again.`,
+        httpHeaders: {
+          'Retry-After': options.windowSizeSeg.toString(),  
         }
-      )
+      })
       
     }
 

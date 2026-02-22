@@ -1,7 +1,7 @@
 import { and, desc, eq } from "drizzle-orm";
 import { db } from "../db";
 import { project, workspace } from "../schemas/app";
-import { AppError } from "@/modules/shared/lib/error";
+import { ApiHttpError } from "@/modules/shared/lib/error";
 import { DbTransaction } from "../interface";
 import { projectQuery } from "./project";
 
@@ -27,7 +27,7 @@ export const workspaceQuery = {
 
     const alreadyExists = await workspaceQuery.exist(by.projectId, data.name);
 
-    if(alreadyExists) throw new AppError('bad_request', 'Workspace with this name already exists');
+    if(alreadyExists) throw new ApiHttpError({ name: 'bad_request', message: 'Workspace with this name already exists' });
   
     const [ wks ] = await dbToUse
     .insert(workspace)
@@ -63,7 +63,7 @@ export const workspaceQuery = {
           where: { userId: query.by.userId } 
         }, { tx });
 
-      if(!project) throw new AppError('not_found', 'Project linked to this workspace not found');
+      if(!project) throw new ApiHttpError({ name: 'not_found', message: 'Project linked to this workspace not found' });
 
       await tx
       .update(workspace)

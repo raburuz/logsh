@@ -1,5 +1,6 @@
 export const metadata = { 
   title: 'Get started with Logsh', 
+  description: 'Learn how to get started with Logsh, create your first API key, workspace and send your first event.',
   alternates: { canonical: '/n/1', }
 };
 
@@ -51,8 +52,9 @@ export const sendLogshEvent = async ( data ) => {
         workspace: data.workspace,    // Your workspace name
         event: data.event,            // Event name
         description: data.description, // Event description
-        color: data.color,             // Event color Hex (optional) 
+        icon: data.icon,             // Event icon (optional) 
         notify: data.notify,           // Whether to send a push notification (optional, default: false)
+        metadata: data.metadata,       // Additional metadata for the event (optional)
       }),
     }
   )

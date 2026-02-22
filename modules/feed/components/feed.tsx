@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, ChevronRight, Settings, Terminal } from 'lucide-react';
 import { useVirtualizer } from '@tanstack/react-virtual'
-import { nicePastDate } from '@/modules/shared/lib/date';
 import { cn } from '@/lib/utils';
 import { config } from '@/modules/shared/config';
 import { useProject } from '@/modules/shared/store/project';
@@ -14,6 +13,8 @@ import { ScrambleText } from '@/modules/shared/components/scramble-text';
 import { Button } from '@/components/ui/button';
 import { CreateWorkspaceForm } from '../form/create';
 import { WKSettings } from './settings';
+import { EventItem } from './event';
+import { ActivityDrawer } from './activity-drawer';
 import { IEvent } from '../interface';
 
 
@@ -22,6 +23,7 @@ export const Feed = () => {
   const project = useProject();
   const event = useEvent();
   const [viewAllWorkspace, setViewAllWorkspace] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<IEvent | null>(null)
 
   const rtEvents = event.realTimeList.filter( e => e.workspaceId === project.selectedWorkspaceId ).map(e => e.event);
   const storeEvents = event.list.flat();
@@ -57,6 +59,7 @@ export const Feed = () => {
               height: `${rowVirtualizer.getTotalSize()}px`,
               width: '100%',
               position: 'relative',
+              overflowY: 'hidden'
             }}
             >
             <AnimatePresence initial={false} mode='sync'>
@@ -83,7 +86,7 @@ export const Feed = () => {
                       data-index={virtualRow.index}
                       ref={rowVirtualizer.measureElement}
                       >
-                        <EventItem event={event} />
+                        <EventItem event={event} isSelected={selectedEvent?.id === event.id} onSelect={() => setSelectedEvent(event)} />
                       </motion.div>
                     )
                 })
@@ -99,9 +102,15 @@ export const Feed = () => {
                   </div>
                 ))
               }
-
             </div>
           </div>
+          <ActivityDrawer
+            event={selectedEvent}
+            onOpenChange={(open) => {
+              if (!open) setSelectedEvent(null)
+            }}
+            open={Boolean(selectedEvent)}
+          />
       </>
     );
   };
@@ -270,52 +279,6 @@ export const Feed = () => {
     </section>
   );
 };
-
-const EventItem = ({ event }: { event: IEvent }) => {
-
-  const time = nicePastDate(event.createdAt) || 'Unknown time';
-
-  return (
-    
-    <div className="flex items-start justify-between gap-4 py-4 group">
-      <div className="flex items-start gap-6 min-w-0">
-          <span
-            className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full border border-zinc-950/50"
-            style={{ backgroundColor: event.color }}
-            aria-hidden="true"
-          />
-          <div className="min-w-0">
-            <p className="text-sm font-medium text-foreground">
-              {event.event}
-            </p>
-            <p className="text-sm text-muted-foreground mt-0.5 truncate">
-              {event.description}
-            </p>
-          </div>
-        </div>
-        {/* Time / Live indicator */}
-        <div className="flex items-center gap-2 shrink-0">
-          {
-            time === 'now' && (<LiveDot />)
-          }
-          <span
-            className={ cn('text-xs tabular-nums font-mono', time === 'now' ? 'text-emerald-400/80' : 'text-muted-foreground/60') }
-          >
-            {time}
-          </span>
-        </div>
-    </div>
-  );
-};
-
-const LiveDot = () => {
-  return (
-    <span className="relative flex h-2 w-2">
-      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-      <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-    </span>
-  )
-}
 
 const NoEvents = () => {
   return (

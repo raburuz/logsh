@@ -1,4 +1,5 @@
-import { getServerSideUser } from "../actions/auth"
+import { getServerSideUser } from "@/modules/shared/lib/auth/middlewares/user";
+
 
 export const Profile = async () => {
 

@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
-import { getServerSideUser } from "@/modules/auth/actions/auth";
 import { Profile } from "@/modules/auth/components/profile";
 import { Subscription } from "@/modules/payment/components/subscription";
 import PushNotificationButton from "@/modules/push/components/push-notification";
+import { getServerSideUser } from "@/modules/shared/lib/auth/middlewares/user";
 
 export default async function Page() {
 

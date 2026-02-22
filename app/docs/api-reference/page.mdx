@@ -1,4 +1,8 @@
-export const metadata = { title: '5 Tiny CLI Tricks You (Probably) Didn’t Know', alternates: { canonical: '/n/1', }, };
+export const metadata = { 
+  title: 'Api Reference - Event', 
+  description: 'Learn how to send events to Logsh using the API.', 
+  alternates: { canonical: '/n/1', }, 
+};
 
 <a name="event"></a>
 # Event
@@ -15,8 +19,12 @@ https://logsh.co/api/event
   "workspace": "logsh",
   "event": "user_signup",
   "description": "User signed up for the newsletter.",
-  "color": "#FF5733",
-  "notify": false
+  "icon": "👤",
+  "notify": false,
+  "metadata": {
+    "user_id": "12345",
+    "plan": "pro"
+  }
 }
 ```
 
@@ -25,8 +33,9 @@ https://logsh.co/api/event
 | workspace  | String    | Workspace name | Required |
 | event  | String    | Event name | Required |
 | description  | String    | Event description | Required |
-| color | String    | Event color Hex | Optional |
+| icon | String    | Event icon | Optional |
 | notify | Boolean    | Whether to send a push notification | Optional |
+| metadata | key/value  | Additional metadata for the event | Optional |
 
 #### Validation Rules:
 
@@ -35,8 +44,9 @@ https://logsh.co/api/event
 | workspace | Must be a non-empty string. <br /> Max length: 35 characters. | logsh |
 | event | Must be a non-empty string. <br /> Max length: 250 characters. | user_signup |
 | description | Must be a non-empty string. <br /> Max length: 150 characters. | User signed up for the newsletter. |
-| color | Optional, if provided must be a non-empty string. <br /> Must be a valid hex color code. | #FF5733 |
+| icon | Optional, if provided must be a non-empty string. <br /> Must be a valid emoji. | 👤 |
 | notify | Optional, if provided must be a boolean. <br /> Default: false. | false |
+| metadata | Optional, if provided must be an object. <br/> value | { } |
 
 Notes: 
 
@@ -89,8 +99,9 @@ export const sendLogshEvent = async ( data ) => {
         workspace: data.workspace,    // Your workspace name
         event: data.event,            // Event name
         description: data.description, // Event description
-        color: data.color,              // Event color Hex (optional) 
+        icon: data.icon,              // Event icon (optional) 
         notify: data.notify,           // Whether to send a push notification (optional, default: false)
+        metadata: data.metadata,       // Additional metadata for the event (optional)
       }),
     }
   )

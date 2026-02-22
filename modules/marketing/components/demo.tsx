@@ -3,11 +3,12 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { nicePastDate } from '@/modules/shared/lib/date';
-import { eventTemplates } from '../data';
+import { eventTemplates, IEventDemo } from '../data';
 import { cn } from '@/lib/utils';
-import { Activity, Terminal } from 'lucide-react';
+import { Activity, ChevronRight, Terminal } from 'lucide-react';
 import { config } from '@/modules/shared/config';
 import { ScrambleText } from '@/modules/shared/components/scramble-text';
+import { dominantColorFromEmoji } from '@/modules/shared/utils/dominatColorFromEmoji';
 
 const workspaces = eventTemplates.map(e => e.workspace).filter((v, i, a) => a.indexOf(v) === i); // Unique workspaces
 
@@ -17,10 +18,10 @@ const generateFakeEvent = (workspace: string) => {
   const randomEvent = workspaceEvents[Math.floor(Math.random() * workspaceEvents.length)];
   
   return {
-    id: `event-${Date.now()}-${Math.random()}`,
-    event: randomEvent.name,
+    id: crypto.randomUUID().slice(0, 6),
+    name: randomEvent.name,
     description: randomEvent.description,
-    color: randomEvent.color,
+    icon: randomEvent.icon,
     createdAt: new Date().toISOString(),
     workspaceId: workspace
   };
@@ -204,9 +205,11 @@ export const AppDemo = () => {
   );
 };
 
-const EventItem = ({ event, isAnimated }: { event: any; isAnimated: boolean }) => {
+const EventItem = ({ event, isAnimated }: { event: IEventDemo & { createdAt: string; id: string }; isAnimated: boolean }) => {
 
   const time = nicePastDate(event.createdAt) || 'Unknown time';
+
+  const eventColor = dominantColorFromEmoji(event.icon)?.hex || '#888888';
 
   return (
     <motion.div
@@ -227,32 +230,69 @@ const EventItem = ({ event, isAnimated }: { event: any; isAnimated: boolean }) =
       }
       layout="position"
     >
-      <div className="flex items-start justify-between gap-4 py-4 group">
-        <div className="flex items-start gap-6 min-w-0">
-            <span
-              className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full"
-              style={{ backgroundColor: event.color }}
-              aria-hidden="true"
-            />
-            <div className="min-w-0">
-              <p className="text-sm font-medium text-foreground">
-                {event.event}
-              </p>
-              <p className="text-sm text-muted-foreground mt-0.5 truncate">
-                {event.description}
-              </p>
-            </div>
-          </div>
-          {/* Time / Live indicator */}
-          <div className="flex items-center gap-2 shrink-0">
-            <LiveDot />
-            <span
-              className='text-xs tabular-nums font-mono text-green-400'
-            >
-              {time}
-            </span>
-          </div>
+      <button
+      type='button'
+      className={cn(
+        "mb-0.5 group relative flex w-full items-center gap-3.5 rounded-lg px-3.5 py-3 text-left transition-all duration-200",
+      )}
+      aria-label={`View ${event.name} details`}
+    >
+
+      {/* Hash ID */}
+      <span 
+        className="hidden w-14 shrink-0 text-right font-mono text-[10px] tabular-nums text-muted-foreground/60 sm:block"
+        style={{
+          color:eventColor + "99" // 60% opacity in hex
+        }}
+      >
+        #{event.id.slice(0, 6)}
+      </span>
+
+      {/* Icon EMOJISSSS*/}
+      <div
+        className={cn(
+          "flex h-8 w-8 shrink-0 items-center justify-center rounded-md transition-colors",
+        )}
+        style={{
+          backgroundColor: eventColor + "1A", // 1A is 10% opacity, 0A is 5% opacity
+          color: eventColor
+        }}
+      >
+        { event.icon }
       </div>
+
+      {/* Content */}
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-2">
+          <span
+            className={cn(
+              "truncate text-[13px] font-medium text-white/90",
+            )}
+          >
+            {event.name}
+          </span>
+        </div>
+        <p className="truncate text-[11px] leading-relaxed text-muted-foreground">
+          {event.description}
+        </p>
+      </div>
+
+      {/* Time */}
+      <div className="flex shrink-0 items-center gap-1.5">
+        <span
+          className={cn(
+            "font-mono text-[11px] tabular-nums text-green-500",
+          )}
+        >
+          {time}
+        </span>
+        <ChevronRight
+          className={cn(
+            "h-3 w-3 transition-all duration-200",
+          )}
+        />
+      </div>
+    </button>
     </motion.div>
   );
 };
