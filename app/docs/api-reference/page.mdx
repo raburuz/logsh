@@ -17,7 +17,7 @@ https://logsh.co/api/event
 ```json
 {
   "workspace": "logsh",
-  "event": "user_signup",
+  "event": "user.signup",
   "description": "User signed up for the newsletter.",
   "icon": "👤",
   "notify": false,
@@ -42,11 +42,11 @@ https://logsh.co/api/event
 | Name | Validators | Example |
 | ---- | ---------------- | ------- |
 | workspace | Must be a non-empty string. <br /> Max length: 35 characters. | logsh |
-| event | Must be a non-empty string. <br /> Max length: 250 characters. | user_signup |
+| event | Must be a non-empty string. <br /> Max length: 250 characters. | user.signup |
 | description | Must be a non-empty string. <br /> Max length: 150 characters. | User signed up for the newsletter. |
 | icon | Optional, if provided must be a non-empty string. <br /> Must be a valid emoji. | 👤 |
 | notify | Optional, if provided must be a boolean. <br /> Default: false. | false |
-| metadata | Optional, if provided must be an object. <br/> value | { } |
+| metadata | Optional, if provided must be an object. <br/> key/value | \{ <br/> &nbsp;&nbsp;"user_id" : "12345",<br/> &nbsp;&nbsp;"plan" : "pro",<br/>\} |
 
 Notes: 
 
@@ -57,15 +57,18 @@ Notes:
 
 ```json
 {
-  "Content-Type": "application/json",
-  "Authorization": "Bearer YOUR_API_KEY"
+
+  "Content-Type" : "application/json",
+
+  "Authorization" : "Bearer <YOUR_API_KEY>",
+
 }
 ```
 
 | Name    | type | value          | Restrictions |
 | ------- | ---- | -------------------- |   --------- |
 | Content-Type  | string    | application/json | Required |
-| Authorization  | string    | Bearer YOUR_API_KEY |Required |
+| Authorization  | string    | Bearer \<YOUR_API_KEY> |Required |
 
 ### Response
 A successful request will return a 200 OK status with a JSON response:
@@ -84,7 +87,7 @@ and a failure will return an appropriate error status code and message.
 
 ### Example using JavaScript (Fetch API)
 
-```js title="JavaScript Example"  caption="Send an event to Logsh"
+```js showLineNumbers title="JavaScript Example"  caption="Send an event to Logsh"
 export const sendLogshEvent = async ( data ) => {
  
   const response = await fetch(
@@ -93,15 +96,22 @@ export const sendLogshEvent = async ( data ) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer logsh_api_key_here', // Your API Key
+        // Replace <YOUR_API_KEY> with your actual API Key
+        'Authorization': 'Bearer <YOUR_API_KEY>',
       },
       body: JSON.stringify({
-        workspace: data.workspace,    // Your workspace name
-        event: data.event,            // Event name
-        description: data.description, // Event description
-        icon: data.icon,              // Event icon (optional) 
-        notify: data.notify,           // Whether to send a push notification (optional, default: false)
-        metadata: data.metadata,       // Additional metadata for the event (optional)
+        // Your workspace name
+        workspace: data.workspace,    
+        // Event name
+        event: data.event,
+        // Event description
+        description: data.description,
+        // Event icon (optional)
+        icon: data.icon,
+        // Whether to send a push notification (optional)
+        notify: data.notify,
+        // Additional metadata for the event (optional)
+        metadata: data.metadata,
       }),
     }
   )

@@ -18,10 +18,8 @@ To create as many API Keys as you need go to the Logsh Dashboard.
 **Navigate to the "API Keys"** section and **click on "Create"**. 
 Give your key a name and start using it.
 
-```js title="Api Key Example" caption="You need to send your API key as Bearer token in the Authorization header"
-
+```plaintext title="Api Key Example" caption="You need to send your API key as Bearer token in the Authorization header"
 logsh_1234567890qwertyuiopasdfghjklzxcvbnm
-
 ```
 
 <a name="create-workspace"></a>
@@ -37,35 +35,42 @@ To create a workspace, go to the Logsh Dashboard and **navigate to the "Workspac
 Now that you have your workspace and API token, you're ready to track your first event! 
 You can do this by making a POST request to the Logsh API.
 
-```js title="Javascript Example"  caption="Send an event to Logsh"
-export const sendLogshEvent = async ( data ) => {
 
+```js showLineNumbers title="JavaScript Example"  caption="Send an event to Logsh"
+export const sendLogshEvent = async ( data ) => {
+ 
   const response = await fetch(
-    'https://logsh.co/api/event', 
+    'https://logsh.co/api/event',
     {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer logsh_api_key_here', // Your API Key
+        // Replace <YOUR_API_KEY> with your actual API Key
+        'Authorization': 'Bearer <YOUR_API_KEY>',
       },
       body: JSON.stringify({
-        workspace: data.workspace,    // Your workspace name
-        event: data.event,            // Event name
-        description: data.description, // Event description
-        icon: data.icon,             // Event icon (optional) 
-        notify: data.notify,           // Whether to send a push notification (optional, default: false)
-        metadata: data.metadata,       // Additional metadata for the event (optional)
+        // Your workspace name
+        workspace: data.workspace,    
+        // Event name
+        event: data.event,
+        // Event description
+        description: data.description,
+        // Event icon (optional)
+        icon: data.icon,
+        // Whether to send a push notification (optional)
+        notify: data.notify,
+        // Additional metadata for the event (optional)
+        metadata: data.metadata,
       }),
     }
   )
-
+ 
   const result = await response.json();
-
+ 
   if( !response.ok ) {
     throw new Error(result.message || 'Failed to send event to Logsh');
   } 
 }
-
 ```
 
 That's it! You've successfully tracked your first event with Logsh.
