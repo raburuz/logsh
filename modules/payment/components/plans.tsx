@@ -79,12 +79,12 @@ export const Pricing = () => {
               )}
 
               <div className="mb-6">
-                <h3 className="text-sm font-medium text-foreground">{plan.name}</h3>
+                <h3 className="text-sm font-medium text-zinc-100">{plan.name}</h3>
                 <p className="mt-1 text-xs text-zinc-500">{plan.description}</p>
               </div>
 
               <div className="mb-6 flex items-baseline gap-1">
-                <span className="text-3xl font-semibold tracking-tight text-foreground">
+                <span className="text-3xl font-semibold tracking-tight text-zinc-100">
                   ${billing === "monthly" ? plan.interval.monthly.amount : plan.interval.yearly.amount}
                 </span>
                 <span className="text-sm text-zinc-500">{billing === "monthly" ? "/ mo" : "/ yr"}</span>
@@ -101,7 +101,7 @@ export const Pricing = () => {
                   plan.interval.yearly.discount && billing === "yearly" && (
                     <li className="flex items-start gap-2.5">
                       <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-orange-700" />
-                      <span className="text-sm text-orange-700">{plan.interval.yearly.discount.text}</span>
+                      <span className="text-sm text-orange-700 font-semibold">{plan.interval.yearly.discount.text}</span>
                     </li>
                   )
                 }

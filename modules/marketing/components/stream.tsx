@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, useRef } from 'react';
 
-const ClarityStream = () => {
+export const ClarityStream = () => {
   const canvasRef = useRef<any>(null);
   const containerRef = useRef<any>(null);
   const animationFrameRef = useRef<any>(null);
@@ -121,5 +121,3 @@ const ClarityStream = () => {
     </div>
   );
 };
-
-export default ClarityStream;

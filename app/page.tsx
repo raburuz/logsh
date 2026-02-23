@@ -6,9 +6,10 @@ import { HowItWorks } from "@/modules/marketing/components/how-it-works";
 import { Comparison } from "@/modules/marketing/components/comparison";
 import { Founder } from "@/modules/marketing/components/founder";
 import { AppDemo } from "@/modules/marketing/components/demo";
-import ClarityStream from "@/modules/marketing/components/stream";
+import { ClarityStream } from "@/modules/marketing/components/stream";
 import { CTA } from "@/modules/marketing/components/cta";
 import { seo } from "@/modules/shared/utils/seo";
+import { Faq } from "@/modules/marketing/components/faq";
 
 export const metadata = seo();
 
@@ -41,6 +42,7 @@ export default function Home() {
       <HowItWorks/>
       <Comparison/>
       <Pricing />
+      <Faq/>
       <Founder/>
       <CTA/>
     </main>
