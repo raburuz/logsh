@@ -88,7 +88,7 @@ export const Feedback = () => {
                 <DialogHeader>
                   <DialogTitle className="text-start">Send us your feedback</DialogTitle>
                   <DialogDescription className="text-start text-sm">
-                    Help us improve {config.app.name} with your suggestions
+                    Help us improve {config.app.name.toLowerCase()} with your suggestions
                   </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={form.handleSubmit(handleSubmit)}>
@@ -97,7 +97,7 @@ export const Feedback = () => {
                       "bg-zinc-900/10 text-zinc-300 min-h-28",
                       "border-zinc-900/50 hover:border-zinc-900/60 focus:border-zinc-900/70 focus-visible:border-zinc-900/70",
                     )}
-                    placeholder="Ideas to improve this page..."
+                    placeholder={`Ideas to improve ${config.app.name.toLowerCase()}...`}
                     {...form.register("content")} 
                     />
                     <span className="text-red-700 text-xs">{form.formState.errors.content?.message}</span>

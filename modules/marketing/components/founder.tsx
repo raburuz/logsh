@@ -3,7 +3,7 @@ import Image from "next/image"
 
 export const Founder = () => {
   return (
-    <div className="relative mt-16 max-w-xl md:min-w-xl mx-auto border border-gray-900/20 rounded-lg p-8 bg-gray-900/10">
+    <div className="relative mt-16 max-w-xl md:min-w-xl mx-auto border border-gray-900/20 rounded-lg p-8 py-10 bg-gray-900/10">
       <div className="mb-6 flex flex-row items-center gap-6">
         <div className="overflow-hidden w-14 aspect-[0.75/1] rounded-sm rotate-2 border-[3px] border-gray-400">
           <Image 

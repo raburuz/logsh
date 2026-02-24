@@ -2,7 +2,6 @@ import z from "zod";
 import { zodValidator } from "@/modules/shared/lib/zod/zod";
 import { withUser } from "@/modules/shared/lib/auth/middlewares/user";
 import { db } from "@/modules/db";
-import { IEvent } from "@/modules/feed/interface";
 import { maskEventIfBlocked } from "@/modules/shared/lib/events";
 
 export const POST = withUser( async ({ request, user }) => {

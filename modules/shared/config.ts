@@ -14,8 +14,8 @@ export const config = {
   marketing: {
     socialMedia: {
       x: {
-        username: '@Jeanparaca',
-        url: 'https://x.com/Jeanparaca',
+        username: '@Jeanpacara',
+        url: 'https://x.com/Jeanpacara',
       }
     },
     seo: {
@@ -24,6 +24,10 @@ export const config = {
       category: 'Analytics',
       keywords: ['analytics', 'dashboard', 'data visualization', 'insights', 'real-time monitoring', 'performance metrics', 'user behavior', 'data-driven decisions', 'log management', 'application monitoring'],
     }
+  },
+  community: {
+    discord: 'https://discord.gg/DeDxTANd',
+    x: 'https://x.com/Jeanpacara',
   },
   redirects: {
     toDashboard: "/dashboard",
