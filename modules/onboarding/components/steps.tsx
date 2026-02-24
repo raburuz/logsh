@@ -98,7 +98,7 @@ export const StepNotifications = () => {
                 if(checked) {
                   pushNotification.subscribe();
                 } else {
-                  pushNotification.unsubscribe();
+                  pushNotification.unsubscribe( pushNotification.getCurrentDeviceId());
                 };  
               }}
             />
@@ -360,7 +360,7 @@ export const StepPlan = () => {
             onClick={() => setIsAnnual(true)}
           >
             Yearly
-            <span className="ml-1 text-[10px] text-green-500">-20%</span>
+            <span className="ml-1 text-[10px] text-orange-600">2 months free</span>
           </button>
         </div>
       </div>
@@ -411,17 +411,27 @@ export const StepPlan = () => {
                 <p className="mt-0.5 text-xs text-zinc-500">
                   {plan.description}
                 </p>
-                <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1">
+                <ul className="mt-2 flex flex-wrap gap-x-3 gap-y-1">
+                  {
+                    plan.interval.yearly.discount && isAnnual && (
+                      <li
+                        className="flex items-center gap-1 text-[11px] text-orange-600"
+                      >
+                        <Check className="h-2.5 w-2.5 text-orange-600" />
+                        <span>{plan.interval.yearly.discount.text}</span>
+                      </li>
+                    )
+                  }
                   {plan.features.map((f) => (
-                    <span
+                    <li
                       key={f}
                       className="flex items-center gap-1 text-[11px] text-zinc-500"
                     >
                       <Check className="h-2.5 w-2.5 text-green-500" />
-                      {f}
-                    </span>
+                      <span>{f}</span>
+                    </li>
                   ))}
-                </div>
+                </ul>
               </div>
 
               {/* Price */}

@@ -2,6 +2,8 @@ import { RateLimiterRedis, RateLimiterMemory, IRateLimiterOptions } from "rate-l
 import { redis, isRedisReady } from "./redis";
 import { ApiHttpError } from "./error";
 
+
+//https://docs.railway.com/networking/public-networking/specs-and-limits
 export const RateLimit = {
 
   bucket : async ( key: string, options: {

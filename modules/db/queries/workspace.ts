@@ -116,7 +116,7 @@ export const workspaceQuery = {
       name: workspace.name,
     })
     .from(workspace)
-    .innerJoin( project, 
+    .where(
       and(
         eq(workspace.projectId, query.by.projectId),
         eq(workspace.status, workspaceStatus.ACTIVE)

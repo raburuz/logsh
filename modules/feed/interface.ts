@@ -1,10 +1,10 @@
 export interface IEvent {
   id: string;
   event: string;
-  createdAt: string;
-  description: string;
-  icon: string;
-  metadata: Record<string, any>;
+  description: string | null;
+  icon: string | null;
+  createdAt: Date;
+  metadata: Record<string, any> | null;
 }
 
 export interface IEvents{

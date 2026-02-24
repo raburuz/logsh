@@ -4,6 +4,7 @@ import { create } from 'zustand'
 import { useSubscriptionApi } from '@/modules/payment/hooks/use-subscription';
 import { ISubscription } from '@/modules/shared/lib/stripe/interface';
 import { toast } from 'sonner';
+import { authClient } from '../lib/auth/client';
 
 interface ISubscriptionState {
   subscription: ISubscription | null;
@@ -47,10 +48,22 @@ export const useSubscription = () => {
 
   }
 
+  const portal = async () => {
+    const { data } = await authClient.subscription.billingPortal({
+      returnUrl: window.location.origin + "/profile"
+    });
+
+    if (data?.url) {
+      window.open(data.url, "_blank", 'noopener,noreferrer');
+    }
+
+  }
+
   return {
     subscription: subscriptions.subscription,
     getSubscription: subscriptions.getSubscription,
     checkout,
+    portal,
     fetchSubscription,
     clean: subscriptions.clean,
   }

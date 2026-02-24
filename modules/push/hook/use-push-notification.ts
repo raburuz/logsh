@@ -22,7 +22,7 @@ export const usePushNotification = () => {
 
   const checkBrowserPermission = async () => {
     try {
-      const permission = await Notification.requestPermission();
+      const permission = Notification.permission;
       pushNotification.setBrowserPermission(permission);
     } catch (error) {
       console.log("Failed to request notification permission", error);
@@ -93,6 +93,13 @@ export const usePushNotification = () => {
         return;
       }
 
+      const previous = await registration.pushManager.getSubscription();
+
+      if(previous) {
+        // If there's an existing subscription, we need to unsubscribe it before creating a new one to ensure we get a fresh subscription object with the updated keys.
+        await unsubscribe( pushNotification.getDeviceId() );
+      }
+
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
@@ -133,9 +140,7 @@ export const usePushNotification = () => {
     setIsSubscribing(false);
   }
 
-  const unsubscribe = async () => {
-
-    const deviceId = pushNotification.getDeviceId();
+  const unsubscribe = async ( deviceId: string ) => {
 
     if(!deviceId) {
       console.log("No device ID found for unsubscription");
@@ -161,6 +166,7 @@ export const usePushNotification = () => {
       console.log("Failed to unsubscribe from push notifications", error);
     }
 
+    pushNotification.setDevices( pushNotification.devices.filter( device => device.deviceId !== deviceId ) );
     await api.unsubscribe({ deviceId });
 
   }
@@ -184,5 +190,6 @@ export const usePushNotification = () => {
     fetchSubscribedDevices,
     isCreatingSubscription: isSubscribing,
     isFetchingDevices,
+    getCurrentDeviceId: pushNotification.getDeviceId,
   }
 };

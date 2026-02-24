@@ -6,12 +6,16 @@ import { ApiHttpError } from "../lib/error";
 import { sendNotificationToWorkspaceMembers } from "@/modules/push/server";
 import { publishEvent } from "../lib/pub-sub";
 import { eventApiCreationSchema } from "../lib/zod/schemas/event";
+import { maskEventIfBlocked } from "../lib/events";
+import { IEvent } from "@/modules/feed/interface";
 
 interface ISubscriptionCache {
   subscriptionId: string;
   eventUsage: number;
-  eventLimit: number;
-  eventPerSecond: number;
+  monthlyEventQuota: number;
+  rateLimitPerSecond: number;
+  softLimitThreshold: number;
+  hardLimitThreshold: number;
 }
 
 export const eventService = {
@@ -31,10 +35,12 @@ export const eventService = {
       });
 
       return {
-        eventUsage: subscription.usage?.events ?? 0,
-        eventLimit: subscription.limits.events,
-        eventPerSecond: subscription.limits.eventPerSecond,
         subscriptionId: subscription.id,
+        eventUsage: subscription.usage?.events ?? 0,
+        monthlyEventQuota: subscription.limits.monthlyEventQuota,
+        rateLimitPerSecond: subscription.limits.rateLimitPerSecond,
+        softLimitThreshold: subscription.limits.softLimitThreshold,
+        hardLimitThreshold: subscription.limits.hardLimitThreshold,
       }
     }
   },
@@ -49,19 +55,23 @@ export const eventService = {
 
     const subscription = await eventService.subscription(userId);
 
-    if( subscription.eventUsage >= subscription.eventLimit ) {
+    const isHardLimitExceeded = subscription.eventUsage >= (subscription.monthlyEventQuota * subscription.hardLimitThreshold);
+    const isSoftLimitExceeded = subscription.eventUsage >= (subscription.monthlyEventQuota * subscription.softLimitThreshold);
+
+    // Check if user has reached monthly event quota considering soft and hard limits
+    if( isHardLimitExceeded ) {
       throw new ApiHttpError({
         name: 'rate_limit_exceeded',
         message: 'You have reached the maximum number of monthly events. Please upgrade your plan to create more events.',
-        details: 'Your current subscription plan allows a maximum of ' + subscription.eventLimit + ' events per month. Please upgrade to a higher-tier plan to increase this limit and continue creating events.',
+        details: 'Your current subscription plan allows a maximum of ' + subscription.monthlyEventQuota + ' events per month. Please upgrade to a higher-tier plan to increase this limit and continue creating events.',
       });
     }
 
     // Apply rate limit using token bucket algorithm
     await RateLimit.bucket(
-      `subscription_${subscription.subscriptionId}`, 
+      `id:${subscription.subscriptionId}`, 
       {
-        refillAmount: subscription.eventPerSecond,
+        refillAmount: subscription.rateLimitPerSecond,
         refillIntervalSeg: 1,
         tokensPerRequest: 1,
         redisKeyPrefix: 'subscription',
@@ -108,21 +118,26 @@ export const eventService = {
     setCache(
       cacheKey.subscription(userId),
       JSON.stringify(newSubscriptionCache),
-      3600, // 1 hour in seconds
+      300, // 5 minutes in seconds
     )
+
+    const newEvent = {
+      id: event.id,
+      event: body.event,
+      description: body.description,
+      icon: body.icon,
+      createdAt: event.createdAt,
+      metadata: body.metadata,
+    } satisfies IEvent;
+
+    
+    const maskedEvent = maskEventIfBlocked(newEvent, isSoftLimitExceeded);
 
     // Publish event to Redis SSE channel
     publishEvent({
       userId: userId,
       workspaceId: event.workspaceId,
-      event: {
-        id: event.id,
-        event: body.event,
-        description: body.description,
-        icon: body.icon,
-        createdAt: event.createdAt.toISOString(),
-        metadata: body.metadata,
-      },
+      event: maskedEvent,
     })
 
     if(body.notify){
@@ -132,12 +147,11 @@ export const eventService = {
         {
           type: 'event',
           data: {
-            event: body.event,
-            description: `${body.icon} ${body.description}`,
+            event: `${maskedEvent.icon} ${maskedEvent.event}`,
+            description: maskedEvent.description ?? '',
           }
         }
       )
     }
-
   } 
 }

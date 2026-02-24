@@ -5,6 +5,7 @@ import { zodValidator } from "@/modules/shared/lib/zod/zod";
 import { withUser } from "@/modules/shared/lib/auth/middlewares/user";
 import { sendNotificationToWorkspaceMembers } from "@/modules/push/server";
 import { publishEvent } from "@/modules/shared/lib/pub-sub";
+import { IEvent } from "@/modules/feed/interface";
 
 //Create Event
 export const POST = withUser( async ({ request, user }) => {
@@ -16,6 +17,18 @@ export const POST = withUser( async ({ request, user }) => {
       workspace: workspaceValidator.name,
     })
   });
+
+  const exampleEventData = {
+    id: "",
+    event: "user.signup.test",
+    description: "New user registered",
+    icon: "🎉",
+    metadata: {
+      user_id: "test_12345",
+      plan: "pro"
+    },
+    createdAt: new Date(),
+  } satisfies IEvent; 
   
   const event = await db.event.create({
     query: {
@@ -25,13 +38,10 @@ export const POST = withUser( async ({ request, user }) => {
         userId: user.id,
       },
       data: {
-        event: "user.signup.test",
-        description: "New user registered",
-        icon: "🎉",
-        metadata: {
-          user_id: "test_12345",
-          plan: "pro"
-        },  
+        event: exampleEventData.event,
+        description: exampleEventData.description,
+        icon: exampleEventData.icon,
+        metadata: exampleEventData.metadata,
       },
     },
     options: {
@@ -45,14 +55,11 @@ export const POST = withUser( async ({ request, user }) => {
     workspaceId: event.workspaceId,
     event: {
       id: event.id,
-      event: "user.signup.test",
-      description: "New user registered",
-      icon: "🎉",
-      metadata: {
-        user_id: "test_12345",
-        plan: "pro"
-      },        
-      createdAt: event.createdAt.toISOString(),
+      event: exampleEventData.event,
+      description: exampleEventData.description,
+      icon: exampleEventData.icon,
+      metadata: exampleEventData.metadata,
+      createdAt: event.createdAt,
     },
   })
   
@@ -62,8 +69,8 @@ export const POST = withUser( async ({ request, user }) => {
     {
       type: 'event',
       data: {
-        event: "user.signup.test",
-        description: "New user registered",
+        event: exampleEventData.event,
+        description: exampleEventData.description,
       }
     }
   )

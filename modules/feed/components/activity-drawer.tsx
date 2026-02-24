@@ -69,7 +69,7 @@ export function ActivityDrawer({
 
   if (!event) return null
 
-  const detailEntries = Object.entries(event.metadata).filter(
+  const detailEntries = Object.entries(event?.metadata ?? {}).filter(
     ([, v]) => v !== undefined
   ) as [string, string][]
 

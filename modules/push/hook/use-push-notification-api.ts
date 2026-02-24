@@ -2,7 +2,7 @@
 'use client';
 
 import { toast } from 'sonner';
-import { PushSubscription } from '../interface';
+import { PushSubscription, PushSubscriptionDevice } from '../interface';
 
 export const usePushNotificationApi = () => {
 
@@ -68,7 +68,7 @@ export const usePushNotificationApi = () => {
       
   }
 
-  const fetchSubscribedDevices = async (): Promise<{ list: PushSubscription[] }> => {
+  const fetchSubscribedDevices = async (): Promise<{ list: PushSubscriptionDevice[] }> => {
     try {
       const response = await fetch('/api/push/subscription', {
         method: 'GET',

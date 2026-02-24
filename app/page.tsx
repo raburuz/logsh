@@ -1,6 +1,6 @@
 import { config } from "@/modules/shared/config";
 import { Pricing } from "@/modules/payment/components/plans";
-import { ActionButton } from "@/modules/marketing/components/action";
+import { ActionBanner, ActionButton } from "@/modules/marketing/components/action";
 import { Testimonial } from "@/modules/marketing/components/testimonial";
 import { HowItWorks } from "@/modules/marketing/components/how-it-works";
 import { Comparison } from "@/modules/marketing/components/comparison";
@@ -18,6 +18,7 @@ export default function Home() {
 
   return (
     <>
+     <ActionBanner/>
       <div className="absolute top-0 left-0 w-full h-full -z-10">
         <LightRays
           raysOrigin="top-center"
@@ -54,7 +55,6 @@ export default function Home() {
             <ActionButton />
           </div>
         </div>
-        {/* Feed component */}
         <AppDemo/>
         <Testimonial/>
         <HowItWorks/>

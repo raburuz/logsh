@@ -2,6 +2,8 @@ import z from "zod";
 import { zodValidator } from "@/modules/shared/lib/zod/zod";
 import { withUser } from "@/modules/shared/lib/auth/middlewares/user";
 import { db } from "@/modules/db";
+import { IEvent } from "@/modules/feed/interface";
+import { maskEventIfBlocked } from "@/modules/shared/lib/events";
 
 export const POST = withUser( async ({ request, user }) => {
 
@@ -32,13 +34,27 @@ export const POST = withUser( async ({ request, user }) => {
     },
     userId: user.id
   });
+
+  const subscription = await db.subscription.get_usable_subscription({ by: { userId: user.id } });
+
+  let blockEventData = false;
+
+  if( subscription ){
+    blockEventData = subscription.usage.events >= (subscription.limits.monthlyEventQuota * subscription.limits.softLimitThreshold);
+  }
   
   // Determine if there's a next page of data
   const haveNextPage = events.length > body.take;
   
-  const items = haveNextPage
+  let items = haveNextPage
     ? events.slice(0, body.take)
     : events;
+
+  if(blockEventData){
+    items = items.map ( event => {
+      return maskEventIfBlocked(event, blockEventData);
+    })
+  }
   
   const lastEvent = items.at(-1);
   

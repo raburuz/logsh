@@ -5,6 +5,7 @@ import { and, desc, eq, gte, lt, or } from "drizzle-orm";
 import { workspaceQuery, workspaceStatus } from "./workspace";
 import { dayjs } from "@/modules/shared/lib/date";
 import { projectQuery } from "./project";
+import { IEvent } from "@/modules/feed/interface";
 
 export const eventQuery = {
   create: async (
@@ -105,7 +106,7 @@ export const eventQuery = {
       },
       userId: string,
     }
-  )=> {
+  ): Promise<IEvent[]>=> {
   
     const { nextCursor, entity, query } = data;
     const whereConditions:any[] = [
@@ -139,8 +140,6 @@ export const eventQuery = {
       description: event.description,
       createdAt: event.createdAt,
       icon: event.icon,
-      workspace: workspace.name,
-      workspaceId: event.workspaceId,
       metadata: event.metadata,
     })
     .from(event)
@@ -149,7 +148,7 @@ export const eventQuery = {
     .orderBy( desc( event.createdAt), desc(event.id))
     .limit(query.take)
   
-    return response;
+    return response
 
   },
   delete_all: async ( queryData: { where: { gte: { milliseconds: number } } }) => {

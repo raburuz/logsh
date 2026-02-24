@@ -94,7 +94,8 @@ export const Feed = () => {
               </AnimatePresence>
               {
                 event.isLoading && [1, 2, 3, 4, 5].map((index) => (
-                  <div key={index} className="snap-start shrink-0">
+                  <div key={index} className="snap-start shrink-0 flex flex-row items-center gap-6">
+                    <div className="h-2 w-10 bg-zinc-800 rounded-md mt-2"></div>
                     <div className="w-full relative px-4 py-5 flex flex-col gap-1 animate-pulse rounded-r-xl">
                       <div className="h-2 w-32 bg-zinc-800 rounded-md mt-2"></div>
                       <div className="h-2 w-52 bg-zinc-800 rounded-md mt-2"></div>
@@ -243,7 +244,8 @@ export const Feed = () => {
           {renderVirtualizedItems()}
           {
             event.isLoading && [1, 2, 3, 4, 5].map((index) => (
-              <div key={index} className="snap-start shrink-0">
+              <div key={index} className="snap-start shrink-0 flex flex-row items-center gap-6">
+                <div className="h-2 w-10 bg-zinc-800 rounded-md mt-2"></div>
                 <div className="w-full relative px-4 py-5 flex flex-col gap-1 animate-pulse rounded-r-xl">
                   <div className="h-2 w-32 bg-zinc-800 rounded-md mt-2"></div>
                   <div className="h-2 w-52 bg-zinc-800 rounded-md mt-2"></div>

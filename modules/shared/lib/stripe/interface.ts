@@ -28,9 +28,11 @@ export interface IPlan {
   }
   features: string[];
   limits: {
-    events: number;
-    eventsRetentionDays: number;
-    eventPerSecond: number;
+    monthlyEventQuota: number;
+    retentionDays: number;
+    rateLimitPerSecond: number;
+    softLimitThreshold: number;
+    hardLimitThreshold: number; 
   };
   callToAction: string;
   freeTrialDays?: number;

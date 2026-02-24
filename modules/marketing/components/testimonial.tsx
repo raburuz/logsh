@@ -9,7 +9,7 @@ export const Testimonial = () => {
       </blockquote>
       <div className="mt-5 flex flex-row gap-1.5">
         <Image src="/founder.png" alt="Jean Ramirez" width={50} height={50} className="border border-zinc-900 rounded-full w-10 h-10 object-contain" />
-        <p className="mt-2 ml-0.5 text-sm text-zinc-300">Jean Ramirez, {config.app.name} founder.</p>
+        <p className="mt-2 ml-0.5 text-sm text-zinc-300">Jean Ramirez, {config.app.name.toLowerCase()} founder.</p>
       </div>
 
     </div>

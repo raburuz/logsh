@@ -27,6 +27,7 @@ type ISchema = z.infer<typeof schema>;
 
 export function AuthForm() {
 
+  const [isLoginPage, setIsLoginPage] = useState<boolean>(true);
   const [isClicked, setIsClicked] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -56,48 +57,62 @@ export function AuthForm() {
       setIsClicked(false);
       return;
     }
-    setMessage('Magic link sent! Please check your email.');
+    setMessage('Magic link sent! Please check your email to sign in.');
   }
 
   return (
-    <form onSubmit={handleSubmit(magicLink)}>
-      <Card className="w-96 bg-black text-white/80 border border-zinc-900/50" >
-        <CardHeader>
-          <CardTitle>Sign in to your account</CardTitle>
-          <CardDescription>
-            Enter your email below to sign in to your account
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-            <div className="flex flex-col gap-6">
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  className="border-zinc-900/20"
-                  id="email"
-                  type="email"
-                  placeholder={`m@${config.app.name.toLowerCase()}.com`}
-                  {...register("email")}
-                />
-                {
-                  errors.email && (
-                    <p className="text-xs text-red-500">
-                      {errors.email.message}
-                    </p>
-                  )
-                }
+    <div>
+      <form onSubmit={handleSubmit(magicLink)}>
+        <Card className="py-11 px-1 w-96 bg-zinc-900/20 text-zinc-300 border border-zinc-900/10" >
+          <CardHeader>
+            <CardTitle>{isLoginPage ? "Sign in to your account" : "Create an account"}</CardTitle>
+            <CardDescription>
+              Enter your email below to {isLoginPage ? "sign in to your account" : "create an account"}.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+              <div className="flex flex-col gap-6">
+                <div className="grid gap-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    className="border-zinc-900/20"
+                    id="email"
+                    type="email"
+                    placeholder={`m@${config.app.name.toLowerCase()}.com`}
+                    {...register("email")}
+                  />
+                  {
+                    errors.email && (
+                      <p className="text-xs text-red-500">
+                        {errors.email.message}
+                      </p>
+                    )
+                  }
+                </div>
               </div>
+          </CardContent>
+          <CardFooter className="flex-col gap-2">
+            {error && <p className="text-xs text-red-500 mb-2">{error}</p>}
+            {message && <p className="text-xs text-green-500 mb-2">{message}</p>}
+            <div className="w-full pb-4">
+              <Button type="submit" className="w-full" disabled={isClicked}>
+                { isLoginPage ? "Send magic link" : "Create account" }
+              </Button>
             </div>
-        </CardContent>
-        <CardFooter className="flex-col gap-2">
-          {error && <p className="text-xs text-red-500">{error}</p>}
-          {message && <p className="text-xs text-green-500">{message}</p>}
-          <Button type="submit" className="w-full" disabled={isClicked}>
-            Login with Email
-          </Button>
-          <Google/>
-        </CardFooter>
-      </Card>
-    </form>
+            <Google/>
+          </CardFooter>
+        </Card>
+      </form>
+      <div className="text-sm text-center text-zinc-500 mt-4">
+        {isLoginPage ? "Don't have an account?" : "Already have an account?"}{" "}
+        <button
+          type="button"
+          className="text-blue-500 hover:underline"
+          onClick={() => setIsLoginPage(!isLoginPage)}
+        >
+          {isLoginPage ? "Sign up" : "Sign in"}
+        </button>
+      </div>
+    </div>
   )
 }

@@ -2,16 +2,17 @@
 
 // store/usePushStore.ts
 import { create } from 'zustand';
+import { PushSubscriptionDevice } from './interface';
 
 interface PushStoreState {
   browserPermission: NotificationPermission;
   currentDeviceId: string;
-  devices: any[];
+  devices: PushSubscriptionDevice[];
 }
 interface PushStoreActions {
   setBrowserPermission: ( permission: NotificationPermission ) => void;
   setCurrentDeviceId: ( deviceId: string ) => void;
-  setDevices: ( devices: any[] ) => void;
+  setDevices: ( devices: PushSubscriptionDevice[] ) => void;
   getDeviceId: () => string;
 }
 
@@ -21,7 +22,7 @@ export const usePushStore = create<PushStoreState & PushStoreActions>( ( set, ge
   devices: [],
   setBrowserPermission: ( permission: NotificationPermission ) => set({ browserPermission: permission }),
   setCurrentDeviceId: ( deviceId: string ) => set({ currentDeviceId: deviceId }),
-  setDevices: ( devices: any[] ) => set({ devices }),
+  setDevices: ( devices: PushSubscriptionDevice[] ) => set({ devices }),
   getDeviceId: () => get().currentDeviceId,
 
 }));

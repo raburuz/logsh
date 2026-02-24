@@ -31,19 +31,13 @@ export const nicePastDate = ( date: string | Date) => {
 
 export const niceFutureDate = ( date: string | Date) => {
   
-  const isLessThanOneHour = dayjs(date).diff(dayjs(), 'minute') < 60 && dayjs(date).diff(dayjs(), 'minute') > 0; // less than one hour from now
   const isToday = dayjs(date).isToday();
   const isTomorrow = dayjs(date).add(1, 'day').isToday();
   const isNotTodayOrTomorrow = !isToday && !isTomorrow;
   const isCurrentYear = dayjs(date).year() === dayjs().year();
 
-  if(isLessThanOneHour) {
-    const minutesFromNow = Math.abs(dayjs(date).diff(dayjs(), 'minute'));
-    return `in ${minutesFromNow}m`;
-  }
-
-  if(isToday) return dayjs(date).format('H.mm a');
-  if(isTomorrow) return dayjs(date).format('[Tom ·] H.mm a');
-  if(isNotTodayOrTomorrow && isCurrentYear) return dayjs(date).format('D MMM');
-  if(!isCurrentYear) return dayjs(date).format('D MMM YYYY');
+  if(isToday) return dayjs(date).format('today');
+  if(isTomorrow) return dayjs(date).format('tomorrow');
+  if(isNotTodayOrTomorrow && isCurrentYear) return dayjs(date).format('DD MMM YYYY');
+  if(!isCurrentYear) return dayjs(date).format('DD MMM YYYY');
 }

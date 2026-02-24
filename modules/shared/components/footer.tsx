@@ -9,7 +9,7 @@ export const Footer = async () => {
 
   if(user) return (
     <footer className="py-10 grid place-content-center w-full">
-      <span className="text-sm text-zinc-500 lowercase">{config.app.name}</span>
+      <LogshCo/>
     </footer>
   );
 

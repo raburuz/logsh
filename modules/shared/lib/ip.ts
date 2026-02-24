@@ -1,5 +1,12 @@
 import { headers } from "next/headers";
 
+//https://docs.railway.com/networking/public-networking/specs-and-limits
+export const ipAddressHeaders = [
+  'x-forwarded-for', // Standard header
+  'x-real-ip', // nginx
+  'cf-connecting-ip', // Cloudflare
+];
+
 export const getClientIp = async () => {
   const header = await headers();
 

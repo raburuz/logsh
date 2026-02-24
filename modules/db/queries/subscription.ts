@@ -5,6 +5,7 @@ import { findPlanByName } from "@/modules/shared/lib/stripe/plans";
 import { subscriptionUsage } from "../schemas/app";
 import { DbTransaction } from "../interface";
 import { dayjs } from "@/modules/shared/lib/date";
+import { ApiHttpError } from "@/modules/shared/lib/error";
 
 export const subscriptionQuery = {
 
@@ -30,7 +31,9 @@ export const subscriptionQuery = {
       lastResetAt: subscriptionUsage.lastResetAt,
     });
 
-    return response.at(0)
+    const newUsage = response.at(0);
+
+    return newUsage;
   },
 
   get_or_create_usage :  async (
@@ -164,8 +167,14 @@ export const subscriptionQuery = {
         stripeCustomerId: subscription.stripeCustomerId,
         stripeSubscriptionId: subscription.stripeSubscriptionId,
         periodEnd: subscription.periodEnd,
+        usage: {
+          events: subscriptionUsage.events,
+          lastEventAt: subscriptionUsage.lastEventAt,
+          lastResetAt: subscriptionUsage.lastResetAt,
+        }
       })
       .from(subscription)
+      .innerJoin(subscriptionUsage, eq(subscriptionUsage.subscriptionId, subscription.id))
       .where(
         eq(subscription.referenceId, by.userId)
       );
@@ -179,18 +188,13 @@ export const subscriptionQuery = {
       if(!sub){
         return null;
       }
-
-      const usage = await subscriptionQuery.get_or_create_usage({ 
-        data : { subscriptionId: sub.id }, 
-        options: { tx } 
-      });
   
       const plan = findPlanByName(sub.plan);
 
       return {
         id: sub.id,
         plan: plan.name,
-        usage: usage,
+        usage: sub.usage,
         limits: plan.limits,
         status: sub.status,
         stripeCustomerId: sub.stripeCustomerId,

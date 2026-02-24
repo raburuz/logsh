@@ -37,7 +37,7 @@ export const faqData: { question: string; answer: string }[] = [
   },
   {
     question: "What happens if I get more events than my plan allows?",
-    answer: "No worries! We'll continue tracking your events, but you'll need to upgrade to a larger plan to access your dashboard."
+    answer: "No worries! We'll continue tracking your events, but event data access is automatically restricted once the monthly quota is reached. Access will be restored in the next billing cycle or by upgrading your plan."
   },
 
   // plans and pricing

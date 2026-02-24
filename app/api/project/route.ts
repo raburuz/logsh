@@ -1,5 +1,6 @@
 import { db } from "@/modules/db";
 import { withUser } from "@/modules/shared/lib/auth/middlewares/user";
+import { ApiHttpError } from "@/modules/shared/lib/error";
 
 export const GET = withUser( async ({ user }) => {
 
@@ -12,7 +13,10 @@ export const GET = withUser( async ({ user }) => {
     }
   })
   
-  if(!project) throw new Error("Project not found");
+  if(!project) throw new ApiHttpError({
+    name: 'not_found',
+    message: 'Project not found',
+  });
   
   const workspaces = await db
   .workspace

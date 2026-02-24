@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button'
 import { authClient } from '@/modules/shared/lib/auth/client';
 import { config } from '@/modules/shared/config';
+import Image from 'next/image';
 
 export const Google = () => {
 
@@ -18,10 +19,13 @@ export const Google = () => {
     <Button
       type='button' 
       variant="outline" 
-      className="w-full" 
+      className="w-full bg-white text-black hover:bg-white/95 cursor-pointer" 
       onClick={handleGoogleSignIn}
       >
-      Login with Google
+        <Image src="/google-icon.svg" alt="Google logo" width={20} height={20} />
+        <span className='font-semibold'>
+          Google
+        </span>
     </Button>
   )
 }
