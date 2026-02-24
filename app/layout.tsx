@@ -28,16 +28,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black text-white/80`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black text-zinc-300`}
       >
-        <>
+        <div className="px-4 w-full flex flex-col min-h-screen mx-auto max-w-6xl items-center justify-between font-sans">
           <ActionBanner/>
-          <div className="px-4 w-full flex flex-col h-screen mx-auto max-w-6xl items-center justify-between font-sans">
-            <Nav />
-            {children}
-            <Footer />
-          </div>
-        </>
+          <Nav />
+          {children}
+          <Footer />
+        </div> 
       </body>
     </html>
   );

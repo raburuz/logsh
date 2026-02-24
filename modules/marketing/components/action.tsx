@@ -12,7 +12,7 @@ export const ActionButton = async () => {
       {
         user ? (
           <Button className="w-fit mb-2" asChild>
-            <Link href="/dashboard">Go to Dashboard</Link>
+            <Link href="/pricing">Go to Dashboard</Link>
           </Button>
         ) : (
           <Button className="w-fit mb-2" asChild>
@@ -22,20 +22,23 @@ export const ActionButton = async () => {
       }
       <span className="text-zinc-400 font-semibold text-xs">No charge today • Cancel anytime</span>
       <p className="pt-4 text-xs"><span className="font-bold text-green-500">Get 25,000 events</span> now for just <span className="text-blue-500 font-bold">$10/month</span></p>
-      {/* <span className="text-xs text-blue-400">-( 10 left )-</span> */}
     </div>
   )
 }
 
 
-export const ActionBanner = () => {
+export const ActionBanner = async () => {
+
+  const user = await getServerSideUser();
 
   return (
-    <div className="sticky top-0 p-2 text-center border-b border-zinc-900/20 bg-black z-50">
-      <div className="max-w-4xl mx-auto flex flex-row items-center justify-center gap-2">
-        <p className="text-xs">Save big as an early customer: <span className="font-bold text-green-500">25,000 events</span> now for just <span className="text-blue-500 font-bold">$10/month</span></p>
-        <ArrowRight className="w-3 h-3"/>
+    <Link href={user ? "/pricing" : "/auth"} className="sticky top-0 cursor-pointer z-30">
+      <div className="w-full p-2 px-4 mt-1 text-center border border-zinc-900/30 bg-zinc-900 rounded-full">
+        <div className="max-w-4xl mx-auto flex flex-row items-center justify-center gap-2">
+          <p className="text-xs">Save big as an early customer: <span className="font-bold text-green-500">25,000 events</span> now for just <span className="text-blue-500 font-bold">$10/month</span></p>
+          <ArrowRight className="w-3 h-3"/>
+        </div>
       </div>
-    </div>
+    </Link>
   )
 }

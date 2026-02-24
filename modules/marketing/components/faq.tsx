@@ -61,6 +61,10 @@ export const faqData: { question: string; answer: string }[] = [
     question: "Do you offer discounts?",
     answer: "Yes, we offer a 2-month free discount for annual billing. Choose the annual billing option when selecting your plan to take advantage of this offer."
   },
+  {
+    question: "Can I get a refund if I'm not satisfied?",
+    answer: "We offer a 30-day money-back guarantee. If you're not satisfied with Logsh, please contact our support team within 30 days of your purchase for a full refund."
+  },
 
   // support and compliance
   {
@@ -89,24 +93,42 @@ export const faqData: { question: string; answer: string }[] = [
 
 export const Faq = () => {
   return (
-    <div className="mb-10 w-full mx-auto max-w-2xl">
-      <Accordion type="single" collapsible className="space-y-4" >
-        {
-          faqData.map((item, index) => (
-            <AccordionItem key={index} value={`item-${index}`} className="border-0">
-              <AccordionTrigger
-                className="border border-zinc-900/30 bg-zinc-900/10 px-4"
-              >{item.question}</AccordionTrigger>
-              <AccordionContent
-                className="px-4 mt-4 border-b border-zinc-900/30"
-              >
-                {item.answer}
-              </AccordionContent>
-            </AccordionItem>
-          ))
-        }
-      </Accordion>
-    
+    <div className="mb-10 w-full mx-auto max-w-4xl">
+      <div className="grid md:grid-cols-2 gap-4">
+        <Accordion type="single" collapsible className="space-y-4">
+          {
+            faqData.slice(0, Math.ceil(faqData.length / 2)).map((item, index) => (
+              <AccordionItem key={index} value={`item-${index}`} className="border-0">
+                <AccordionTrigger
+                  className="border border-zinc-900/30 bg-zinc-900/10 px-4"
+                >{item.question}</AccordionTrigger>
+                <AccordionContent
+                  className="px-4 mt-4 border-b border-zinc-900/30"
+                >
+                  {item.answer}
+                </AccordionContent>
+              </AccordionItem>
+            ))
+          }
+        </Accordion>
+
+        <Accordion type="single" collapsible className="space-y-4">
+          {
+            faqData.slice(Math.ceil(faqData.length / 2)).map((item, index) => (
+              <AccordionItem key={index} value={`item-${index}`} className="border-0">
+                <AccordionTrigger
+                  className="border border-zinc-900/30 bg-zinc-900/10 px-4"
+                >{item.question}</AccordionTrigger>
+                <AccordionContent
+                  className="px-4 mt-4 border-b border-zinc-900/30"
+                >
+                  {item.answer}
+                </AccordionContent>
+              </AccordionItem>
+            ))
+          }
+        </Accordion>
+      </div>
     </div>
   )
 }

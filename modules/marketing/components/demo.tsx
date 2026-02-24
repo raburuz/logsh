@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { nicePastDate } from '@/modules/shared/lib/date';
-import { eventTemplates, IEventDemo } from '../data';
+import { eventTemplates, IEventDemo } from '../data/event';
 import { cn } from '@/lib/utils';
 import { Activity, ChevronRight, Terminal } from 'lucide-react';
 import { config } from '@/modules/shared/config';
@@ -71,7 +71,8 @@ export const AppDemo = () => {
         <>
           {
             [1, 2, 3, 4, 5].map((index) => (
-              <div key={index} className="snap-start shrink-0">
+              <div key={index} className="snap-start shrink-0 flex flex-row items-center gap-6">
+                <div className="h-2 w-10 bg-zinc-800 rounded-md mt-2"></div>
                 <div className="w-full relative px-4 py-5 flex flex-col gap-1 animate-pulse rounded-r-xl">
                   <div className="h-2 w-32 bg-zinc-800 rounded-md mt-2"></div>
                   <div className="h-2 w-52 bg-zinc-800 rounded-md mt-2"></div>
@@ -170,7 +171,7 @@ export const AppDemo = () => {
         ))}
       </nav>
       {/* Event List */}
-      <div className='mt-6 h-120 overflow-hidden pb-8 px-2 rounded-xl backdrop-blur-2xl'>
+      <div className='relative mt-6 h-120 overflow-hidden pb-8 px-2 rounded-xl'>
         <div className="pt-8 flex items-center gap-3 mb-6">
           <h2 className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
             Activity stream

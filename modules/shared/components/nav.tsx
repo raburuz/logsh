@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { CircleUser } from "lucide-react";
 import { getServerSideUser } from "../lib/auth/middlewares/user";
+import { Logo } from "./logo";
 
 export const Nav = async () => {
 
@@ -21,35 +22,37 @@ export const Nav = async () => {
   if( !user ) {
     return (
       <div className="py-10 w-full flex flex-row justify-between items-center gap-10">
-      <Link href={"/"} >
-        <span className="font-bold text-sm lowercase">{config.app.name}</span>
-      </Link>
-      <nav>
-        <ul className="flex flex-row items-center gap-4 text-xs">
-          <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
-            <Link href={"/"}>Home</Link>
-          </li>
-          <span className="text-zinc-900">/</span>
-          <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
-            <Link href={"/pricing"}>Pricing</Link>
-          </li>
-          <span className="text-zinc-900">/</span>
-          <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
-            <Link href={"/docs/get-started"}>Docs</Link>
-          </li>
-          <span className="text-zinc-900">/</span>
-          <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
-            <Link href={"/auth"}>Login</Link>
-          </li>
-        </ul>
-      </nav>
-    </div>
+        <Link href={"/"} className="flex flex-row items-center">
+          <Logo/>
+          <span className="font-bold text-sm lowercase">{config.app.name}</span>
+        </Link>
+        <nav>
+          <ul className="flex flex-row items-center gap-4 text-xs">
+            <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
+              <Link href={"/"}>Home</Link>
+            </li>
+            <span className="text-zinc-900">/</span>
+            <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
+              <Link href={"/pricing"}>Pricing</Link>
+            </li>
+            <span className="text-zinc-900">/</span>
+            <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
+              <Link href={"/docs/get-started"}>Docs</Link>
+            </li>
+            <span className="text-zinc-900">/</span>
+            <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
+              <Link href={"/auth"}>Login</Link>
+            </li>
+          </ul>
+        </nav>
+      </div>
     )
   }
 
   return (
     <div className="py-10 w-full flex flex-row justify-between items-center gap-10">
-      <Link href={"/dashboard"} >
+      <Link href={"/dashboard"} className="flex flex-row items-center">
+        <Logo/>
         <span className="font-bold text-sm lowercase">{config.app.name}</span>
       </Link>
       <>

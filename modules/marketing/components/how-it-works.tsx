@@ -5,8 +5,8 @@ import { ChatPreview } from "./chat-preview"
 
 export const HowItWorks = () => {
   return (
-    <section className="relative py-20 mb-20 w-full overflow-hidden">
-      <div className="max-w-4xl mx-auto px-4">
+    <section className="relative pt-20 mb-20 w-full overflow-hidden">
+      <div className="max-w-4xl mx-auto md:px-4">
         {/* Badge */}
         <div className="flex justify-center mb-3">
           <span className="px-4 py-1.5 text-xs text-green-600 border border-green-800 rounded-full">
@@ -74,7 +74,7 @@ export const HowItWorks = () => {
         <div className="w-px h-full bg-linear-to-b from-transparent to-green-500 mx-auto" />
       </div>
       {/* Step 3 */}
-      <div className="max-w-4xl mx-auto px-4">
+      <div className="max-w-4xl mx-auto md:px-4">
         <div className="">
           <div className="flex justify-center mb-4">
             <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center">

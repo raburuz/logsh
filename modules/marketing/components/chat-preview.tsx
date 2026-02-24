@@ -47,7 +47,8 @@ export function ChatPreview() {
   ]
 
   return (
-    <div className="max-h-80">
+    <div className="max-h-96 py-2 relative overflow-hidden">
+      <div className='absolute bottom-0 w-full h-28 bg-linear-to-t from-black to-transparent z-20'></div>
       <PhoneMockup>
         <div className="relative">
           {/* Messages */}

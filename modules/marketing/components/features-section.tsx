@@ -29,18 +29,20 @@ const features = [
 
 export function FeaturesSection() {
   return (
-    <div className="space-y-6">
-      {features.map((feature, index) => (
-        <div key={index} className="flex gap-4">
-          <div className={`${feature.color} mt-1`}>
-            <feature.icon className="w-5 h-5" />
+    <div className="h-full flex flex-col justify-center items-center">
+      <div className="space-y-6">
+        {features.map((feature, index) => (
+          <div key={index} className="flex gap-4">
+            <div className={`${feature.color} mt-1`}>
+              <feature.icon className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="text-white font-medium text-sm mb-1">{feature.title}</h4>
+              <p className="text-white/80 text-xs leading-relaxed">{feature.description}</p>
+            </div>
           </div>
-          <div>
-            <h4 className="text-white font-medium text-sm mb-1">{feature.title}</h4>
-            <p className="text-white/80 text-xs leading-relaxed">{feature.description}</p>
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   )
 }
