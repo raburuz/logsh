@@ -129,7 +129,7 @@ export const Feed = () => {
         </div>
       <div className="flex items-center gap-3 mb-10">
         {/* Animated logo */}
-        <div className="relative group">
+        <div className="relative self-start group">
           <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-card border border-border transition-all duration-300 group-hover:border-muted-foreground/30">
             <Activity
               className="h-5 w-5 text-foreground transition-transform duration-300 group-hover:scale-110"
@@ -284,7 +284,7 @@ export const Feed = () => {
 
 const NoEvents = () => {
   return (
-    <div className="w-full py-10 flex flex-col items-center justify-center gap-4">
+    <div className="w-full py-14 flex flex-col items-center justify-center gap-4">
       <span className="text-white/60 text-sm">No events found.</span>
       <span className="text-white/60 text-xs">Start performing actions in your workspace to see events here.</span>
       <Button asChild size={"xs"} >

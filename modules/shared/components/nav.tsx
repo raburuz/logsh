@@ -91,11 +91,15 @@ export const NavPhone = async () => {
     <>
       <DropdownMenu>
       <DropdownMenuTrigger asChild className="sm:hidden">
-        <CircleUser className="cursor-pointer w-5 h-5 text-zinc-300 hover:text-white transition"/>
+        <div className="cursor-pointer p-2 rounded-full">
+          <CircleUser className="w-5 h-5 text-zinc-300 hover:text-zinc-100 transition"/>
+        </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="mr-2 sm:hidden">
         <DropdownMenuGroup>
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuLabel>
+            <span className="text-zinc-500">My Account</span>
+          </DropdownMenuLabel>
           <>
             <Link href={"/profile"}>
               <DropdownMenuItem>Account</DropdownMenuItem>
@@ -122,7 +126,7 @@ export const NavPhone = async () => {
         </DropdownMenuGroup>
         <DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <Logout className="w-full bg-transparent flex justify-start"/>
+          <Logout className="w-full bg-transparent flex justify-start text-sm capitalize h-8"/>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

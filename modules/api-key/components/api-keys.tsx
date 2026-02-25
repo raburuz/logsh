@@ -21,7 +21,7 @@ export const ApiKeys = () => {
       
       <div className="flex items-center gap-3 mb-10">
         {/* Animated logo */}
-        <div className="relative group">
+        <div className="relative self-start group">
           <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-card border border-border transition-all duration-300 group-hover:border-muted-foreground/30">
             <KeyRound
               className="h-5 w-5 text-foreground transition-transform duration-300 group-hover:scale-110"

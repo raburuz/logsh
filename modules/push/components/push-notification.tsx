@@ -51,7 +51,8 @@ export default function PushNotificationButton() {
               }
             >
               {
-                pushNotification.devices?.some( device => device.deviceId === pushNotification.deviceId ) ? 'Update push notification' : 'Enable push notification' }
+                pushNotification.devices?.some( device => device.deviceId === pushNotification.deviceId ) ? 'Update push notification' : 'Enable push notification' 
+              }
             </Button>
           </div>
           {/* List */}
@@ -123,7 +124,7 @@ export default function PushNotificationButton() {
                 <CircleAlert />
                 <AlertTitle>Action required</AlertTitle>
                 <AlertDescription>
-                  <p>You have denied permission for push notifications on this device. Please enable notifications in your <span className='font-bold underline'>browser settings</span> to receive updates.</p>
+                  <p>You have <span className='font-bold underline'>denied permission for push notifications on this device</span>. Please enable notifications in your <span className='font-bold underline'>browser settings</span> to receive updates.</p>
                 </AlertDescription>
               </Alert>
             )
