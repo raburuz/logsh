@@ -1,6 +1,12 @@
 import { migrate } from "drizzle-orm/node-postgres/migrator";
 import { db } from "../db";
 
+const databaseUrl = process.env.DATABASE_URL;
+if (!databaseUrl) {
+  console.error("✗ DATABASE_URL environment variable is not set.");
+  process.exit(1);
+}
+
 const runMigrations = async () => {
   try {
     console.log("Starting migrations...");
