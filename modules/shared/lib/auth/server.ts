@@ -61,7 +61,7 @@ export const auth = betterAuth({
           // Create a default project for the new user
           // We wrap this in a try-catch to ensure that even if project creation fails, it doesn't affect the user's ability to log in
           try {
-            await db.project.create({ by: { userId: user.id }, data: { name: "Default"}});
+            await db.project.create({ by: { userId: user.id }, data: { name: "default"}});
           } catch (error) {
             console.log("Error creating default project for new user:", error);
           }

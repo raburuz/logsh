@@ -36,6 +36,24 @@ export const subscriptionQuery = {
     return newUsage;
   },
 
+  create_usage_or_throw: async ( 
+    props: { data: { subscriptionId: string } },
+    options?: { tx?: DbTransaction }
+  ) => {
+
+    const usage = await subscriptionQuery.create_usage(props, options);
+
+    if(!usage) {
+      throw new ApiHttpError({
+        name: 'application_error',
+        message: 'Failed to create subscription usage record. Please try again later.',
+      })
+    }
+
+    return usage;
+
+  },
+
   get_or_create_usage :  async (
     props: {
       data: { subscriptionId: string },
@@ -62,7 +80,9 @@ export const subscriptionQuery = {
     let usage = resp.at(0); 
 
     if(!usage) {
-      usage = await subscriptionQuery.create_usage({ data: { subscriptionId } }, { tx });
+      usage = await subscriptionQuery.create_usage_or_throw({ 
+        data: { subscriptionId }
+      }, options );
     }
 
     return usage;
@@ -167,14 +187,8 @@ export const subscriptionQuery = {
         stripeCustomerId: subscription.stripeCustomerId,
         stripeSubscriptionId: subscription.stripeSubscriptionId,
         periodEnd: subscription.periodEnd,
-        usage: {
-          events: subscriptionUsage.events,
-          lastEventAt: subscriptionUsage.lastEventAt,
-          lastResetAt: subscriptionUsage.lastResetAt,
-        }
       })
       .from(subscription)
-      .innerJoin(subscriptionUsage, eq(subscriptionUsage.subscriptionId, subscription.id))
       .where(
         eq(subscription.referenceId, by.userId)
       );
@@ -188,13 +202,18 @@ export const subscriptionQuery = {
       if(!sub){
         return null;
       }
+
+      const usage = await subscriptionQuery.get_or_create_usage({
+        data: { subscriptionId: sub.id },
+        options: { tx }
+      });
   
       const plan = findPlanByName(sub.plan);
 
       return {
         id: sub.id,
         plan: plan.name,
-        usage: sub.usage,
+        usage: usage,
         limits: plan.limits,
         status: sub.status,
         stripeCustomerId: sub.stripeCustomerId,

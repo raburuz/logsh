@@ -1,13 +1,17 @@
 import { withUser } from "@/modules/shared/lib/auth/middlewares/user";
 import { ApiHttpError } from "@/modules/shared/lib/error";
-import { getChannelName } from "@/modules/shared/lib/pub-sub";
-import { isRedisReady, redis } from "@/modules/shared/lib/redis";
+import { getChannelName } from "@/modules/shared/lib/redis/pub-sub";
+import { isRedisReady, redis } from "@/modules/shared/lib/redis/redis";
 
 // This is required to enable streaming
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export const GET = withUser( async ({ request, user }) => {
+
+  // Initialize redis client
+  const subscriber = redis.duplicate();
+  await subscriber.connect();
 
   if(!isRedisReady()) {
     throw new ApiHttpError({
@@ -17,21 +21,16 @@ export const GET = withUser( async ({ request, user }) => {
     });
   }
   
-  // Initialize Upstash Redis client
-  const subscriber = redis.duplicate();
-  
   // Create a TransformStream to handle streaming data
   const responseStream = new TransformStream();
   const writer = responseStream.writable.getWriter();
   const encoder = new TextEncoder();
   
-  await subscriber.subscribe(getChannelName(user.id));
-  
-  
   // Send an initial comment to establish the SSE connection
   writer.write(encoder.encode('event: keep-alive\ndata: keep alive\n\n'));
   
-  subscriber.on('message', async (_channel, message) => {
+  await subscriber.subscribe(getChannelName(user.id), ( message ) => {
+
     // Send the message to the client
     const sseMessage =  "event: event\n"+`data: ${message}\n\n`;
     writer.write(encoder.encode(sseMessage));

@@ -9,7 +9,7 @@ import { sendToLogsh } from "@/modules/shared/lib/logsh";
 // CREATE a new API key
 export const POST = withUser( async ({ request, user }) => {
   
-  const { body } = await zodValidator({ body: request.json()}, {
+  const { body } = await zodValidator({ body: await request.json()}, {
     body: z.strictObject({
       name: z.string().trim().min(1, "Name is required"),
     })

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { auth } from "@/modules/shared/lib/auth/server";
 import { getClientIp } from "../../ip";
-import { RateLimit } from "../../rate-limit";
+import { RateLimit } from "../../redis/rate-limit";
 import { sendToLogsh } from "../../logsh";
 import { ApiHttpError } from "../../error";
 import { ApiHandler, ApiRouteOptions } from "../interfaces";
@@ -50,6 +50,7 @@ const apiAuthentication = async () => {
           message: 'You have exceeded the rate limit for API requests. Please try again later.',
           details: 'The API key has reached its usage limit or rate limit. Please wait before making more requests.',
         });
+      case 'UNAUTHORIZED':
       case 'KEY_NOT_FOUND':
       case 'INVALID_API_KEY':
         throw new ApiHttpError({

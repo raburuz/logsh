@@ -6,7 +6,12 @@ export const cacheKey = {
 
 export const setCache = ( key: string, value: string, ttlAsSeconds?: number ) => {
   if (ttlAsSeconds) {
-    return redis.set(key, value, "EX", ttlAsSeconds);
+    return redis.set(key, value, {
+      expiration:{
+        type: 'EX',
+        value: ttlAsSeconds,
+      }
+    });
   }
   return redis.set(key, value);
 }

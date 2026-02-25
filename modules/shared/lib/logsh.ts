@@ -37,7 +37,7 @@ export const sendToLogsh = async (data: {
       });
 
     if (!response.ok) {
-      throw new Error(`Failed to send log to Logsh: ${response.statusText}`);
+      throw new Error(`Failed to send log to logsh.co: ${response.statusText}`);
     }
 
     return {
@@ -46,7 +46,7 @@ export const sendToLogsh = async (data: {
     
   } catch (error) {
     const err = error as Error;
-    console.error(err.message ?? "An unknown error occurred while sending log to Logsh.");
+    console.error(err.message ?? "An unknown error occurred while sending log to logsh.co");
     return { success: false, error: err.message };
   }
 

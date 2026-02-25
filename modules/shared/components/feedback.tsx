@@ -66,8 +66,8 @@ export const Feedback = () => {
           setState("idle");
         }}
       >
-        <DialogTrigger>
-          <div className="fixed bottom-6 right-4 border-2 border-zinc-900/60 rounded-full p-3 text-white cursor-pointer bg-zinc-900/10 transition-colors">
+        <DialogTrigger asChild>
+          <div className="z-10 fixed bottom-6 right-4 border-2 border-zinc-900/60 rounded-full p-3 text-white cursor-pointer hover:bg-zinc-900 bg-black transition-colors">
             <MessageCircle className="w-4 h-4" />
           </div>
         </DialogTrigger>

@@ -1,13 +1,13 @@
 import { db } from "@/modules/db"
-import { cacheKey, getCache, setCache } from "../lib/cache";
-import { RateLimit } from "../lib/rate-limit";
+import { cacheKey, getCache, setCache } from "../lib/redis/cache";
+import { RateLimit } from "../lib/redis/rate-limit";
 import { zodValidator } from "../lib/zod/zod";
 import { ApiHttpError } from "../lib/error";
 import { sendNotificationToWorkspaceMembers } from "@/modules/push/server";
-import { publishEvent } from "../lib/pub-sub";
 import { eventApiCreationSchema } from "../lib/zod/schemas/event";
 import { maskEventIfBlocked } from "../lib/events";
 import { IEvent } from "@/modules/feed/interface";
+import { publishEvent } from "../lib/redis/pub-sub";
 
 interface ISubscriptionCache {
   subscriptionId: string;

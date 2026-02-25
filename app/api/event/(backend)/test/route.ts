@@ -4,8 +4,8 @@ import { workspaceValidator } from "@/modules/feed/lib/zod";
 import { zodValidator } from "@/modules/shared/lib/zod/zod";
 import { withUser } from "@/modules/shared/lib/auth/middlewares/user";
 import { sendNotificationToWorkspaceMembers } from "@/modules/push/server";
-import { publishEvent } from "@/modules/shared/lib/pub-sub";
 import { IEvent } from "@/modules/feed/interface";
+import { publishEvent } from "@/modules/shared/lib/redis/pub-sub";
 
 //Create Event
 export const POST = withUser( async ({ request, user }) => {

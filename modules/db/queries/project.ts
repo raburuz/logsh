@@ -37,7 +37,7 @@ export const projectQuery = {
       const projectField = identifyBy.type === "projectId" 
         ? project.id 
         : project.name;
-      wheres.push( eq(projectField, identifyBy.value) );
+      wheres.push( eq(projectField, identifyBy.value.toLowerCase()) );
     }
 
 
@@ -86,7 +86,7 @@ export const projectQuery = {
       const [ pj ] = await tx
       .insert(project)
       .values({
-        name: data.name,
+        name: data.name.toLowerCase(),
       })
       .returning({
         id: project.id,

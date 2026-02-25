@@ -1,6 +1,6 @@
 import { RateLimiterRedis, RateLimiterMemory, IRateLimiterOptions } from "rate-limiter-flexible";
 import { redis, isRedisReady } from "./redis";
-import { ApiHttpError } from "./error";
+import { ApiHttpError } from "../error";
 
 
 //https://docs.railway.com/networking/public-networking/specs-and-limits
@@ -31,6 +31,7 @@ export const RateLimit = {
       if( isRedisReady() ) {
         const rateLimiter = new RateLimiterRedis({
           storeClient: redis,
+          useRedisPackage: true,
           //inMemoryBlockDuration: options.blockDurationSeg ?? 0,
           ...rateLimiterOptions,
         });
@@ -85,6 +86,7 @@ export const RateLimit = {
       if( isRedisReady() ){
         const limiter = new RateLimiterRedis({
           storeClient: redis,
+          useRedisPackage: true,
           ...rateLimiterOptions,
         })
     
