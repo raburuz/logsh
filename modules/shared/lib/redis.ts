@@ -20,14 +20,14 @@ const redisInstance =
     reconnectOnError: err => {
       return err.message.includes("READONLY"); 
     },
-    connectTimeout: 10_000, // 10 seconds
+    connectTimeout: 20_000, // 20 seconds
     commandTimeout: 5_000, // 5 seconds
     keepAlive: 10_000, // 10 seconds
     enableAutoPipelining: true,
     maxLoadingRetryTime: 10_000, // 10 seconds
     // TLS configuration based on environment variable
     tls: process.env.REDIS_TLS === "true" ? {} : undefined,
-    lazyConnect: false, // Connect immediately 
+    lazyConnect: true, // Connect immediately 
   });
 
 if (process.env.NODE_ENV !== "production") {
@@ -37,5 +37,9 @@ if (process.env.NODE_ENV !== "production") {
 export const isRedisReady = () => {
   return redisInstance.status === "ready";
 }
+
+redisInstance.on("error", (err) => {
+  console.error("⭕ Redis error: ", err);
+});
 
 export const redis = redisInstance;

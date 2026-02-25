@@ -39,7 +39,7 @@ export const stripePlugin = stripe({
             enabled: true
           },
           billing_address_collection: "required",
-          payment_method_types: ["card", "paypal", "link"],
+          payment_method_types: ["card", "link"],
           discounts,
           // Dont ask for payment method if the plan has a free trial (perfect for freemium plans)
           payment_method_collection: "if_required"

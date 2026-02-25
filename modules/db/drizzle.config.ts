@@ -1,5 +1,4 @@
 import { defineConfig } from 'drizzle-kit'
-import { isProduction } from '../shared/utils/constraint';
 
 const config = defineConfig({
   schema: ["./modules/db/schemas/*.ts"],
