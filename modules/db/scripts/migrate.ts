@@ -12,7 +12,8 @@ const runMigrations = async () => {
     console.log("Starting migrations...");
     
     await migrate(db, {
-      migrationsFolder: "drizzle",
+      migrationsFolder: "drizzle",      
+      migrationsSchema: "public", // Optional: specify a custom schema for the migrations table
     });
 
     console.log("✓ Migrations completed successfully.");

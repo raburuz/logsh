@@ -14,6 +14,7 @@
     "dev:check:build": "pnpm run prod:sw:generate && next build",
     "dev:sw:generate": "node modules/push/watch-sw.ts",
     "dev:email": "email dev",
+    "dev:drizzle:studio": "drizzle-kit studio --config ./modules/db/drizzle.config.ts",
     "dev:drizzle:check": "drizzle-kit check --config ./modules/db/drizzle.config.ts",
     "dev:drizzle:generate": "drizzle-kit generate --config ./modules/db/drizzle.config.ts",
     "dev:drizzle:push": "drizzle-kit push --config ./modules/db/drizzle.config.ts",
