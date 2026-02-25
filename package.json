@@ -5,16 +5,20 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently -n SW,NEXT -c blue,green \"pnpm run sw:generate\" \"next dev\"",
-    "build": "cross-env NODE_ENV=production pnpm run sw:generate && next build",
+    "deploy": "pnpm run prod:drizzle:migrate && pnpm run build",
+    "build": "pnpm run prod:sw:generate && next build",
     "start": "next start",
-    "sw:generate": "node modules/push/watch-sw.ts",
     "lint": "eslint",
-    "email:dev": "email dev",
-    "drizzle:generate": "drizzle-kit generate --config ./modules/db/drizzle.config.ts",
-    "drizzle:push": "drizzle-kit push --config ./modules/db/drizzle.config.ts",
-    "drizzle:migration:custom": "drizzle-kit generate --custom --config ./modules/db/drizzle.config.ts --name",
-    "better-auth:schema:generate": "pnpm dlx @better-auth/cli@latest generate --config ./modules/auth/lib/server.ts --output ./modules/db/schemas/auth.ts",
-    "better-auth:schema:migrate": "pnpm dlx @better-auth/cli@latest migrate --config ./modules/auth/lib/server.ts"
+    "prod:sw:generate": "cross-env NODE_ENV=production node modules/push/watch-sw.ts",
+    "prod:drizzle:migrate": "node modules/db/scripts/migrate.ts",
+    "dev:sw:generate": "node modules/push/watch-sw.ts",
+    "dev:email": "email dev",
+    "dev:drizzle:check": "drizzle-kit check --config ./modules/db/drizzle.config.ts",
+    "dev:drizzle:generate": "drizzle-kit generate --config ./modules/db/drizzle.config.ts",
+    "dev:drizzle:push": "drizzle-kit push --config ./modules/db/drizzle.config.ts",
+    "dev:drizzle:migration:custom": "drizzle-kit generate --custom --config ./modules/db/drizzle.config.ts --name",
+    "dev:better-auth:schema:generate": "pnpm dlx @better-auth/cli@latest generate --config ./modules/auth/lib/server.ts --output ./modules/db/schemas/auth.ts",
+    "dev:better-auth:schema:migrate": "pnpm dlx @better-auth/cli@latest migrate --config ./modules/auth/lib/server.ts"
   },
   "dependencies": {
     "@better-auth/stripe": "^1.4.18",
