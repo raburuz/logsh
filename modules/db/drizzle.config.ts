@@ -12,6 +12,10 @@ const config = defineConfig({
   strict: true, // Enable strict mode for better type safety
   verbose: true, // Enable verbose logging for better insights during development
   breakpoints: true, // Enable breakpoints for better debugging
+  migrations: {
+    table: "drizzle_migrations", // Optional: specify a custom name for the migrations table
+    schema: "drizzle" // Optional: specify a custom schema for the migrations table
+  }
 })
 
 
