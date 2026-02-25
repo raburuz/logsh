@@ -5,6 +5,8 @@ import { db } from "@/modules/db"
 import { plans } from "@/modules/shared/lib/stripe/plans";
 import { zodValidator } from "@/modules/shared/lib/zod/zod";
 import { withUser } from "@/modules/shared/lib/auth/middlewares/user"
+import { APIError } from "better-auth";
+import { ApiHttpError } from "@/modules/shared/lib/error";
 
 export const GET = withUser( async ({ user, request }) => {
   const subscription = await db.subscription.get_usable_subscription({by: { userId: user.id }});
@@ -36,23 +38,34 @@ export const POST = withUser( async ({ user, request }) => {
 
   const sub = await db.subscription.get_usable_subscription({by: { userId: user.id }});
 
-  const data = await auth.api.upgradeSubscription({
-    body: {
-        plan: body.planName, // required
-        annual: body.isAnnual, //required
-        referenceId: user.id, // required if you want to reuse the same subscription
-        subscriptionId: sub?.stripeSubscriptionId ?? undefined,
-        successUrl: "/profile", // required
-        cancelUrl: "/profile", // required
-        returnUrl: "/profile",
-        disableRedirect: false, // required
-    },
-    // This endpoint requires session cookies.
-    headers: await headers(),
-  });
+  try {
+    const data = await auth.api.upgradeSubscription({
+      body: {
+          plan: body.planName, // required
+          annual: body.isAnnual, //required
+          referenceId: user.id, // required if you want to reuse the same subscription
+          subscriptionId: sub?.stripeSubscriptionId ?? undefined,
+          successUrl: "/profile", // required
+          cancelUrl: "/profile", // required
+          returnUrl: "/profile",
+          disableRedirect: false, // required
+      },
+      // This endpoint requires session cookies.
+      headers: await headers(),
+    });
+  
+    return {
+      url: data.url
+    };
+    
+  } catch (error) {
+    const err = error as APIError;
 
-  return {
-    url: data.url
-  };
+    throw new ApiHttpError({
+      name: 'application_error',
+      message: err.message,
+      details: 'Failed to create checkout session. Please try again.',
+    })
+  }
 
 })

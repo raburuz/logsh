@@ -1,5 +1,6 @@
 "use client"
 
+import { toast } from "sonner";
 import { ISubscription } from "../../shared/lib/stripe/interface";
 
 export const useSubscriptionApi = () => {
@@ -51,6 +52,7 @@ export const useSubscriptionApi = () => {
       return resp.data;
 
     } catch (error) {
+      toast.error('Failed to update subscription. Please try again.');
       console.log("Error updating subscription:", error);
       return undefined;
     }
