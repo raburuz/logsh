@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently -n SW,NEXT -c blue,green \"pnpm run sw:generate\" \"next dev\"",
-    "deploy": "pnpm run prod:drizzle:migrate && pnpm run build",
-    "build": "pnpm run prod:sw:generate && next build",
+    "pre:build": "pnpm run prod:drizzle:migrate",
+    "build": "pnpm run pre:build && pnpm run prod:sw:generate && next build",
     "start": "next start",
     "lint": "eslint",
     "prod:sw:generate": "cross-env NODE_ENV=production node modules/push/watch-sw.ts",
