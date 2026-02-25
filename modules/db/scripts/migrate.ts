@@ -1,5 +1,9 @@
+import path from "node:path";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
 import { db } from "../db";
+
+
+const root = process.cwd()
 
 const databaseUrl = process.env.DATABASE_URL;
 if (!databaseUrl) {
@@ -12,7 +16,7 @@ const runMigrations = async () => {
     console.log("Starting migrations...");
     
     await migrate(db, {
-      migrationsFolder: "drizzle",      
+      migrationsFolder: path.resolve(root, "drizzle"),      
       //migrationsSchema: "public", // Optional: specify a custom schema for the migrations table
     });
 
