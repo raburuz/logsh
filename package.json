@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "concurrently -n SW,NEXT -c blue,green \"pnpm run sw:generate\" \"next dev\"",
+    "dev": "concurrently -n SW,NEXT -c blue,green \"pnpm run dev:sw:generate\" \"next dev\"",
     "build": "pnpm run prod:sw:generate && next build && pnpm run post:build",
     "post:build": "pnpm run prod:drizzle:migrate:script",
     "start": "next start",

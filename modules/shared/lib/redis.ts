@@ -30,6 +30,15 @@ const redisInstance =
     lazyConnect: true, // Connect immediately 
   });
 
+// Connect to Redis immediately to ensure it's ready when needed (FORCE CONNECT ON STARTUP)
+redisInstance.connect()
+  .then(() => {
+    console.log("✅ Redis client connected successfully");
+  })
+  .catch((err) => {
+    console.error("⭕ Failed to connect to Redis: ", err);
+  });
+
 if (process.env.NODE_ENV !== "production") {
   global._redis = redisInstance;
 }
