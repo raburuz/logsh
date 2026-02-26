@@ -22,7 +22,6 @@ interface BeforeInstallPromptEvent extends Event {
 export const InstallPrompt = () => {
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(null)
-  const [isVisible, setIsVisible] = useState(false)
   const [isIOS, setIsIOS] = useState(false)
   const [isStandalone, setIsStandalone] = useState(false)
 
@@ -37,19 +36,18 @@ export const InstallPrompt = () => {
     // Detect standalone mode
     setIsStandalone(
       window.matchMedia("(display-mode: standalone)").matches ||
-      (window.navigator as any).standalone === true
+      (window.navigator as any).standalone === true ||
+      document.referrer.includes("android-app://")
     )
 
     const handleBeforeInstallPrompt = (event: Event) => {
       const installEvent = event as BeforeInstallPromptEvent
       installEvent.preventDefault()
       setDeferredPrompt(installEvent)
-      setIsVisible(true)
     }
 
     const handleAppInstalled = () => {
       setDeferredPrompt(null)
-      setIsVisible(false)
     }
 
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt)
@@ -68,7 +66,6 @@ export const InstallPrompt = () => {
     await deferredPrompt.userChoice
 
     setDeferredPrompt(null)
-    setIsVisible(false)
   }
 
   // Don't show if already installed
@@ -101,7 +98,7 @@ export const InstallPrompt = () => {
   }
 
   // Android / Desktop install UI
-  if (!isVisible || !deferredPrompt) return (
+  if (!deferredPrompt) return (
     <Card className="flex flex-col gap-4 pb-6">
       <CardHeader>
         <CardTitle className="space-x-3">
