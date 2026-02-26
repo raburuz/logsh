@@ -4,6 +4,8 @@ import { db } from "@/modules/db";
 import { sendToLogsh } from "@/modules/shared/lib/logsh";
 import { config } from "../../config";
 import { findPlanByName, planListToBetterAuthPlans } from "./plans";
+import { sendEmail } from "../resend";
+import TrialWillEndEmail from "@/emails/trial-will-end";
 
 export const stripeClient = new Stripe( 
   process.env.STRIPE_SECRET_KEY ?? '', 
@@ -116,6 +118,109 @@ export const stripePlugin = stripe({
       })
     }
   },
+  onEvent: async ( event ) => {
+    // Called on any Stripe event, you can use this to log all events or trigger other actions
+    switch(event.type) {
+
+      // Trial will end reminder and refund events are important to track as they impact revenue, so we log them in Logsh with high visibility
+      case "customer.subscription.trial_will_end" : {
+        const subscription = event.data.object as Stripe.Subscription;
+
+        const stripeCustomerId = subscription.customer as string;
+
+        // Retrieve the user from our database using the Stripe customer ID
+        try {
+          const user = await db.user.find_by_stripe_customer_id(stripeCustomerId);
+
+          if(!user){
+            await sendToLogsh({
+              workspace: "stripe_error",
+              event: "user_not_found_for_subscription_trial_will_end",
+              description: "A subscription trial will end event was received from Stripe, but no user was found with the corresponding Stripe customer ID",
+              icon: "❌",
+              notify: true,
+              metadata: {
+                provider: "stripe",
+                url: "https://dashboard.stripe.com/subscriptions",
+                stripeCustomerId,
+                subscriptionId: subscription.id,
+              }
+            })
+
+            return;
+          }
+
+          await sendEmail({
+            to: user.email,
+            from: config.email.author,
+            subject: `Don't lose your events: Your ${config.app.name.toLowerCase()} trial ends soon!`,
+            react: TrialWillEndEmail({
+              userName: user.name || "there!",
+              companyName: config.app.name.toLowerCase(),
+              upgradeUrl: `${config.app.url}/pricing`,
+            })
+          })
+  
+          //Send event to Logsh
+          await sendToLogsh({
+            workspace: "logsh_subscriptions",
+            event: "subscription.trial_will_end",
+            description: "A subscription trial is about to end in Stripe",
+            notify: true,
+            icon: "⏰",
+            metadata: {
+              provider: "stripe",
+              url: "https://dashboard.stripe.com/subscriptions",
+              userId: subscription.metadata.userId,
+              subscriptionId: subscription.id,
+            }
+          })
+        } catch (error) {
+          console.log(error);
+        }
+
+      }
+
+      case "refund.created" : {
+        const refund = event.data.object as Stripe.Refund;
+
+        //Send event to Logsh
+        await sendToLogsh({
+          workspace: "logsh_payments",
+          event: "refund.created",
+          description: "A refund has been created in Stripe",
+          notify: true,
+          icon: "💸",
+          metadata: {
+            provider: "stripe",
+            url: "https://dashboard.stripe.com/refunds",
+            userId: refund.metadata?.userId,
+            refundId: refund.id,
+          }
+        })
+      }
+
+      case "radar.early_fraud_warning.created" : {
+        const fraudWarning = event.data.object as Stripe.Radar.EarlyFraudWarning;
+        //Send event to Logsh
+        await sendToLogsh({
+          workspace: "logsh_payments",
+          event: "radar.early_fraud_warning.created",
+          description: "An early fraud warning has been created in Stripe",
+          notify: true,
+          icon: "⚠️",
+          metadata: {
+            provider: "stripe",
+            url: "https://dashboard.stripe.com/radar/early_fraud_warnings",
+            actionable: fraudWarning.actionable,
+            fraudWarningId: fraudWarning.id,
+            fraudType: fraudWarning.fraud_type,
+          }
+        })
+      }
+
+    }
+  } 
 });
 
 export const resetSubscriptionUsage = async ( data: { subscription: { id: string, referenceId: string } } ) => {

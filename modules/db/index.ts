@@ -3,6 +3,7 @@ import { eventQuery } from "./queries/event"
 import { projectQuery } from "./queries/project"
 import { pushSubscriptionQuery } from "./queries/push"
 import { subscriptionQuery } from "./queries/subscription"
+import { userQuery } from "./queries/user"
 import { workspaceQuery } from "./queries/workspace"
 import { account, apikey, session, subscription ,user, verification } from "./schemas/auth"
 
@@ -24,5 +25,6 @@ export const db = {
     event: eventQuery,
     subscription: subscriptionQuery,
     pushSubscription: pushSubscriptionQuery,
+    user: userQuery,
   })
 } 
