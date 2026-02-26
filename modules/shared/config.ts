@@ -1,6 +1,7 @@
 export const config = {
   app: {
-    name: 'Logsh.co',
+    shortName: 'logsh',
+    name: 'logsh.co',
     domain: 'logsh.co',
     url: "https://logsh.co",
     description: 'A comprehensive analytics dashboard',

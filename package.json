@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "dev:https": "concurrently -n SW,NEXT -c blue,green \"pnpm run dev:sw:generate\" \"next dev --experimental-https\"",
     "dev": "concurrently -n SW,NEXT -c blue,green \"pnpm run dev:sw:generate\" \"next dev\"",
     "build": "pnpm run prod:sw:generate && next build && pnpm run post:build",
     "post:build": "pnpm run prod:drizzle:migrate:script",

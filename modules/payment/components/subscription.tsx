@@ -60,17 +60,29 @@ export const Subscription = () => {
                 <div className="flex items-center gap-2 ">
                   <Gauge className='w-4 h-4 '/>
                   <span>Usage:</span>
-                  <p className="font-bold text-zinc-500">
+                  <p className="text-zinc-500">
                     <span
                       className={cn(
+                        "tracking-wider font-medium",
                         subscription.usage.events >= subscription.limits.monthlyEventQuota * 0.8 ? "text-orange-600" : "",
                         subscription.usage.events >= subscription.limits.monthlyEventQuota ? "text-red-600" : "",
                         subscription.usage.events < subscription.limits.monthlyEventQuota * 0.8 ? "text-green-600" : ""
                       )}
-                    >{subscription.usage.events.toLocaleString()}</span>
-                    {' '}/{' '}
-                    <span>{subscription.limits.monthlyEventQuota.toLocaleString()}</span>
-                    {' '}events</p>
+                    >
+                      {subscription.usage.events.toLocaleString().padStart(subscription.limits.monthlyEventQuota.toString().length, '0')}
+                    </span>
+                    <span>{' '}/{' '}</span>
+                    <span className="font-bold">{subscription.limits.monthlyEventQuota.toLocaleString()}</span>
+                    <span>{' '}events{' '}</span>
+                    <span>(</span>
+                    <span className={cn(
+                      "font-bold",
+                      subscription.usage.events >= subscription.limits.monthlyEventQuota * 0.8 ? "text-orange-600" : "",subscription.usage.events >= subscription.limits.monthlyEventQuota * 0.8 ? "text-orange-600" : "",
+                      subscription.usage.events >= subscription.limits.monthlyEventQuota ? "text-red-600" : "",
+                      subscription.usage.events < subscription.limits.monthlyEventQuota * 0.8 ? "text-green-600" : ""
+                    )}>{' '}{((subscription.usage.events / subscription.limits.monthlyEventQuota) * 100).toFixed(4)} % </span>
+                    <span>{' '}used )</span>
+                  </p>
                 </div>
                 <div className="h-px my-4 w-full bg-zinc-900/30"></div>
                 {

@@ -32,7 +32,7 @@ const defaultMetadata= async ( data?: IDefaultMetadataProps ): Promise<Metadata>
       siteName: config.app.name.toLowerCase(),
       images: [{
         alt: title,
-        url: `${domain}/og-image.png`,
+        url: '/og-image.png',
         width: 1200,
         height: 630,
       }],
@@ -45,7 +45,7 @@ const defaultMetadata= async ( data?: IDefaultMetadataProps ): Promise<Metadata>
       creator: `${socialMedia.x.username}`,
       images: [{
         alt: title,
-        url: `${domain}/og-image.png`,
+        url: '/og-image.png',
         width: 1200,
         height: 630,
       }],
@@ -56,6 +56,19 @@ const defaultMetadata= async ( data?: IDefaultMetadataProps ): Promise<Metadata>
     },
     category: seoAttributes.category,
     keywords: seoAttributes.keywords,
+    appleWebApp: {
+      title: config.app.shortName,
+      startupImage: '/apple-touch-icon.png',
+      statusBarStyle: 'default',
+      capable: true,
+    },
+    icons:{
+      icon: [ 
+        { rel: 'shortcut icon', url: "/favicon.ico" },
+        { type: "image/svg+xml", url: "/favicon.svg" }, 
+        { type: "image/png", url: "/favicon-96x96.png", sizes: "96x96" }
+      ],
+    }
   }
 }
 

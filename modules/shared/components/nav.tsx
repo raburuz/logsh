@@ -27,23 +27,23 @@ export const Nav = async () => {
           <span className="font-bold text-sm lowercase">{config.app.name}</span>
         </Link>
         <nav>
-          <ul className="flex flex-row items-center gap-4 text-xs">
-            <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
+          <div className="flex flex-row items-center gap-4 text-xs">
+            <div className="cursor-pointer font-medium text-white/80 hover:text-white transition">
               <Link href={"/"}>Home</Link>
-            </li>
+            </div>
             <span className="text-zinc-900">/</span>
-            <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
+            <div className="cursor-pointer font-medium text-white/80 hover:text-white transition">
               <Link href={"/pricing"}>Pricing</Link>
-            </li>
+            </div>
             <span className="text-zinc-900">/</span>
-            <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
+            <div className="cursor-pointer font-medium text-white/80 hover:text-white transition">
               <Link href={"/docs/get-started"}>Docs</Link>
-            </li>
+            </div>
             <span className="text-zinc-900">/</span>
-            <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
+            <div className="cursor-pointer font-medium text-white/80 hover:text-white transition">
               <Link href={"/auth"}>Login</Link>
-            </li>
-          </ul>
+            </div>
+          </div>
         </nav>
       </div>
     )
@@ -60,25 +60,25 @@ export const Nav = async () => {
       <NavPhone/>
       {/* Desktop */}
         <nav className="hidden sm:flex">
-          <ul className="flex flex-row items-center gap-4 text-xs">
-            <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
+          <div className="flex flex-row items-center gap-4 text-xs">
+            <div className="cursor-pointer font-medium text-white/80 hover:text-white transition">
               <Link href={"/dashboard"}>Dashboard</Link>
-            </li>
+            </div>
             <span className="text-zinc-900">/</span>
-            <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
+            <div className="cursor-pointer font-medium text-white/80 hover:text-white transition">
               <Link href={"/docs/get-started"} target="_blank">Docs</Link>
-            </li>
+            </div>
             <span className="text-zinc-900">/</span>
-            <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
+            <div className="cursor-pointer font-medium text-white/80 hover:text-white transition">
               <Link href={"/pricing"}>Pricing</Link>
-            </li>
+            </div>
             <span className="text-zinc-900">/</span>
-            <li className="cursor-pointer font-medium text-white/80 hover:text-white transition">
+            <div className="cursor-pointer font-medium text-white/80 hover:text-white transition">
               <Link href={"/profile"}>Account</Link>
-            </li>
+            </div>
             <span className="text-zinc-900">/</span>
             <Logout/>
-          </ul>
+          </div>
         </nav>
       </>
     </div>
@@ -90,8 +90,8 @@ export const NavPhone = async () => {
   return (
     <>
       <DropdownMenu>
-      <DropdownMenuTrigger asChild className="sm:hidden">
-        <div className="cursor-pointer p-2 rounded-full">
+      <DropdownMenuTrigger asChild>
+        <div className="sm:hidden cursor-pointer p-2 rounded-full">
           <CircleUser className="w-5 h-5 text-zinc-300 hover:text-zinc-100 transition"/>
         </div>
       </DropdownMenuTrigger>

@@ -98,3 +98,13 @@ stripe login
 stripe listen --forward-to http://localhost:3000/api/auth/stripe/webhook
 
 ```
+
+### Tunnel 
+
+```
+
+pnpm i -g cloudflared
+
+cloudflared tunnel --url http://localhost:3000
+
+```

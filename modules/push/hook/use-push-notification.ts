@@ -117,6 +117,7 @@ export const usePushNotification = () => {
       }
       
     } catch (error) {
+      toast.error("Failed to subscribe to push notifications. Please allow notifications and try again.");
       console.log("Failed to subscribe to push notifications", error);
       setIsSubscribing(false);
       return;

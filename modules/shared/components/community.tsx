@@ -1,10 +1,7 @@
 "use client"
 
-import Link from "next/link";
-import { Activity, AlertCircle, CalendarClock, Gauge, Info, Package, Siren } from "lucide-react";
+import { Info} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { niceFutureDate } from "@/modules/shared/lib/date";
-import { useSubscription } from "@/modules/shared/store/subscription";
 import {
   Card,
   CardContent,
@@ -17,7 +14,6 @@ import {
   AlertDescription,
   AlertTitle,
 } from "@/components/ui/alert"
-import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { config } from "../config";
 
@@ -32,15 +28,15 @@ export const Community = () => {
           <div className="space-y-4">
             <div className="h-px w-full bg-zinc-900/30"></div>
             <div className="text-xs flex flex-row flex-wrap gap-5">
-              <Button asChild>
+              <Button size={"sm"} asChild>
                 <a href={config.community.discord} target="_blank" rel="noopener noreferrer" className="flex items-center">
-                  <Image src="/discord-icon.svg" alt="Discord community" width={14} height={14} />
+                  <Image src="/discord-icon.svg" alt="Discord community" width={14} height={14} className="h-auto object-contain"/>
                   <span className="ml-0.5">Join our Discord</span>
                 </a>
               </Button>
-              <Button asChild>
+              <Button size={"sm"} asChild>
                 <a href={config.community.x} target="_blank" rel="noopener noreferrer" className="flex items-center">
-                  <Image src="/x-icon.svg" alt="X community" width={14} height={14} />
+                  <Image src="/x-icon.svg" alt="X community" width={14} height={14} className="h-auto object-contain"/>
                   <span className="ml-0.5">Join our X</span>
                 </a>
               </Button>

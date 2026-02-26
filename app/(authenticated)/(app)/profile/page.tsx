@@ -4,6 +4,7 @@ import { Subscription } from "@/modules/payment/components/subscription";
 import PushNotificationButton from "@/modules/push/components/push-notification";
 import { getServerSideUser } from "@/modules/shared/lib/auth/middlewares/user";
 import { Community } from "@/modules/shared/components/community";
+import { InstallPrompt } from "@/modules/shared/components/install-prompt";
 
 export default async function Page() {
 
@@ -17,6 +18,7 @@ export default async function Page() {
         <Profile/>
         <PushNotificationButton/>
         <Subscription/>
+        <InstallPrompt/>
         <Community/>
       </div>
     

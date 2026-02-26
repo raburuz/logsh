@@ -11,6 +11,13 @@ const builder = ( message: PushNotification ): { event: string, body: string, ic
         body: message.data.description ?? '',
         icon: sw.location.origin + '/logsh.png',
       };
+    default: {
+      return {
+        event: 'Notification',
+        body: 'You have a new notification',
+        icon: sw.location.origin + '/logsh.png',
+      }
+    }
   
   }
 

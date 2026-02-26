@@ -21,8 +21,13 @@ const nextConfig: NextConfig = {
   headers: async () => {
     return [
       {
+        //https://nextjs.org/docs/app/guides/progressive-web-apps#8-securing-your-application
         source: '/sw.js',
         headers: [
+          {
+            key: 'Content-Type',
+            value: 'application/javascript; charset=utf-8',
+          },
           {
             key: 'Cache-Control',
             value: 'no-cache, no-store, must-revalidate',
@@ -30,6 +35,10 @@ const nextConfig: NextConfig = {
           {
             key: 'Service-Worker-Allowed',
             value: '/',
+          },
+          {
+            key: 'Content-Security-Policy',
+            value: "default-src 'self'; script-src 'self'",
           },
         ]
       },

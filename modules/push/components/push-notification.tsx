@@ -140,6 +140,7 @@ export default function PushNotificationButton() {
                     <Button
                       size={'xs'}
                       onClick={handleSubscribe}
+                      disabled={pushNotification.isCreatingSubscription}
                       className='bg-white text-black hover:bg-white/95'
                     >
                       👉 Enable notifications
@@ -160,6 +161,7 @@ export default function PushNotificationButton() {
                     <Button
                       size={'xs'}
                       onClick={handleSubscribe}
+                      disabled={pushNotification.isCreatingSubscription}
                       className='bg-white text-black hover:bg-white/95'
                     >
                       👉 Enable notifications
