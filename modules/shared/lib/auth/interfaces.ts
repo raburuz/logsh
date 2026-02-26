@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { apiAuthentication } from "./middlewares/api";
 
 export type UserHandler<T> = (
   data: {
@@ -17,10 +18,7 @@ export type UserHandler<T> = (
 export type ApiHandler<T> = (
   data: {
     request: NextRequest,
-    api: {
-      id: string;
-      userId: string;
-    },
+    api: Awaited<ReturnType<typeof apiAuthentication>>,
     ctx: any,
   }
 ) => Promise<T>;

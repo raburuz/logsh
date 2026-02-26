@@ -6,8 +6,9 @@ import { RateLimit } from "../../redis/rate-limit";
 import { sendToLogsh } from "../../logsh";
 import { ApiHttpError } from "../../error";
 import { ApiHandler, ApiRouteOptions } from "../interfaces";
+import { userWithUnlimitedApiAccess } from "@/modules/shared/utils/constraint";
 
-const apiAuthentication = async () => {
+export const apiAuthentication = async () => {
 
   const authorization = (await headers()).get('authorization');
 
@@ -70,7 +71,9 @@ const apiAuthentication = async () => {
   
   return {
     id: session.key.id,
-    userId: session.key.userId, 
+    metadata: session.key.metadata,
+    hasUnlimitedAccess: userWithUnlimitedApiAccess.includes(session.key.userId),
+    userId: session.key.userId,
   };
 }
 

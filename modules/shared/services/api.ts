@@ -1,59 +1,47 @@
 import { db } from "@/modules/db"
-import { cacheKey, getCache, setCache } from "../lib/redis/cache";
+import { IEvent } from "@/modules/feed/interface";
+import { sendNotificationToWorkspaceMembers } from "@/modules/push/server";
 import { RateLimit } from "../lib/redis/rate-limit";
 import { zodValidator } from "../lib/zod/zod";
 import { ApiHttpError } from "../lib/error";
-import { sendNotificationToWorkspaceMembers } from "@/modules/push/server";
 import { eventApiCreationSchema } from "../lib/zod/schemas/event";
 import { maskEventIfBlocked } from "../lib/events";
-import { IEvent } from "@/modules/feed/interface";
 import { publishEvent } from "../lib/redis/pub-sub";
 
-interface ISubscriptionCache {
-  subscriptionId: string;
-  eventUsage: number;
-  monthlyEventQuota: number;
-  rateLimitPerSecond: number;
-  softLimitThreshold: number;
-  hardLimitThreshold: number;
-}
+export class ApiService {
 
-export const eventService = {
+  user: {
+    id: string,
+    hasUnlimitedAccess: boolean,
+    subscriptionId?: string;
+  };
+  isSoftLimitExceeded: boolean = false;
 
-  subscription: async ( userId: string ): Promise<ISubscriptionCache> => {
-    const cache = await getCache<ISubscriptionCache>(cacheKey.subscription(userId));
-    
-    if(cache.status) {
-      return cache.value;
-    } else {
-      const subscription = await db.subscription.get_usable_subscription({ by: { userId } });
+  constructor( data: { userId: string, hasUnlimitedAccess: boolean } ){
+    this.user = {
+      id: data.userId,
+      hasUnlimitedAccess: data.hasUnlimitedAccess,
+    };
+  }
 
-      if( !subscription ) throw new ApiHttpError({
-        name: 'bad_request',
-        message: 'Your current plan does not allow you to create events. Please upgrade to a paid plan to access this feature.',
-        details: 'No active subscription found for this user. Please subscribe to a plan that includes event creation to use this feature.',
-      });
+  protected withLimitedApiAccess = async () => {
+   
+    const subs = await db.subscription.get_usable_subscription({ by: { userId: this.user.id } });
 
-      return {
-        subscriptionId: subscription.id,
-        eventUsage: subscription.usage?.events ?? 0,
-        monthlyEventQuota: subscription.limits.monthlyEventQuota,
-        rateLimitPerSecond: subscription.limits.rateLimitPerSecond,
-        softLimitThreshold: subscription.limits.softLimitThreshold,
-        hardLimitThreshold: subscription.limits.hardLimitThreshold,
-      }
+    if( !subs ) throw new ApiHttpError({
+      name: 'bad_request',
+      message: 'Your current plan does not allow you to create events. Please upgrade to a paid plan to access this feature.',
+      details: 'No active subscription found for this user. Please subscribe to a plan that includes event creation to use this feature.',
+    });
+
+    const subscription = {
+      subscriptionId: subs.id,
+      eventUsage: subs.usage.events,
+      monthlyEventQuota: subs.limits.monthlyEventQuota,
+      rateLimitPerSecond: subs.limits.rateLimitPerSecond,
+      softLimitThreshold: subs.limits.softLimitThreshold,
+      hardLimitThreshold: subs.limits.hardLimitThreshold,
     }
-  },
-
-  createViaAPI: async ( data: {
-    apikeyId: string,
-    userId: string,
-    request: Request,
-  }) => {
-
-    const { request, userId } = data;
-
-    const subscription = await eventService.subscription(userId);
 
     const isHardLimitExceeded = subscription.eventUsage >= (subscription.monthlyEventQuota * subscription.hardLimitThreshold);
     const isSoftLimitExceeded = subscription.eventUsage >= (subscription.monthlyEventQuota * subscription.softLimitThreshold);
@@ -78,9 +66,20 @@ export const eventService = {
       }
     );
 
-    const bodyRequest = await request.json();
+    this.user.subscriptionId = subscription.subscriptionId;
+    this.isSoftLimitExceeded = isSoftLimitExceeded;
+    
+  }
 
-    const { body } = await zodValidator({ body: bodyRequest }, { body: eventApiCreationSchema });
+  createEvent = async ( data: { request: Request }) => {
+
+    const { request } = data;
+
+    if(!this.user.hasUnlimitedAccess){
+      await this.withLimitedApiAccess();
+    }
+
+    const { body } = await zodValidator({ body: await request.json() }, { body: eventApiCreationSchema });
 
     const EVENT_QUANTITY_CONSUMED = 1;
 
@@ -89,7 +88,7 @@ export const eventService = {
         where: {
           project: 'default',
           workspace: body.workspace,
-          userId: userId,
+          userId: this.user.id,
         },
         data: {
           event: body.event,
@@ -99,27 +98,16 @@ export const eventService = {
         },
       }, 
       options: {
-        consumeEventUsage: {
+        consumeEventUsage: this.user.subscriptionId ? {
           where: {
-            subscriptionId: subscription.subscriptionId,
+            subscriptionId: this.user.subscriptionId,
           },
           query: {
             quantity: EVENT_QUANTITY_CONSUMED,
           }
-        },
+        }: false,
       },
     });
-
-    const newSubscriptionCache: ISubscriptionCache = {
-      ...subscription,
-      eventUsage: subscription.eventUsage + EVENT_QUANTITY_CONSUMED,
-    }
-
-    setCache(
-      cacheKey.subscription(userId),
-      JSON.stringify(newSubscriptionCache),
-      300, // 5 minutes in seconds
-    )
 
     const newEvent = {
       id: event.id,
@@ -130,17 +118,28 @@ export const eventService = {
       metadata: body.metadata,
     } satisfies IEvent;
 
-    
-    const maskedEvent = maskEventIfBlocked(newEvent, isSoftLimitExceeded);
+    this.sendEvent({
+      event: { ...newEvent, userId: this.user.id, projectId: event.projectId, workspaceId: event.workspaceId },
+      mustBeHidden: this.isSoftLimitExceeded,
+      mustSendNotification: body.notify,
+    })
 
+  }
+  
+  protected sendEvent = async (data: { event: IEvent & { userId: string, projectId: string, workspaceId: string }, mustBeHidden: boolean, mustSendNotification: boolean }) => {
+
+    const { event, mustBeHidden, mustSendNotification } = data;
+    
+    const maskedEvent = maskEventIfBlocked(event, mustBeHidden);
+  
     // Publish event to Redis SSE channel
     publishEvent({
-      userId: userId,
+      userId: event.userId,
       workspaceId: event.workspaceId,
       event: maskedEvent,
     })
-
-    if(body.notify){
+  
+    if(mustSendNotification){
       // Send push notifications to workspace members
       sendNotificationToWorkspaceMembers(
         event.projectId,
@@ -153,5 +152,5 @@ export const eventService = {
         }
       )
     }
-  } 
+  }
 }

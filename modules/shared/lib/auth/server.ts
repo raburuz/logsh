@@ -116,8 +116,7 @@ export const auth = betterAuth({
       rateLimit: {
         enabled: false,
       },
-      
-      
+      enableMetadata: true,
     }),
     stripePlugin,
   ]
