@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { AlertCircleIcon, CircleCheck, CircleX, MonitorSmartphone } from "lucide-react"
+import { CircleCheck, Info, MonitorSmartphone } from "lucide-react"
 import { config } from "../config"
 import { Badge } from "@/components/ui/badge"
 
@@ -97,19 +97,15 @@ export const InstallPrompt = () => {
     )
   }
 
-  // Android / Desktop install UI
+  // No support / already installed (broswer)
   if (!deferredPrompt) return (
     <Card className="flex flex-col gap-4 pb-6">
       <CardHeader>
         <CardTitle className="space-x-3">
           <span>Install {config.app.name}</span>
-          <Badge className="text-red-800 bg-red-950/30">
-            <CircleX data-icon="inline-start"/>
-            Not supported on this browser
-          </Badge>
         </CardTitle>
         <CardDescription>
-          <p>It looks like <span className="font-semibold text-zinc-300">your current browser doesn't support the {config.app.name} app</span>.</p>
+          <p>Get the full experience on your device.</p>
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -117,11 +113,10 @@ export const InstallPrompt = () => {
           <div className="h-px w-full bg-zinc-900/30"></div>
           <div> 
             <Alert> 
-              <AlertCircleIcon className="h-4 w-4" /> 
-              <AlertTitle>😢 Oops… your browser isn't cooperating</AlertTitle> 
+              <Info className="h-4 w-4" /> 
+              <AlertTitle>Never miss a event again.</AlertTitle> 
               <AlertDescription> 
                 <p> 
-                  Your current browser doesn't support the {config.app.name} app.
                   For the best experience,{' '} 
                   <span className="font-semibold text-zinc-300">
                     please use{' '}
@@ -174,7 +169,7 @@ export const InstallPrompt = () => {
           <div> 
             <Alert> 
               <MonitorSmartphone className="h-4 w-4" /> 
-              <AlertTitle>Never miss a new log.</AlertTitle> 
+              <AlertTitle>Never miss a event again.</AlertTitle> 
               <AlertDescription> 
                 <p> 
                   Receive real-time notifications the moment a new log is received, wherever you are.
